@@ -1,5 +1,5 @@
 """
-HELD-OUT TEST SET — 100 complaints the model has NEVER seen in its prompt.
+HELD-OUT TEST SET — 200 complaints the model has NEVER seen in its prompt.
 
 This is the honest accuracy measurement for the classifier. run_examples.py
 grades the model on the same 15 examples that are baked into its own prompt
@@ -29,6 +29,12 @@ real municipal department among the 9 fits (spam, staff conduct, private
 property disputes, noise pollution — all outside civic-engineering scope).
 Priorities lowercased to match PRIORITIES. Original per-case reasoning kept
 in "note".
+
+Cases 101-200: batch 2, written by Claude in the same session that rewrote
+prompts.py's priority/category rubric after auditing batch 1's failures.
+Deliberately built to exercise every calibration line the rubric now draws
+explicitly (see the comment above case 101) rather than being freeform —
+each case's "note" says which distinction it's testing.
 """
 
 HOLDOUT_SET = [
@@ -269,12 +275,12 @@ HOLDOUT_SET = [
     # docstring above for the category-remapping methodology.
     # ---------------------------------------------------------------------
 
-    # 31. Malayalam - Medium (Clean drinking water leaking and wasting from burst pipe in fron...)
+    # 31. Malayalam - High (Clean drinking water leaking and wasting from burst pipe in fron...)
     {
         "text": "ഞങ്ങളുടെ വീടിന് മുന്നിലെ പൈപ്പ് പൊട്ടി രണ്ട് ദിവസമായി ശുദ്ധജലം പാഴായി ഒഴുകുന്നു.",
         "expected_category": "water_supply",
-        "expected_priority": "medium",
-        "note": "Priority is Medium because it is persistent clean water wastage without immediate property inundation or structural threat.",
+        "expected_priority": "high",
+        "note": "Priority is High: a burst pipe left unaddressed for two days is prolonged, ongoing water wastage, not a fresh contained leak.",
     },
 
     # 32. Marathi - Medium (Overflowing public garbage bin spreading waste and foul odor nea...)
@@ -655,12 +661,12 @@ HOLDOUT_SET = [
         "note": "Priority is High due to severe vehicle tire trap and nighttime pedestrian fall risk.",
     },
 
-    # 79. English - Medium (Stagnant stormwater drain acting as heavy mosquito breeding site...)
+    # 79. English - High (Stagnant stormwater drain acting as heavy mosquito breeding site...)
     {
         "text": "Stagnant green water in open roadside ditch breeding thousands of mosquitoes near primary clinic.",
         "expected_category": "drainage",
-        "expected_priority": "medium",
-        "note": "Priority is Medium due to vector-borne disease proliferation in public health proximity.",
+        "expected_priority": "high",
+        "note": "Priority is High: mosquito breeding near a clinic is exactly the disease-carrying-conditions case the priority rubric calls high.",
     },
 
     # 80. English - Low (Minor wild weeds growing at stormwater outlet mouth into canal.)
@@ -735,12 +741,12 @@ HOLDOUT_SET = [
         "note": "Priority is Low as minor small-animal carcass on stairs requires routine sweep pickup.",
     },
 
-    # 89. English - Medium (Shopkeeper built illegal concrete ramp extending 6 feet onto pub...)
+    # 89. English - High (Shopkeeper built illegal concrete ramp extending 6 feet onto pub...)
     {
         "text": "Local sweet shop has extended permanent concrete ramp 6 feet onto the public road, blocking car passage.",
         "expected_category": "roads",
-        "expected_priority": "medium",
-        "note": "Priority is Medium because illegal permanent road construction restricts lane width and requires demolition.",
+        "expected_priority": "high",
+        "note": "Priority is High: it is currently blocking car passage on a public road right now, regardless of the longer-term enforcement/demolition process needed to remove it.",
     },
 
     # 90. English - Critical (Uprooted giant tree crushing vehicle and completely blocking eme...)
@@ -791,12 +797,12 @@ HOLDOUT_SET = [
         "note": "Priority is High because a broken sewer lid on an active street directly traps vehicles and injures drivers.",
     },
 
-    # 96. Punjabi - Medium (All streetlights in lane non-functional for a week causing secur...)
+    # 96. Punjabi - High (All streetlights in lane non-functional for a week causing secur...)
     {
         "text": "ਗਲੀ ਦੀਆਂ ਸਾਰੀਆਂ ਲਾਈਟਾਂ ਇੱਕ ਹਫ਼ਤੇ ਤੋਂ ਬੰਦ ਪਈਆਂ ਹਨ, ਰਾਤ ਨੂੰ ਚੋਰੀ ਦਾ ਡਰ ਬਣਿਆ ਰਹਿੰਦਾ ਹੈ।",
         "expected_category": "streetlights",
-        "expected_priority": "medium",
-        "note": "Priority is Medium because complete dark street corridor increases neighborhood vulnerability over an extended period.",
+        "expected_priority": "high",
+        "note": "Priority is High: every light on the street out for a week is a whole-area outage, the rubric's own high-tier example.",
     },
 
     # 97. English - Medium (Unpaved slushy trench left after water pipeline works trapping p...)
@@ -832,5 +838,738 @@ HOLDOUT_SET = [
         "expected_category": "other",
         "expected_priority": "low",
         "note": "Priority is Low because administrative staff demeanor is an internal governance issue with no emergency safety impact.",
+    },
+
+    # -------------------------------------------------------------------
+    # Cases 101-200: batch 2, written by Claude in the same session that
+    # rewrote prompts.py's priority/category rubric. Deliberately built to
+    # exercise the calibration lines the rubric now draws explicitly:
+    # forceful/pressurized bursts vs passive leaks, leak duration (fresh vs
+    # multi-day unaddressed), preventive/scheduled maintenance vs an active
+    # problem, specific-but-trivial complaints staying low, uncovered fall-in
+    # risk vs a sunken-but-covered surface, actively-live/touchable
+    # electrical danger vs unfenced-but-quiet equipment, whole-area outages
+    # vs a single fixture, an obstruction blocking a road regardless of how
+    # permanent it is, and disease/breeding risk counting as high before any
+    # confirmed illness. Also exercises the category boundary notes: dead
+    # animals as garbage (not sanitation), sweeping/cleaning services as
+    # sanitation (not garbage), a hazard's category following what it's
+    # blocking/damaging rather than the noun in the sentence, and private
+    # property issues as "other" rather than "parks"/"roads".
+    # -------------------------------------------------------------------
+
+    # 101. English - Critical (Forceful pressurized water jet at a crowded bus stand)
+    {
+        "text": "Underground water main has burst right at the bus stand and water is shooting up like a fountain, people getting knocked into each other trying to avoid it.",
+        "expected_category": "water_supply",
+        "expected_priority": "critical",
+        "note": "Forceful, pressurized burst in a crowded spot is a real injury risk, not just water wastage.",
+    },
+    # 102. Hinglish - High (Multi-day unrepaired leak)
+    {
+        "text": "Humare street ki pipeline 5 din se leak ho rahi hai, complaint kiya tha lekin abhi tak koi repair karne nahi aaya, bahut paani waste ho gaya.",
+        "expected_category": "water_supply",
+        "expected_priority": "high",
+        "note": "A leak explicitly unaddressed for five days has moved past a fresh, containable report.",
+    },
+    # 103. Tamil - Medium (Fresh minor leak, still contained)
+    {
+        "text": "நேத்து மாலையில் இருந்து சின்ன குழாய் லீக் ஆகுது காம்பவுண்ட் சுவர் அருகில், கொஞ்சம் தண்ணி மட்டும் வீணாகுது.",
+        "expected_category": "water_supply",
+        "expected_priority": "medium",
+        "note": "Freshly reported (since yesterday evening), small volume, still contained — not yet an unaddressed multi-day failure.",
+    },
+    # 104. English - Low (Preventive, no current problem)
+    {
+        "text": "Our building's water meter is due for its routine annual replacement next month, just confirming the schedule, no issue right now.",
+        "expected_category": "water_supply",
+        "expected_priority": "low",
+        "note": "Purely preventive/scheduled, no active problem described.",
+    },
+    # 105. Hindi - High (No supply to whole colony, multiple days)
+    {
+        "text": "puri colony mein teen din se paani ki supply bilkul band hai, sab log bahut pareshan hain, tanker bhi nahi aaya",
+        "expected_category": "water_supply",
+        "expected_priority": "high",
+        "note": "Whole-colony water outage for multiple days is a shared-resource disruption affecting many people.",
+    },
+    # 106. Kannada - Medium (Low pressure, single building, contained)
+    {
+        "text": "ನಮ್ಮ ಅಪಾರ್ಟ್ಮೆಂಟ್‌ನಲ್ಲಿ ಒಂದು ವಾರದಿಂದ ನೀರಿನ ಒತ್ತಡ ತುಂಬಾ ಕಡಿಮೆ ಇದೆ, ಪೂರ್ತಿ ನಿಂತಿಲ್ಲ ಆದರೆ ತುಂಬಾ ನಿಧಾನ.",
+        "expected_category": "water_supply",
+        "expected_priority": "medium",
+        "note": "Low pressure, not a full outage, contained to one building — degraded service, nobody in danger.",
+    },
+    # 107. English - Low (Specific but trivial — hard-to-turn tap)
+    {
+        "text": "Public tap handle outside Rajaji Nagar community hall is stiff and hard to turn, but water still comes out fine.",
+        "expected_category": "water_supply",
+        "expected_priority": "low",
+        "note": "Precise location, but the underlying problem is trivial — the tap still works.",
+    },
+    # 108. Hinglish - High (Contaminated water, foul smell/colour)
+    {
+        "text": "humare naal ka paani do din se peela aur badbudaar aa raha hai, peene layak nahi hai, pura mohalla yehi paani use karta hai",
+        "expected_category": "water_supply",
+        "expected_priority": "high",
+        "note": "Contaminated water affecting a whole neighborhood's supply is a disease-risk / shared-resource high, even without confirmed illness yet.",
+    },
+    # 109. Telugu - Critical (Sewage mixing causing reported illness)
+    {
+        "text": "మా వీధి తాగునీటి పైపులో డ్రైనేజీ నీరు కలుస్తోంది, ఇప్పటికే ముగ్గురికి వాంతులు అయ్యాయి, చాలా ప్రమాదకరంగా ఉంది.",
+        "expected_category": "water_supply",
+        "expected_priority": "critical",
+        "note": "Sewage-contaminated drinking water with people already reporting illness (vomiting) is an active, ongoing health emergency, not just a risk.",
+        "borderline": True,
+        "also_accept_priority": ["high"],
+        "borderline_note": "high is defensible too if 'already sick' is read as evidence rather than an emergency in progress; accept either.",
+    },
+    # 110. English - Low (Vague)
+    {
+        "text": "There's some water issue in our area, has been like this for a while now.",
+        "expected_category": "water_supply",
+        "expected_priority": "low",
+        "note": "No specific problem, place, or affected person named.",
+    },
+    # 111. Marathi - Medium (Intermittent borewell motor fault, contained)
+    {
+        "text": "आमच्या सोसायटीचा बोअरवेल मोटार अधूनमधून बंद पडतो, कधी पाणी येतं कधी नाही, गेल्या आठवड्यापासून असंच आहे.",
+        "expected_category": "water_supply",
+        "expected_priority": "medium",
+        "note": "Intermittent equipment fault degrading service to one society, contained, nobody in danger.",
+    },
+
+    # 112. English - Critical (Unbarricaded arterial road cave-in at night)
+    {
+        "text": "Massive cave-in on the arterial highway right after the flyover exit, no barricades or warning signs, cars are swerving last-second in the dark.",
+        "expected_category": "roads",
+        "expected_priority": "critical",
+        "note": "Unmarked, unbarricaded deep cave-in on a fast arterial road at night is already causing near-misses — a road hazard actively causing crashes.",
+    },
+    # 113. Hinglish - High (Pothole with stated accident)
+    {
+        "text": "is gali mein bahut bada pothole hai, parso ek bike wala gir gaya tha usi wajah se, abhi tak repair nahi hua",
+        "expected_category": "roads",
+        "expected_priority": "high",
+        "note": "A pothole with a stated accident already occurring rises above the default medium for residential potholes.",
+    },
+    # 114. English - Medium (Ordinary pothole, no accident)
+    {
+        "text": "There's a pothole forming on our residential street near house number 24, hasn't caused any accident yet but it's getting bigger.",
+        "expected_category": "roads",
+        "expected_priority": "medium",
+        "note": "Ordinary residential-road pothole with no stated accident or arterial-road context stays medium.",
+    },
+    # 115. Hindi - Low (Vague general road condition)
+    {
+        "text": "hamare area ki sadkein overall kaafi kharab haalat mein hain, koi dhyan nahi deta",
+        "expected_category": "roads",
+        "expected_priority": "low",
+        "note": "General complaint with no specific location or damage described.",
+    },
+    # 116. Punjabi - High (Permanent illegal stall blocking road)
+    {
+        "text": "ਇੱਕ ਦੁਕਾਨਦਾਰ ਨੇ ਆਪਣਾ ਸਟਾਲ ਪੱਕੇ ਤੌਰ 'ਤੇ ਸੜਕ ਉੱਤੇ ਲਗਾ ਦਿੱਤਾ ਹੈ, ਗੱਡੀਆਂ ਲੰਘਣ ਲਈ ਬਹੁਤ ਤੰਗ ਜਗ੍ਹਾ ਬਚੀ ਹੈ।",
+        "expected_category": "roads",
+        "expected_priority": "high",
+        "note": "An obstruction currently blocking road passage is high regardless of whether removing it needs a quick clearing or a longer enforcement process.",
+    },
+    # 117. English - Low (Faded lane marking, cosmetic)
+    {
+        "text": "The white lane divider markings on Church Street have faded and are barely visible now.",
+        "expected_category": "roads",
+        "expected_priority": "low",
+        "note": "Precise location, but a faded marking is cosmetic wear, not an active hazard.",
+    },
+    # 118. Bengali - High (Fallen tree blocking arterial road after storm)
+    {
+        "text": "ঝড়ের পরে একটা বড় গাছ প্রধান রাস্তার উপর পড়ে গেছে, গাড়ি চলাচল পুরো বন্ধ হয়ে গেছে।",
+        "expected_category": "roads",
+        "expected_priority": "high",
+        "note": "A fallen tree completely blocking a main road is a shared-resource obstruction; the category follows what's blocked (the road), not the tree.",
+    },
+    # 119. English - Critical (Protruding rod already puncturing tires on a highway)
+    {
+        "text": "A bent iron rod is sticking straight up out of the broken highway surface near the toll booth, it's already punctured two car tires this morning at high speed.",
+        "expected_category": "roads",
+        "expected_priority": "critical",
+        "note": "A road hazard already causing high-speed tire punctures on a highway is a road hazard already causing crashes.",
+    },
+    # 120. Hinglish - Medium (Broken footpath tiles, minor trip risk)
+    {
+        "text": "footpath ki tiles TCS office ke bahar ukhad gayi hain, thoda uneven hai lekin abhi tak koi gira nahi hai",
+        "expected_category": "roads",
+        "expected_priority": "medium",
+        "note": "Uneven footpath is a real but contained amenity issue; no stated fall or injury yet.",
+    },
+    # 121. English - Low (Preventive resurfacing scheduled)
+    {
+        "text": "Just confirming Elm Street is on the list for its scheduled resurfacing next quarter, no potholes right now.",
+        "expected_category": "roads",
+        "expected_priority": "low",
+        "note": "Preventive/scheduled work, no current problem.",
+    },
+    # 122. Gujarati - High (Open excavation trench left across main road)
+    {
+        "text": "મુખ્ય રસ્તા પર ખોદકામ કરીને ખાડો ખુલ્લો છોડી દીધો છે ચાર દિવસથી, વાહનો રસ્તો બદલીને જવું પડે છે.",
+        "expected_category": "roads",
+        "expected_priority": "high",
+        "note": "An open excavation forcing traffic to divert for days is an obstruction blocking a road.",
+    },
+
+    # 123. Hinglish - Medium (Public toilet unclean, foul smell)
+    {
+        "text": "railway station ke paas wala public toilet kaafi dino se saaf nahi hua hai, bahut badbu aati hai andar se",
+        "expected_category": "sanitation",
+        "expected_priority": "medium",
+        "note": "A facility dirty enough to be unpleasant to use — sanitation service issue, contained.",
+    },
+    # 124. English - Low (Vague sweeping delay)
+    {
+        "text": "Sweeping in our area has been a bit irregular lately.",
+        "expected_category": "sanitation",
+        "expected_priority": "low",
+        "note": "Vague, no specific street or extent named.",
+    },
+    # 125. Hindi - Medium (Sweepers not regular on a named street, litter building up)
+    {
+        "text": "Gandhi Nagar ki 3rd cross road par safai karmi pichle do hafte se nahi aaye hain, kachra jama ho raha hai",
+        "expected_category": "sanitation",
+        "expected_priority": "medium",
+        "note": "Specific street and duration named — a real, contained service lapse, not vague.",
+    },
+    # 126. English - High (Septic overflow flooding a market street)
+    {
+        "text": "The public toilet's septic tank has overflowed and is flooding the entire vegetable market street with waste water, unbearable stench.",
+        "expected_category": "sanitation",
+        "expected_priority": "high",
+        "note": "Sewage/waste overflow contaminating a shared public market street is a disease-risk shared-resource high.",
+    },
+    # 127. Kannada - Low (Vague sweeping complaint)
+    {
+        "text": "ರಸ್ತೆ ಗುಡಿಸುವವರು ಸರಿಯಾದ ಸಮಯಕ್ಕೆ ಬರುವುದಿಲ್ಲ, ಬರೀ ಕಾಟಾಚಾರಕ್ಕೆ ಗುಡಿಸುತ್ತಾರೆ.",
+        "expected_category": "sanitation",
+        "expected_priority": "low",
+        "note": "Vague sweeping-quality complaint with no specific street, ward, or identifiable location.",
+    },
+    # 128. English - Medium (Public urinal wall reeking, overdue clean)
+    {
+        "text": "The public urinal wall behind the bus depot reeks of stale urine, clearly overdue for a deep clean.",
+        "expected_category": "sanitation",
+        "expected_priority": "medium",
+        "note": "Unpleasant-to-use public facility, contained, no stated health outbreak.",
+    },
+    # 129. Hinglish - Low (Slightly dusty bin area, cosmetic)
+    {
+        "text": "market ke corner wala dustbin area thoda dusty rehta hai, itna bada issue nahi hai",
+        "expected_category": "sanitation",
+        "expected_priority": "low",
+        "note": "Minor cosmetic cleanliness issue, citizen themselves frames it as minor.",
+    },
+    # 130. Tamil - High (Sweeping backlog causing pest infestation at a festival market)
+    {
+        "text": "திருவிழா நேரத்துல சந்தையில ரொம்ப நாளா குப்பை அள்ளாம கிடக்குது, ஈக்களும் எலிகளும் அதிகமாகிடுச்சு.",
+        "expected_category": "sanitation",
+        "expected_priority": "high",
+        "note": "Prolonged cleaning-service lapse causing a pest infestation at a crowded festival market is a disease-risk shared-resource issue.",
+    },
+    # 131. English - Low (Scheduled fumigation drive)
+    {
+        "text": "Just checking the fumigation drive for our ward is still scheduled for next month as announced, no current issue.",
+        "expected_category": "sanitation",
+        "expected_priority": "low",
+        "note": "Preventive/scheduled, no active problem.",
+    },
+    # 132. Marathi - Medium (Public toilet tap leaking, unpleasant)
+    {
+        "text": "सार्वजनिक शौचालयातील नळ सतत गळतो, जमिनीवर पाणी साचून घाण होते, वापरायला त्रास होतो.",
+        "expected_category": "sanitation",
+        "expected_priority": "medium",
+        "note": "Facility degraded enough to be unpleasant to use, contained to one toilet block.",
+    },
+    # 133. English - High (Entire ward missed for two weeks)
+    {
+        "text": "Sanitation workers have not come to our entire ward for the collection and street cleaning round in two weeks, it's affecting every lane here.",
+        "expected_category": "sanitation",
+        "expected_priority": "high",
+        "note": "A whole-ward service lapse for two weeks is a shared-resource disruption affecting many people, not a single-street contained issue.",
+    },
+
+    # 134. Hinglish - Critical (Live sparking wire touching a metal railing people are holding)
+    {
+        "text": "bus stop ki metal railing mein current aa raha hai, ऊपर se ek loose wire chhoo raha hai aur spark ho raha hai, log haath laga rahe the!",
+        "expected_category": "electricity",
+        "expected_priority": "critical",
+        "note": "A live wire energizing a railing people are actively touching is an immediate electrocution risk.",
+    },
+    # 135. English - High (Unfenced transformer, no spark yet)
+    {
+        "text": "The transformer box near the school playground has its safety fencing missing, kids play right next to it, no sparking so far though.",
+        "expected_category": "electricity",
+        "expected_priority": "high",
+        "note": "Exposed but not-yet-live equipment is a standing hazard — high, not critical, until it's actually sparking or touched.",
+    },
+    # 136. Hindi - Medium (Frequent short power cuts, single street, no other issue)
+    {
+        "text": "hamari gali mein aajkal thodi thodi der ke liye baar baar bijli chali jaati hai, koi aur problem nahi hai",
+        "expected_category": "electricity",
+        "expected_priority": "medium",
+        "note": "Frequent but brief outages on one street, contained, no stated hazard.",
+    },
+    # 137. English - Low (Cracked meter display, specific location)
+    {
+        "text": "The electricity meter display on pole 42 outside the pharmacy has a cracked glass, hard to read the numbers.",
+        "expected_category": "electricity",
+        "expected_priority": "low",
+        "note": "Precise location, but a cracked meter glass is cosmetic — reading is merely inconvenient.",
+    },
+    # 138. Telugu - Critical (Electric pole leaning toward a crowded market stall right now)
+    {
+        "text": "కరెంటు స్తంభం బాగా వంగి రద్దీగా ఉన్న కూరగాయల దుకాణం మీదకు పడబోతోంది, ఇప్పుడే ఏదైనా జరగొచ్చు.",
+        "expected_category": "electricity",
+        "expected_priority": "critical",
+        "note": "A pole actively leaning toward a crowded stall, about to fall, matches the 'structure actively collapsing or about to' critical test.",
+    },
+    # 139. English - High (Voltage fluctuation damaging appliances across a whole block)
+    {
+        "text": "Severe voltage fluctuations across our entire apartment block have damaged multiple refrigerators and fans this week.",
+        "expected_category": "electricity",
+        "expected_priority": "high",
+        "note": "Property damage with no injury risk, but affecting a whole block — a shared-resource disruption, high not critical.",
+    },
+    # 140. Punjabi - Low (Vague electricity complaint)
+    {
+        "text": "ਸਾਡੇ ਇਲਾਕੇ ਵਿੱਚ ਕਦੇ-ਕਦੇ ਬਿਜਲੀ ਦੀ ਦਿੱਕਤ ਆ ਜਾਂਦੀ ਹੈ।",
+        "expected_category": "electricity",
+        "expected_priority": "low",
+        "note": "Vague, no specific problem, place, or extent named.",
+    },
+    # 141. English - Medium (Single pole flickering, contained, no danger)
+    {
+        "text": "The light on the electric pole outside our gate keeps flickering on and off, otherwise no issue.",
+        "expected_category": "electricity",
+        "expected_priority": "medium",
+        "note": "Contained, minor equipment fault, nobody in danger.",
+    },
+    # 142. Hinglish - High (Sector-wide outage for two days)
+    {
+        "text": "poore sector 12 mein do din se bijli nahi hai, sab log bahut pareshan hain office aur ghar dono mein",
+        "expected_category": "electricity",
+        "expected_priority": "high",
+        "note": "Whole-sector outage for two days is a shared-resource disruption affecting many people.",
+    },
+    # 143. English - Low (Preventive meter inspection)
+    {
+        "text": "Reminder that our building's meters are due for the routine annual inspection next month, nothing wrong currently.",
+        "expected_category": "electricity",
+        "expected_priority": "low",
+        "note": "Preventive/scheduled, no active problem.",
+    },
+    # 144. Kannada - Critical (Live wire fallen on a roof, family stuck inside)
+    {
+        "text": "ಮನೆಯ ಮೇಲ್ಛಾವಣಿ ಮೇಲೆ ವಿದ್ಯುತ್ ತಂತಿ ಬಿದ್ದಿದೆ, ಕಿಡಿಗಳು ಬರುತ್ತಿವೆ, ಮನೆಯೊಳಗೆ ಇರುವವರು ಹೊರಗೆ ಬರಲಾಗುತ್ತಿಲ್ಲ.",
+        "expected_category": "electricity",
+        "expected_priority": "critical",
+        "note": "A sparking live wire down on an occupied roof, trapping the family inside, is an immediate life-threat.",
+    },
+
+    # 145. Hindi - Medium (Single streetlight out, others fine)
+    {
+        "text": "hamari gali ka ek streetlight kaafi din se band hai, baaki sab theek kaam kar rahe hain",
+        "expected_category": "streetlights",
+        "expected_priority": "medium",
+        "note": "A single non-functional streetlight among otherwise-working ones — contained, degraded amenity.",
+    },
+    # 146. English - High (Whole colony dark for over a week)
+    {
+        "text": "Every streetlight across our entire colony has been out for more than a week now, it's pitch dark at night.",
+        "expected_category": "streetlights",
+        "expected_priority": "high",
+        "note": "A whole-area outage lasting over a week is high regardless of scope being one colony or one street.",
+    },
+    # 147. Hinglish - Low (Occasional flicker, minor)
+    {
+        "text": "ek streetlight thoda flicker karta hai kabhi kabhi, bas itna sa issue hai",
+        "expected_category": "streetlights",
+        "expected_priority": "low",
+        "note": "Minor, occasional, citizen frames it as small.",
+    },
+    # 148. English - Medium (Three consecutive lights out on a short stretch)
+    {
+        "text": "Three streetlights in a row are out on the stretch between the temple and the bus stop.",
+        "expected_category": "streetlights",
+        "expected_priority": "medium",
+        "note": "A short contained stretch, not a whole area — degraded but not widespread.",
+    },
+    # 149. Tamil - High (Leaning pole about to fall)
+    {
+        "text": "தெரு விளக்கு கம்பம் ரொம்ப சாஞ்சு நிக்குது, பலமா காத்து அடிச்சா விழுந்துடும் மாதிரி இருக்கு.",
+        "expected_category": "streetlights",
+        "expected_priority": "high",
+        "note": "A pole leaning and at risk of falling in wind is a hazard that reaches critical if ignored — high, not yet actively falling.",
+    },
+    # 150. English - Low (Vague)
+    {
+        "text": "Streetlights in general could use some maintenance around here.",
+        "expected_category": "streetlights",
+        "expected_priority": "low",
+        "note": "Vague, no specific location.",
+    },
+    # 151. Marathi - Medium (Timer malfunction, stays on during day)
+    {
+        "text": "आमच्या रस्त्यावरचा दिवा टायमर बिघडलाय, दिवसाही चालू राहतो, तितकासा मोठा प्रॉब्लेम नाही पण वीज वाया जातेय.",
+        "expected_category": "streetlights",
+        "expected_priority": "medium",
+        "note": "Equipment fault causing wastage, contained, no danger.",
+    },
+    # 152. English - Low (Cosmetic — peeling paint on pole)
+    {
+        "text": "The paint on the streetlight pole outside house 17 is peeling, the light itself works fine.",
+        "expected_category": "streetlights",
+        "expected_priority": "low",
+        "note": "Cosmetic wear on a pole that otherwise functions normally.",
+    },
+    # 153. Hindi - High (Main market street dark for a week, many vendors affected)
+    {
+        "text": "poori main market street ek hafte se raat mein andheri rehti hai, vendors ko bahut dikkat ho rahi hai security ko lekar",
+        "expected_category": "streetlights",
+        "expected_priority": "high",
+        "note": "A dark main market street for a week affecting many vendors is a shared-area outage.",
+    },
+    # 154. English - Low (Scheduled annual bulb replacement)
+    {
+        "text": "Just confirming our street is on the list for the scheduled annual streetlight bulb replacement drive next month.",
+        "expected_category": "streetlights",
+        "expected_priority": "low",
+        "note": "Preventive/scheduled, no current outage.",
+    },
+    # 155. Bengali - Medium (Dim/flickering light near a park, not fully out)
+    {
+        "text": "পার্কের পাশের রাস্তার আলোটা কয়েকদিন ধরে টিমটিম করছে, পুরো নেভেনি তবে খুব কম আলো দিচ্ছে।",
+        "expected_category": "streetlights",
+        "expected_priority": "medium",
+        "note": "Degraded but not fully out, single fixture, contained.",
+    },
+
+    # 156. English - Critical (Open manhole on a busy road at night)
+    {
+        "text": "There's an open manhole with no cover in the middle of the road near the flyover, completely dark at night, no barricade around it.",
+        "expected_category": "drainage",
+        "expected_priority": "critical",
+        "note": "An actual uncovered hole on a busy unlit road is a fall-in risk matching the critical test directly.",
+    },
+    # 157. Hindi - High (Sunken but covered manhole cover)
+    {
+        "text": "manhole ka dhakkan sadak se thoda neeche dhas gaya hai, gaadiyon ko jhatka lagta hai lekin dhakkan hai, khula nahi hai",
+        "expected_category": "drainage",
+        "expected_priority": "high",
+        "note": "Sunken but still covered — a vehicle hazard, not a fall-in risk, so high rather than critical.",
+    },
+    # 158. Hinglish - Medium (Minor stagnation, clears in a day)
+    {
+        "text": "baarish ke baad ek chhoti si ditch mein paani jama ho gaya tha, lekin agle din tak apne aap nikal gaya",
+        "expected_category": "drainage",
+        "expected_priority": "medium",
+        "note": "Minor, self-resolving, contained — a real but low-stakes issue.",
+    },
+    # 159. English - Low (Preventive desilting scheduled)
+    {
+        "text": "Just confirming the drain along our lane is scheduled for its routine pre-monsoon desilting next week, no blockage currently.",
+        "expected_category": "drainage",
+        "expected_priority": "low",
+        "note": "Preventive/scheduled work, no active problem.",
+    },
+    # 160. Kannada - High (Stagnant water breeding mosquitoes near residential block)
+    {
+        "text": "ಚರಂಡಿಯಲ್ಲಿ ನಿಂತ ನೀರು ಸೊಳ್ಳೆಗಳನ್ನು ಹೆಚ್ಚಿಸುತ್ತಿದೆ, ವಸತಿ ಬ್ಲಾಕ್ ಪಕ್ಕದಲ್ಲೇ ಇದೆ, ಡೆಂಗ್ಯೂ ಭಯ ಇದೆ.",
+        "expected_category": "drainage",
+        "expected_priority": "high",
+        "note": "Mosquito-breeding stagnant water near housing is a disease-carrying-conditions high, even before confirmed illness.",
+    },
+    # 161. English - Critical (Collapsed drain wall flooding an occupied basement shop)
+    {
+        "text": "The drain retaining wall has collapsed and floodwater is actively pouring into the basement shop next door while the shopkeeper is still inside.",
+        "expected_category": "drainage",
+        "expected_priority": "critical",
+        "note": "Structural collapse actively sending floodwater into an occupied enclosed space, someone could be trapped.",
+    },
+    # 162. Telugu - Medium (Slow drain flow, minor puddling)
+    {
+        "text": "మా వీధి డ్రైన్ నీళ్లు నెమ్మదిగా పోతున్నాయి, కొద్దిగా నీళ్లు నిలిచిపోతున్నాయి కానీ దేనినీ అడ్డుకోవడం లేదు.",
+        "expected_category": "drainage",
+        "expected_priority": "medium",
+        "note": "Slow but functioning drain causing minor puddling, not blocking anything or endangering anyone.",
+    },
+    # 163. English - Low (Weeds at drain outlet, cosmetic)
+    {
+        "text": "There's some weed growth at the drain outlet mouth near the canal, water still flows through fine.",
+        "expected_category": "drainage",
+        "expected_priority": "low",
+        "note": "Cosmetic overgrowth with no functional blockage.",
+    },
+    # 164. Hinglish - High (Sewage overflow mixing into a lake residents use)
+    {
+        "text": "sewage overflow ho kar seedha lake mein mix ho raha hai, aas paas ke log usi paani ka use karte hain rozmarra ke kaamon mein",
+        "expected_category": "drainage",
+        "expected_priority": "high",
+        "note": "Sewage contaminating a shared water body residents actually use is a disease/contamination-risk high.",
+    },
+    # 165. English - Medium (Loose drain grating, minor rattle)
+    {
+        "text": "The drain grating outside the pharmacy is a bit loose and rattles when vehicles pass, but it's not a fall risk.",
+        "expected_category": "drainage",
+        "expected_priority": "medium",
+        "note": "Minor equipment issue explicitly stated as not a fall risk.",
+    },
+    # 166. Punjabi - Critical (Stolen drain grate, open hole on a busy walking path at night)
+    {
+        "text": "ਡਰੇਨ ਦੀ ਲੋਹੇ ਦੀ ਜਾਲੀ ਚੋਰੀ ਹੋ ਗਈ ਹੈ, ਹੁਣ ਡੂੰਘਾ ਖੁੱਲ੍ਹਾ ਟੋਆ ਹੈ ਵਿਅਸਤ ਪੈਦਲ ਰਸਤੇ 'ਤੇ, ਰਾਤ ਨੂੰ ਬਿਲਕੁਲ ਦਿਖਦਾ ਨਹੀਂ।",
+        "expected_category": "drainage",
+        "expected_priority": "critical",
+        "note": "A deep uncovered hole on a busy, unlit walking path is a genuine fall-in risk matching the critical test.",
+    },
+
+    # 167. English - High (Garbage piling up two weeks across a whole market)
+    {
+        "text": "Garbage has been piling up across the entire vegetable market for two weeks now, terrible smell and rats everywhere.",
+        "expected_category": "garbage",
+        "expected_priority": "high",
+        "note": "A prolonged, area-wide accumulation affecting many vendors and shoppers, plus a pest/health signal.",
+    },
+    # 168. Hinglish - Medium (One household's garbage missed, contained)
+    {
+        "text": "hamare ghar ka kachra pichle 3 din se collect nahi hua, baaki area mein normally ho raha hai",
+        "expected_category": "garbage",
+        "expected_priority": "medium",
+        "note": "Contained to a single household, real but not widespread.",
+    },
+    # 169. English - Low (Bin lid broken, bin fine, specific location)
+    {
+        "text": "The dustbin lid near the bus stop on 2nd Main is broken, but the bin isn't overflowing.",
+        "expected_category": "garbage",
+        "expected_priority": "low",
+        "note": "Precise location, but a broken lid on an otherwise-functioning bin is trivial.",
+    },
+    # 170. Hindi - Low (Vague)
+    {
+        "text": "kachra sahi se nahi uthta hamare area mein, koi fix nahi karta",
+        "expected_category": "garbage",
+        "expected_priority": "low",
+        "note": "Vague, no specific location or extent.",
+    },
+    # 171. Tamil - High (Dead cattle carcass on a public road since previous day)
+    {
+        "text": "நேத்து முதல் ஒரு மாட்டு உடல் பொது சாலையில கிடக்குது, நாற்றம் அதிகமாகிடுச்சு, யாரும் அகற்றல.",
+        "expected_category": "garbage",
+        "expected_priority": "high",
+        "note": "A dead animal is garbage's job to remove, not sanitation's; a large carcass left overnight on a public road is a real health hazard.",
+    },
+    # 172. English - Critical (Biomedical waste with visible syringes near a playground)
+    {
+        "text": "Someone has dumped biomedical waste including visible used syringes into the public bin right next to the children's playground.",
+        "expected_category": "garbage",
+        "expected_priority": "critical",
+        "note": "Visible syringes reachable by children playing nearby is an immediate injury/infection risk, not just a health-over-days concern.",
+    },
+    # 173. Marathi - Medium (Overflowing bin at a bus stop)
+    {
+        "text": "बस स्टॉपजवळचा कचरापेटी पूर्ण भरून वाहतोय, आजच रिकामी करायला हवी.",
+        "expected_category": "garbage",
+        "expected_priority": "medium",
+        "note": "A single overflowing bin needing prompt but routine clearing.",
+    },
+    # 174. English - Low (Preventive — extra bin scheduled)
+    {
+        "text": "Just confirming an extra bin is scheduled to be installed near our lane next month as discussed.",
+        "expected_category": "garbage",
+        "expected_priority": "low",
+        "note": "Preventive/scheduled, no current problem.",
+    },
+    # 175. Kannada - High (Illegal dumping ground near a water body)
+    {
+        "text": "ಕೆರೆಯ ಪಕ್ಕದಲ್ಲಿ ಅಕ್ರಮವಾಗಿ ಕಸ ಸುರಿಯುವ ಜಾಗ ಆಗಿದೆ, ನೀರು ಕಲುಷಿತವಾಗುವ ಅಪಾಯ ಇದೆ.",
+        "expected_category": "garbage",
+        "expected_priority": "high",
+        "note": "Illegal dumping threatening to contaminate a shared water body is a disease/contamination-risk high.",
+    },
+    # 176. English - Low (Rusted but usable dustbin, cosmetic)
+    {
+        "text": "The dustbin at the park entrance is a bit rusted on the outside, still perfectly usable.",
+        "expected_category": "garbage",
+        "expected_priority": "low",
+        "note": "Cosmetic wear only, no functional impact.",
+    },
+    # 177. Hinglish - Medium (Garbage truck skipped once, first occurrence)
+    {
+        "text": "aaj garbage truck hamari street pe nahi aaya, pehli baar aisa hua hai, hope kal aa jayega",
+        "expected_category": "garbage",
+        "expected_priority": "medium",
+        "note": "A one-off missed collection, contained, not yet a pattern.",
+    },
+
+    # 178. English - Low (Peeling paint on a park bench, cosmetic)
+    {
+        "text": "The paint on the benches near the park's east entrance is peeling, benches are otherwise fine to sit on.",
+        "expected_category": "parks",
+        "expected_priority": "low",
+        "note": "Cosmetic wear on a fully usable amenity.",
+    },
+    # 179. Hindi - Medium (Broken swing chain, risk if used)
+    {
+        "text": "bacchon ke park mein jhoole ki chain tooti hui hai, agar koi baccha use kare toh gir sakta hai",
+        "expected_category": "parks",
+        "expected_priority": "medium",
+        "note": "Damaged equipment degrading a contained amenity, real but not an immediate danger unless used.",
+    },
+    # 180. English - Critical (Cracking branch hanging over kids currently playing under it)
+    {
+        "text": "A huge branch has cracked and is hanging directly over the play equipment where kids are playing right now, it's creaking and could fall any minute.",
+        "expected_category": "parks",
+        "expected_priority": "critical",
+        "note": "An actively failing structure hanging over children currently underneath it is an imminent, next-few-hours injury risk.",
+    },
+    # 181. English - Low (Vague)
+    {
+        "text": "The park in our area could honestly be a lot nicer overall.",
+        "expected_category": "parks",
+        "expected_priority": "low",
+        "note": "Vague, no specific problem or location.",
+    },
+    # 182. Telugu - Medium (Uneven pathway pavers, minor trip risk, low traffic)
+    {
+        "text": "పార్క్ నడక దారిలో రాళ్లు అసమానంగా ఉన్నాయి, కొంచెం తడబడే అవకాశం ఉంది కానీ చాలా మంది వాడరు ఆ దారి.",
+        "expected_category": "parks",
+        "expected_priority": "medium",
+        "note": "Real trip risk but low foot traffic and no injuries stated, contained.",
+    },
+    # 183. English - Low (Preventive — scheduled tree trimming)
+    {
+        "text": "Confirming the annual tree trimming for the park is still scheduled for next month, no hazard right now.",
+        "expected_category": "parks",
+        "expected_priority": "low",
+        "note": "Preventive/scheduled, no current issue.",
+    },
+    # 184. Hinglish - Medium (Broken gate lock, stays open at night)
+    {
+        "text": "park ka gate lock tuta hua hai, raat ko khula reh jaata hai, security ka thoda concern hai",
+        "expected_category": "parks",
+        "expected_priority": "medium",
+        "note": "Contained security concern from a broken lock, no stated incident.",
+    },
+    # 185. English - Low (Rusty drinking fountain, cosmetic)
+    {
+        "text": "The drinking water fountain in the park has some rust on the outside, still works fine.",
+        "expected_category": "parks",
+        "expected_priority": "low",
+        "note": "Cosmetic wear, functionally fine.",
+    },
+    # 186. Punjabi - High (Boundary fence entirely collapsed, stray animals and open access)
+    {
+        "text": "ਪਾਰਕ ਦੀ ਪੂਰੀ ਬਾਊਂਡਰੀ ਫੈਂਸ ਡਿੱਗ ਗਈ ਹੈ, ਹੁਣ ਅਵਾਰਾ ਪਸ਼ੂ ਅਤੇ ਕੋਈ ਵੀ ਬਿਨਾਂ ਰੋਕ-ਟੋਕ ਅੰਦਰ ਆ ਜਾਂਦਾ ਹੈ, ਬੱਚਿਆਂ ਲਈ ਖ਼ਤਰਾ ਹੈ।",
+        "expected_category": "parks",
+        "expected_priority": "high",
+        "note": "A fully collapsed boundary fence creating open, uncontrolled access for stray animals is a hazard that becomes dangerous if ignored, affecting all park users.",
+    },
+    # 187. English - Medium (Bins overflowing after a one-time event)
+    {
+        "text": "The park's litter bins are overflowing after the weekend festival, needs a one-time extra clearing.",
+        "expected_category": "parks",
+        "expected_priority": "medium",
+        "note": "One-time, contained, routine clearing needed.",
+    },
+    # 188. Bengali - Low (Wobbly bench, minor/cosmetic)
+    {
+        "text": "পার্কের একটা বেঞ্চ একটু নড়বড়ে হয়ে গেছে, খুব বড় সমস্যা না।",
+        "expected_category": "parks",
+        "expected_priority": "low",
+        "note": "Minor, citizen frames it as small themselves.",
+    },
+
+    # 189. English - Low (Vague app feedback)
+    {
+        "text": "The municipal complaint app's interface could be a lot more user-friendly honestly.",
+        "expected_category": "other",
+        "expected_priority": "low",
+        "note": "General feedback, not a civic infrastructure issue.",
+    },
+    # 190. Hindi - Low (Rude staff behavior)
+    {
+        "text": "ward office mein staff ne bahut rudely baat ki jab main property tax jama karne gaya tha",
+        "expected_category": "other",
+        "expected_priority": "low",
+        "note": "Staff conduct is an internal governance issue with no safety impact.",
+    },
+    # 191. English - Medium (Private construction noise disturbing a street)
+    {
+        "text": "Loud construction noise from a private building site has been disturbing our whole street during work hours for two weeks.",
+        "expected_category": "other",
+        "expected_priority": "medium",
+        "note": "Private-site noise nuisance, no clear single civic-engineering department owns it, contained disruption.",
+    },
+    # 192. Hinglish - Low (Spam SMS, non-civic)
+    {
+        "text": "mujhe roz ek private number se loan approval ka spam SMS aata hai, isse related complaint hai",
+        "expected_category": "other",
+        "expected_priority": "low",
+        "note": "Non-civic commercial spam, minimum priority.",
+    },
+    # 193. English - Critical (Private balcony detaching over a public sidewalk)
+    {
+        "text": "A private apartment's balcony slab is visibly cracking and tilting away from the building, right above the public sidewalk where people walk constantly.",
+        "expected_category": "other",
+        "expected_priority": "critical",
+        "note": "A structure actively about to collapse onto a public walkway is critical regardless of it being privately owned — the danger is to the public.",
+    },
+    # 194. Tamil - Low (Neighbor's private wall paint faded, purely cosmetic dispute)
+    {
+        "text": "பக்கத்து வீட்டுக்காரோட காம்பவுண்ட் சுவர் பெயிண்ட் கொஞ்சம் மங்கிடுச்சு, அவ்வளவுதான், வேற எந்த பிரச்சனையும் இல்ல.",
+        "expected_category": "other",
+        "expected_priority": "low",
+        "note": "Purely cosmetic private-property matter with no public impact.",
+    },
+    # 195. English - Medium (Aggressive stray dog pack, no bite yet)
+    {
+        "text": "A pack of stray dogs has been acting aggressively toward pedestrians on our lane the past few days, no one bitten yet but people are scared.",
+        "expected_category": "other",
+        "expected_priority": "medium",
+        "note": "A real, contained safety concern with no injury yet — no single civic-engineering department owns animal control here.",
+    },
+    # 196. English - Medium (Unclear-source chemical smell, ambiguous responsibility)
+    {
+        "text": "There's a persistent sharp chemical smell in the air near the industrial lane, not clear which facility it's coming from.",
+        "expected_category": "other",
+        "expected_priority": "medium",
+        "note": "Ambiguous source and no confirmed exposure yet — real but not clearly assignable to one department, and not yet an active toxic-exposure emergency.",
+        "borderline": True,
+        "also_accept_priority": ["high"],
+        "borderline_note": "high is defensible if a persistent chemical smell is read as an ongoing exposure risk; accept either.",
+    },
+    # 197. English - Low (Private parking lot overcharge, non-civic)
+    {
+        "text": "A private parking lot near the mall overcharged me compared to their posted rate.",
+        "expected_category": "other",
+        "expected_priority": "low",
+        "note": "Private commercial dispute, not civic infrastructure.",
+    },
+    # 198. Hindi - Medium (Recurring late-night noise from a private event hall)
+    {
+        "text": "paas wale private marriage hall se raat ko der tak loud music aati rehti hai, aksar hota hai",
+        "expected_category": "other",
+        "expected_priority": "medium",
+        "note": "Recurring private-venue noise nuisance, no single clear department owner.",
+    },
+    # 199. English - Critical (Gas smell near a residential complex, source unclear)
+    {
+        "text": "There's a strong gas smell near our residential complex, source unclear, it's been getting stronger over the last hour.",
+        "expected_category": "other",
+        "expected_priority": "critical",
+        "note": "A toxic/chemical hazard people are being exposed to right now is critical regardless of which department ultimately owns the fix.",
+    },
+    # 200. English - Low (Vague)
+    {
+        "text": "The government in general should really do a better job around here.",
+        "expected_category": "other",
+        "expected_priority": "low",
+        "note": "Vague, no specific problem, place, or person named.",
     },
 ]
