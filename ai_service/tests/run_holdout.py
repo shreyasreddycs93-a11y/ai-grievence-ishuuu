@@ -135,6 +135,8 @@ def run_case(case: dict, mode: str) -> dict:
         "location_text": result.get("location_text"),
         "borderline": bool(case.get("borderline")),
         "note": case.get("note"),
+        "lang": case.get("lang"),
+        "tags": case.get("tags"),
     }
 
 
@@ -174,6 +176,21 @@ def report(rows: list, mode: str) -> dict:
         print(f"\n  Excluding the {len(scored) - len(strict)} borderline cases:"
               f"   {strict_exact}/{len(strict)}   {strict_exact / len(strict):6.1%}")
 
+    # ---- per-language breakdown ------------------------------------------
+    print("\n" + "-" * 78)
+    print("BY LANGUAGE")
+    print("-" * 78)
+    langs = sorted({r.get("lang") for r in scored}, key=lambda x: (x is None, x or ""))
+    print(f"  {'lang':<10} {'n':>4}   {'category':>10}   {'priority':>10}   {'exact':>10}")
+    for lang in langs:
+        rows_l = [r for r in scored if r.get("lang") == lang]
+        nl = len(rows_l)
+        cat_l = sum(1 for r in rows_l if r["category_ok"]) / nl
+        pri_l = sum(1 for r in rows_l if r["priority_ok"]) / nl
+        exact_l = sum(1 for r in rows_l if r["exact_ok"]) / nl
+        label = lang if lang else "?"
+        print(f"  {label:<10} {nl:>4}   {cat_l:>9.1%}   {pri_l:>9.1%}   {exact_l:>9.1%}")
+
     translated_count = direct_count = None
     if mode == "smart":
         translated = [r for r in scored if r.get("took_translation_path")]
@@ -187,6 +204,16 @@ def report(rows: list, mode: str) -> dict:
         scripts = Counter(r["detected_script"] for r in translated)
         if scripts:
             print("  scripts seen: " + ", ".join(f"{name} x{count}" for name, count in scripts.most_common()))
+
+        print(f"\n  {'path':<10} {'n':>4}   {'category':>10}   {'priority':>10}   {'exact':>10}")
+        for path_name, rows_p in (("translated", translated), ("direct", direct)):
+            if not rows_p:
+                continue
+            npth = len(rows_p)
+            cat_p = sum(1 for r in rows_p if r["category_ok"]) / npth
+            pri_p = sum(1 for r in rows_p if r["priority_ok"]) / npth
+            exact_p = sum(1 for r in rows_p if r["exact_ok"]) / npth
+            print(f"  {path_name:<10} {npth:>4}   {cat_p:>9.1%}   {pri_p:>9.1%}   {exact_p:>9.1%}")
 
     # ---- where it went wrong -------------------------------------------
     cat_misses = [r for r in scored if not r["category_ok"]]
