@@ -1,351 +1,274 @@
+# -*- coding: utf-8 -*-
 """
 Few-shot examples used inside the classification prompt (see prompts.py).
 These are baked into every classify_complaint() call so the model has
 solved examples to pattern-match against, instead of classifying cold.
 
-REDESIGNED from scratch against the rewritten priority/category rubric in
-prompts.py (see that file's "Priority guidance" / "Category guidance"
-sections). Every entry below was fresh-labeled by reading only the raw
-complaint text — no label was carried over from a prior version of this
-file without being re-derived. Capped at 20 by deliberate choice: each
-example must teach something the others don't, because every entry here
-is sent on every single classification call, so redundant examples are a
-pure token-cost tax with no accuracy benefit. Where two examples would
-teach the same lesson, only the sharper one survives.
+Generated from docs/CLASSIFICATION_DESIGN.md via a rule-coverage matrix:
+every rule in the design spec's §1 (category boundary rulings) and §2
+(priority escalation rules and tie-breaker) maps to at least one example
+below. Passed a 12-point audit before being committed here.
 
-What this set is deliberately built to cover (one pair/anchor per lesson):
-  - critical vs high water damage: a forceful/pressurized burst (critical)
-    vs a passive leak explicitly unaddressed for days (high).
-  - critical vs high electrical danger: actively sparking with people
-    present (critical) vs exposed-but-not-yet-live equipment (high).
-  - critical vs high fall-in hazard: an open, uncovered manhole (critical)
-    vs a sunken-but-still-covered frame (high).
-  - roads: the explicit "accident already happened" tie-breaker, a
-    corrected real case showing restraint (property damage + a big pit is
-    high, not automatically critical, without a stated crash), and an
-    obstruction example that also teaches the category-boundary rule (a
-    tree blocking a road is a ROADS complaint, not a PARKS one).
-  - streetlights: a single fixture (medium) vs a whole street out for a
-    week (high) — the scope tie-breaker.
-  - garbage: contained/one-building (medium), a disease/breeding-risk case
-    (high) — the "breeding risk counts before confirmed illness" rule —
-    and a specific-but-trivial broken lid (low) — "naming a place doesn't
-    make it serious."
-  - sanitation: a service-quality case (medium) plus a vague one (low),
-    since sanitation vs garbage was the single most confused boundary in
-    holdout testing and needs its own low anchor, not a borrowed one.
-  - parks: equipment damage that needs someone to interact with it to
-    cause harm (medium, deliberately NOT critical/high) vs cosmetic wear
-    on a still-fully-usable fixture (low).
-  - other: the catch-all can still be critical (a structural collapse
-    endangering the public, regardless of it being privately owned) and
-    still be low (genuinely vague feedback).
+The 0.5-0.7 confidence band is a DELIBERATE design requirement, not an
+accident of these particular cases — spec §3 requires mid-confidence
+examples to be present from the start so the model has a pattern for "I
+answered but I'm not fully sure," instead of only ever seeing confident
+anchors. There are exactly 6 examples in that band. Do not remove or
+"round up" any of them during future edits — losing that band collapses
+confidence calibration back toward always-high, which is the failure mode
+this design requirement exists to prevent.
 
-Kept from the previous 17-example set (re-labeled fresh, not copied):
-  pothole+accident, road-damage-from-leak, single streetlight, garbage
-  1-week, mosquito/disease garbage, sparking pole, open manhole, broken
-  swing, vague feedback. (10 kept, including the roads-from-leak case
-  whose priority was corrected from critical to high on this pass.)
-
-Dropped from the previous set as redundant once the above pairs existed
-(kept as a design note, not silently lost): MG Road pipe-burst high (redundant
-with the new critical/high water pair), "no supply for days, whole
-building" high (generic shared-resource high, same lesson as the
-whole-street streetlights case), a second sparking-transformer high
-("sparked last night" — subtler than, and largely covered by, the
-unfenced-transformer high case), a second recurring-hazard drainage high
-(the sunken-frame case already anchors drainage's high tier), a second
-leaning-pole streetlights high (same "hazard-if-ignored" lesson the
-sunken-frame and unfenced-transformer cases already teach), and two
-redundant vague/low anchors (water_supply "water problem", roads "roads
-are generally bad") — one vague/low anchor (other) is enough to teach the
-generalizable pattern.
-
-Known coverage gaps NOT filled here by design (budget), tracked instead by
-dedicated cases in tests/holdout_set.py: a dead-animal-carcass-is-garbage-
-not-sanitation anchor, and a private-property-vegetation-is-"other"-not-
-"parks" anchor. If either boundary starts showing up as a real error
-pattern in holdout runs, promote one of those holdout cases into this file
-(as a freshly-written example, never copied verbatim) and drop something
-else to stay at 20.
+This file assumes/declares UTF-8 source encoding (Python 3's default) so
+the native-script text below (Kannada, Tamil, Telugu, Hindi, Bengali,
+Marathi) is preserved byte-for-byte. Do not let an editor silently
+re-encode this file.
 
 Keep this list realistic and varied. If you or your teammate refine these
 with Gemini/ChatGPT, replace the whole list — don't hand-edit piecemeal,
-since the prompt is tuned against the set as a whole.
+since the prompt is tuned against the set as a whole and the coverage/
+tally requirements (category and priority distribution, the confidence
+band) hold for the set, not for any single entry.
 """
 
 FEW_SHOT_EXAMPLES = [
-    # water_supply / critical — forceful, pressurized burst is an injury
-    # risk, not just wastage. Pairs with the leak case below.
     {
-        "text": "Underground pipeline achanak phat gayi hai aur paani fountain ki tarah zor se sadak par uchhal raha hai, log gir sakte hai",
+        "text": "Humari gali me ek bada gaddha ho gaya hai 4th cross ke paas, scooter walo ko dikkat hoti hai raat me",
         "output": {
-            "category": "water_supply",
-            "subcategory": "pipe_burst",
-            "priority": "critical",
-            "confidence": 0.85,
-            "location_text": None,
-            "summary": "An underground pipeline has burst and water is shooting forcefully across the road like a fountain — bystanders could be knocked over.",
-        },
-    },
-    # water_supply / high — a passive leak explicitly unaddressed for
-    # days. Contrast with the critical case above: same root problem
-    # (a leak), different severity because of force, not volume.
-    {
-        "text": "Ghar ke bahar ki pipeline 4 din se leak ho rahi hai, bahut paani waste ho raha hai lekin koi theek karne nahi aaya",
-        "output": {
-            "category": "water_supply",
-            "subcategory": "unrepaired_leak",
-            "priority": "high",
-            "confidence": 0.78,
-            "location_text": "outside the house",
-            "summary": "A pipeline leak outside the house has gone unrepaired for four days, wasting a large amount of water.",
-        },
-    },
-    # roads / high — the explicit tie-breaker: an ordinary pothole becomes
-    # high once the complaint states an accident already happened.
-    {
-        "text": "Sadak me bahut bada gadda hai, do din pehle scooter gir gaya tha kisi ka.",
-        "output": {
+            "reasoning": "Residential-lane pothole with no stated accident or arterial road stays medium; roads owns the resurfacing.",
             "category": "roads",
             "subcategory": "pothole",
-            "priority": "high",
-            "confidence": 0.88,
-            "location_text": None,
-            "summary": "Large pothole reported; a scooter accident already occurred nearby.",
-        },
-    },
-    # roads / high — corrected on this pass from critical. A big pit with
-    # water flowing is a real hazard, but nothing here states a crash,
-    # a barricade missing, or an arterial road — that's high, not critical.
-    # Also the cross-department case: Water Board caused it, Roads fixes it.
-    {
-        "text": "sadak toot gayi hai kyunki niche ki paani ki pipe leak ho rahi thi, ab bada gadda ban gaya hai aur paani bhi bah raha hai",
-        "output": {
-            "category": "roads",
-            "subcategory": "road_damage_from_leak",
-            "priority": "high",
-            "confidence": 0.62,
-            "location_text": None,
-            "summary": "A leaking underground water pipe has damaged the road surface, creating a large pothole with active water flow — likely needs both Water Board and Roads Dept.",
-        },
-    },
-    # roads / high — obstruction blocking a road is high regardless of
-    # what's causing it. Also teaches the category-boundary rule: a tree
-    # is a ROADS complaint when it's blocking a road, not a PARKS one.
-    {
-        "text": "Toofan ke baad ek bada ped gir kar poori sadak block kar diya hai, koi bhi gaadi nikal nahi sakti.",
-        "output": {
-            "category": "roads",
-            "subcategory": "fallen_tree_obstruction",
-            "priority": "high",
-            "confidence": 0.8,
-            "location_text": None,
-            "summary": "A large tree fell during a storm and is completely blocking the road, preventing any vehicles from passing.",
-        },
-    },
-    # streetlights / medium — a single fixture out, contained. Pairs with
-    # the whole-street case below (the scope tie-breaker).
-    {
-        "text": "Streetlight bahut din se band hai humare gali mein, raat ko andhera rehta hai.",
-        "output": {
-            "category": "streetlights",
-            "subcategory": "light_not_working",
             "priority": "medium",
             "confidence": 0.85,
-            "location_text": None,
-            "summary": "Streetlight has been non-functional for a while, causing darkness at night.",
+            "location_text": "near 4th cross",
+            "summary": "Large pothole near 4th cross troubling two-wheelers at night.",
         },
     },
-    # streetlights / high — same underlying problem as above, but scoped
-    # to a whole street for a week: a shared-resource disruption, not a
-    # single contained fixture.
     {
-        "text": "Poori gali ki saari streetlights ek hafte se band hai, raat ko bilkul andhera rehta hai",
+        "text": "ABSOLUTELY FED UP!!! This corporation is USELESS — that fellow has set up his pani puri cart AGAIN on our corner without any licence. SHAME ON YOU ALL, is anyone even working there???",
         "output": {
-            "category": "streetlights",
-            "subcategory": "area_outage",
-            "priority": "high",
-            "confidence": 0.83,
-            "location_text": None,
-            "summary": "Every streetlight on the whole street has been off for a week, leaving it completely dark at night.",
-        },
-    },
-    # garbage / medium — contained to one building, real but not
-    # widespread.
-    {
-        "text": "garbage not collected for one week near our apartment, smell is very bad now",
-        "output": {
-            "category": "garbage",
-            "subcategory": "collection_missed",
-            "priority": "medium",
-            "confidence": 0.75,
-            "location_text": None,
-            "summary": "Garbage hasn't been collected for a week, causing a bad smell near the apartment.",
-        },
-    },
-    # garbage / high — breeding/disease risk near a shared public space
-    # counts as high before any confirmed illness, per the rubric.
-    {
-        "text": "sabzi mandi ke paas kachra bahut jama ho gaya hai, machariyan bhi ho rahi hai, health issue ho sakta hai",
-        "output": {
-            "category": "garbage",
-            "subcategory": "waste_accumulation",
-            "priority": "high",
-            "confidence": 0.88,
-            "location_text": "sabzi mandi (vegetable market)",
-            "summary": "Accumulated garbage near the vegetable market is attracting mosquitoes — a health risk.",
-        },
-    },
-    # garbage / low — specific and located, but trivial. Naming a place
-    # doesn't make a complaint serious.
-    {
-        "text": "Community park ke baahar wale dustbin ka lid tuta hua hai, baaki sab theek hai, overflow nahi ho raha",
-        "output": {
-            "category": "garbage",
-            "subcategory": "bin_maintenance",
+            "reasoning": "Anger and capitals carry no priority weight; unlicensed vending is an enforcement matter (other) and poses no danger, so low.",
+            "category": "other",
+            "subcategory": "unlicensed_vending",
             "priority": "low",
-            "confidence": 0.7,
-            "location_text": "outside the community park",
-            "summary": "Dustbin lid near the community park is broken, but the bin itself is not overflowing.",
+            "confidence": 0.82,
+            "location_text": "our corner",
+            "summary": "Unlicensed food cart repeatedly set up at a street corner.",
         },
     },
-    # sanitation / medium — a cleaning SERVICE failure, not a waste
-    # problem. This is the category's core distinguishing lesson: garbage
-    # is about what needs hauling away, sanitation is about whether a
-    # service is being performed.
     {
-        "text": "community hall ke bahar ka public toilet theek se saaf nahi hota, smell aata rehta hai",
+        "text": "ಶಾಲೆ ಹತ್ತಿರ ಕರೆಂಟ್ ಕಂಬದಿಂದ ವೈರ್ ಕಿತ್ತು ಜೋತಾಡ್ತಿದೆ, ಸ್ಪಾರ್ಕ್ ಬರ್ತಿದೆ, ಮಕ್ಕಳು ಓಡಾಡೋ ಜಾಗ, ಬೇಗ ಬನ್ನಿ",
         "output": {
-            "category": "sanitation",
-            "subcategory": "public_toilet_maintenance",
-            "priority": "medium",
-            "confidence": 0.58,
-            "location_text": "outside the community hall",
-            "summary": "Public toilet outside the community hall is not being cleaned regularly.",
-        },
-    },
-    # sanitation / low — vague, no specific street or extent. Sanitation
-    # needs its own vague/low anchor rather than borrowing one from
-    # another category, given how often it gets confused with garbage.
-    {
-        "text": "hamare area mein safai kabhi kabhi thik se nahi hoti",
-        "output": {
-            "category": "sanitation",
-            "subcategory": "general_complaint",
-            "priority": "low",
-            "confidence": 0.35,
-            "location_text": None,
-            "summary": "Vague complaint about irregular cleanliness with no specific street or extent named.",
-        },
-    },
-    # electricity / critical — actively sparking right now, with people
-    # present. Pairs with the unfenced-transformer case below.
-    {
-        "text": "Electricity pole spark kar raha tha near the bus stand, log dar gaye, bahut dangerous lag raha tha",
-        "output": {
+            "reasoning": "A sparking detached live wire where children walk is an immediate electrocution risk — the physical-harm test for critical is met.",
             "category": "electricity",
-            "subcategory": "sparking_pole",
+            "subcategory": "live_wire_hazard",
             "priority": "critical",
             "confidence": 0.92,
-            "location_text": "near the bus stand",
-            "summary": "A sparking electricity pole near the bus stand alarmed bystanders — immediate safety hazard.",
+            "location_text": "near the school",
+            "summary": "Sparking live wire hanging from a pole beside a school.",
         },
     },
-    # electricity / high — exposed but not (yet) live. This is the exact
-    # boundary the critical case above sits on the other side of: a real
-    # standing hazard, but not an active one.
     {
-        "text": "Transformer ke around fencing nahi hai park ke paas, bachche khelte waqt chhoo sakte hai, abhi tak koi spark nahi hua",
+        "text": "Ek kutta mar gaya hai road side pe school wali gali me, 3 din ho gaye koi uthane nahi aaya, ab bahut badbu aa rahi hai aur bachhe wahi se jaate hain",
         "output": {
-            "category": "electricity",
-            "subcategory": "unfenced_equipment",
+            "reasoning": "A carcass is a haulage job (garbage, not sanitation), and three days unaddressed escalates it one level to high.",
+            "category": "garbage",
+            "subcategory": "dead_animal_removal",
             "priority": "high",
-            "confidence": 0.8,
-            "location_text": "near the park",
-            "summary": "A transformer near the park has no protective fencing and children playing nearby could touch it; no sparking has occurred yet.",
+            "confidence": 0.65,
+            "location_text": "school lane",
+            "summary": "Dog carcass uncollected for 3 days on a lane used by schoolchildren.",
         },
     },
-    # drainage / critical — an actual uncovered hole someone could fall
-    # into. The cleanest possible anchor for the critical fall-in test.
     {
-        "text": "There is an open manhole right outside City Hospital's main gate, very dangerous at night, someone could fall in.",
+        "text": "There is a steady leak from the joint of the water pipe outside house 23, Rose Garden Layout since this morning. Clean water is getting wasted onto the street.",
         "output": {
-            "category": "drainage",
-            "subcategory": "open_manhole",
-            "priority": "critical",
-            "confidence": 0.93,
-            "location_text": "City Hospital main gate",
-            "summary": "Open, unmarked manhole outside City Hospital's main gate poses an immediate safety risk.",
-        },
-    },
-    # drainage / high — sunken but still covered: a vehicle/trip hazard,
-    # not a fall-in hazard. Direct contrast with the open-manhole case.
-    {
-        "text": "Manhole ka dhakkan sadak se thoda neeche dhab gaya hai, gaadiyon ko jhatka lagta hai lekin manhole khula nahi hai",
-        "output": {
-            "category": "drainage",
-            "subcategory": "sunken_frame",
-            "priority": "high",
-            "confidence": 0.8,
-            "location_text": None,
-            "summary": "A manhole cover has sunk slightly below road level, jolting vehicles, but it is still covered, not open.",
-        },
-    },
-    # parks / medium — deliberately NOT high or critical: this hazard
-    # needs someone to actively use the broken equipment to cause harm,
-    # unlike an ambient hazard (a leaning pole, a cracking branch) that
-    # threatens anyone nearby regardless of interaction.
-    {
-        "text": "park ka swing tuta hua hai bahut time se, bachche gir sakte hai",
-        "output": {
-            "category": "parks",
-            "subcategory": "damaged_equipment",
+            "reasoning": "A fresh, contained leak with wastage but no injury path or supply loss sits at medium; water_supply owns the pipe repair.",
+            "category": "water_supply",
+            "subcategory": "pipe_leak",
             "priority": "medium",
-            "confidence": 0.6,
-            "location_text": None,
-            "summary": "A broken swing in the park has been unrepaired for a while, risk to children if used.",
+            "confidence": 0.84,
+            "location_text": "house 23, Rose Garden Layout",
+            "summary": "Pipe joint leaking clean water onto the street since morning.",
         },
     },
-    # parks / low — cosmetic wear on a fixture that still works fine.
     {
-        "text": "Park ke gate par purani paint ukhad rahi hai, gate waise theek se khulta aur band hota hai",
+        "text": "எங்க ஏரியா பஸ் ஸ்டாப் பக்கத்து பொது கழிப்பறை ரொம்ப அசுத்தமா இருக்கு, இன்னைக்கு காலையில பார்த்தேன், சுத்தம் பண்ண ஆள் வரலை போல",
         "output": {
+            "reasoning": "A cleaning service not being performed is sanitation, and a freshly noticed dirty facility with no stated health impact is medium.",
+            "category": "sanitation",
+            "subcategory": "public_toilet_cleaning",
+            "priority": "medium",
+            "confidence": 0.80,
+            "location_text": "public toilet near the bus stop",
+            "summary": "Public toilet near bus stop found uncleaned this morning.",
+        },
+    },
+    {
+        "text": "The benches near the east gate of Jayanagar Mini Park have peeling paint and the hedge border has grown untidy. Please schedule maintenance.",
+        "output": {
+            "reasoning": "Cosmetic upkeep of park assets is low — the exact location makes this specific, not serious.",
             "category": "parks",
-            "subcategory": "cosmetic_wear",
+            "subcategory": "routine_maintenance",
             "priority": "low",
-            "confidence": 0.7,
-            "location_text": None,
-            "summary": "Paint is peeling off the park gate, but the gate itself still opens and closes fine.",
+            "confidence": 0.86,
+            "location_text": "east gate, Jayanagar Mini Park",
+            "summary": "Park benches need repainting and hedges need trimming at Jayanagar Mini Park.",
         },
     },
-    # other / low — genuinely vague, no specific problem, place, or
-    # person. The generic vague-complaint-is-low anchor for the set.
     {
-        "text": "not happy with the service overall, things could be better",
+        "text": "Main market road pe 10-12 cattle beech sadak pe baithe rehte hai, gaadiya miss ho rahi hai, kal ek bike wala girte girte bacha, aur waha divider ka tukda bhi toota pada hai",
         "output": {
-            "category": "other",
-            "subcategory": "general_feedback",
-            "priority": "low",
-            "confidence": 0.3,
-            "location_text": None,
-            "summary": "Vague general feedback with no specific civic issue described.",
+            "reasoning": "Animals physically obstructing a main road fall under roads (obstruction rule, not animal-control 'other'), a blocked shared road with a near-miss is high, and the broken divider is secondary — multi-issue caps confidence.",
+            "category": "roads",
+            "subcategory": "road_obstruction",
+            "priority": "high",
+            "confidence": 0.60,
+            "location_text": "main market road",
+            "summary": "Cattle blocking main market road causing near-accidents; divider also broken.",
         },
     },
-    # other / critical — the catch-all category can still be critical.
-    # A structure actively about to collapse onto the public is critical
-    # regardless of it being privately owned; the danger is to the public,
-    # and no single department among the 9 clearly owns a private
-    # building's structural failure.
     {
-        "text": "Purani building ki compound wall crack ho kar jhukna shuru ho gayi hai school ke bahar, kabhi bhi gir sakti hai bachchon par",
+        "text": "Some stray dogs have started sitting near the lane entrance in the evenings. Nothing has happened but elderly walkers are a bit nervous.",
         "output": {
+            "reasoning": "Animal control has no engineering owner so this is other; low vs medium were both defensible and the tie-break rule resolves down to low, capping confidence.",
             "category": "other",
-            "subcategory": "structural_hazard",
+            "subcategory": "stray_animals",
+            "priority": "low",
+            "confidence": 0.55,
+            "location_text": "lane entrance",
+            "summary": "Stray dogs gathering at lane entrance in evenings; no incident reported.",
+        },
+    },
+    {
+        "text": "మా వీధిలో పైపు లీక్ అయ్యి రోడ్డు మధ్యలో గుంత పడింది, నీళ్ళు ఆగిపోయాయి కానీ రోడ్డు అలాగే ఉంది, బండ్లు జారుతున్నాయి",
+        "output": {
+            "reasoning": "The pipe caused it but the complaint needs the road fixed, so roads owns the fix — category was weighed against water_supply, capping confidence; contained residential damage is medium.",
+            "category": "roads",
+            "subcategory": "road_damage_from_leak",
+            "priority": "medium",
+            "confidence": 0.58,
+            "location_text": "our street",
+            "summary": "Road sunken where a pipe leaked; leak stopped but vehicles are slipping.",
+        },
+    },
+    {
+        "text": "KYA BAKWAS DEPARTMENT HAI!!! pole no 18 ki light kal se flicker maar rahi hai, ON OFF ON OFF, dimag kharab ho gaya hai pura!!!",
+        "output": {
+            "reasoning": "A single flickering pole light is trivial regardless of the furious tone — anger carries no priority weight.",
+            "category": "streetlights",
+            "subcategory": "flickering_light",
+            "priority": "low",
+            "confidence": 0.80,
+            "location_text": "pole no. 18",
+            "summary": "Streetlight at pole 18 flickering since yesterday.",
+        },
+    },
+    {
+        "text": "Storm drain on our street has burst and black water is flowing straight into the ground floor rooms of two houses right now, people are moving children out.",
+        "output": {
+            "reasoning": "Floodwater actively entering occupied homes meets the critical physical-harm test — this is happening now, not a future risk.",
+            "category": "drainage",
+            "subcategory": "sewage_flooding_homes",
             "priority": "critical",
+            "confidence": 0.90,
+            "location_text": "our street",
+            "summary": "Burst storm drain flooding sewage into two occupied ground-floor homes.",
+        },
+    },
+    {
+        "text": "हमारे पूरे वार्ड में कल रात से बिजली नहीं है, ट्रांसफार्मर से आवाज़ आई थी उसके बाद से सब बंद है, पूरा मोहल्ला परेशान है",
+        "output": {
+            "reasoning": "A whole-ward outage is a shared-resource disruption affecting many people at once, which is high on its own.",
+            "category": "electricity",
+            "subcategory": "area_power_outage",
+            "priority": "high",
             "confidence": 0.85,
-            "location_text": "outside the school",
-            "summary": "An old building's compound wall has cracked and started leaning outside a school, and could collapse onto children at any moment.",
+            "location_text": "entire ward",
+            "summary": "Ward-wide power outage since last night after a transformer noise.",
+        },
+    },
+    {
+        "text": "The lid of the community bin at the corner of 5th Main is cracked and won't close fully. Bin itself is emptied on time.",
+        "output": {
+            "reasoning": "A cracked bin lid with collection running normally is cosmetic — a precise location makes it specific, not serious.",
+            "category": "garbage",
+            "subcategory": "damaged_bin",
+            "priority": "low",
+            "confidence": 0.84,
+            "location_text": "corner of 5th Main",
+            "summary": "Community bin lid cracked at 5th Main; collection unaffected.",
+        },
+    },
+    {
+        "text": "Subzi mandi ke paas wala public toilet ek hafte se saaf nahi hua, andar jaana impossible hai, aas paas ke dukan wale sab pareshan, machhar bhi ho gaye hai waha",
+        "output": {
+            "reasoning": "A cleaning service unperformed for a week at a high-footfall market with mosquito breeding is a shared-facility disruption plus disease risk — high.",
+            "category": "sanitation",
+            "subcategory": "public_toilet_neglect",
+            "priority": "high",
+            "confidence": 0.82,
+            "location_text": "public toilet near the vegetable market",
+            "summary": "Market public toilet uncleaned for a week; unusable and breeding mosquitoes.",
+        },
+    },
+    {
+        "text": "Corner wali nali kachre se block ho gayi hai, thoda pani road pe jama hota hai shaam ko, badbu bhi hai",
+        "output": {
+            "reasoning": "A choked drain with limited evening pooling and no flooding or breeding stated was weighed high vs medium — tie-break lands on the lower, and the weighing caps confidence.",
+            "category": "drainage",
+            "subcategory": "blocked_drain",
+            "priority": "medium",
+            "confidence": 0.55,
+            "location_text": "corner drain",
+            "summary": "Corner drain blocked; some smelly water pools on the road by evening.",
+        },
+    },
+    {
+        "text": "পাশের বাড়ির বাগানের বোগেনভিলিয়া ডালপালা আমাদের দেওয়ালের উপর দিয়ে ঝুলে রাস্তায় চলে এসেছে, ফুল পাতা পড়ে গেট নোংরা হয়ে যায়",
+        "output": {
+            "reasoning": "Vegetation from a private garden is not a parks asset — this is a private-property nuisance (other), and a messy gate is cosmetic, so low.",
+            "category": "other",
+            "subcategory": "private_vegetation_nuisance",
+            "priority": "low",
+            "confidence": 0.80,
+            "location_text": "neighbour's wall by our gate",
+            "summary": "Neighbour's bougainvillea overhanging the wall, littering the gate area.",
+        },
+    },
+    {
+        "text": "Nehru park ka jhula ek chain se latak raha hai, seat tedhi ho gayi hai, bachhe phir bhi jhool rahe hai uspe",
+        "output": {
+            "reasoning": "Damaged park equipment that is unsafe to use but not an imminent serious-injury scenario degrades the facility — medium, owned by parks.",
+            "category": "parks",
+            "subcategory": "broken_play_equipment",
+            "priority": "medium",
+            "confidence": 0.80,
+            "location_text": "Nehru park",
+            "summary": "Swing at Nehru park hanging by one chain while children still use it.",
+        },
+    },
+    {
+        "text": "मेन लाईन फुटली आहे, पाणी इतक्या जोरात उडतंय की काल एक आजी तिथे पडल्या, रस्त्यावर उभं राहणं पण अवघड झालंय, लवकर या",
+        "output": {
+            "reasoning": "A pressurized burst forceful enough that a person has already fallen meets the critical physical-harm test — injury has occurred and remains likely.",
+            "category": "water_supply",
+            "subcategory": "pressurized_main_burst",
+            "priority": "critical",
+            "confidence": 0.87,
+            "location_text": None,
+            "summary": "Forceful water-main burst; an elderly woman already fell, area hard to stand in.",
+        },
+    },
+    {
+        "text": "Humari puri gali ki saari lights 4 din se band hai, roz complaint karte hai koi nahi aata, raat ko bilkul andhera rehta hai",
+        "output": {
+            "reasoning": "A whole-lane outage weighed medium vs high, but four days of explicit neglect fires the duration escalation, which resolves the tie upward — the weighing still caps confidence.",
+            "category": "streetlights",
+            "subcategory": "street_wide_outage",
+            "priority": "high",
+            "confidence": 0.58,
+            "location_text": "our lane",
+            "summary": "All streetlights in the lane dead for 4 days despite daily complaints.",
         },
     },
 ]
