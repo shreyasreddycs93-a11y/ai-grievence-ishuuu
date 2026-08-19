@@ -326,9 +326,9 @@ HOLDOUT_SET = [
     # 37. English - High (Cracked tree branch hanging dangerously over active school bus r...)
     {
         "text": "Large roadside gulmohar branch cracked and dangling precariously over the busy school bus route.",
-        "expected_category": "parks",
+        "expected_category": "roads",
         "expected_priority": "high",
-        "note": "Priority is High (not Critical yet) because the branch is dangling with imminent risk of falling on a transit route, but hasn't collapsed yet.",
+        "note": "Corrected from parks to roads: per the rubric, a tree/branch is categorized by what it threatens, not by being a tree — it's dangling over a road, so roads owns it (same rule as case 118's fallen tree). Priority is High (not Critical yet) because it hasn't fallen yet.",
     },
 
     # 38. English - Low (Drop in tap water pressure with drain gurgling in 4th cross lane...)
@@ -680,9 +680,9 @@ HOLDOUT_SET = [
     # 81. English - High (Aggressive pack of stray dogs attacking commuters and school chi...)
     {
         "text": "Pack of aggressive stray dogs chasing two-wheelers and biting school children near gate 4 every morning.",
-        "expected_category": "sanitation",
+        "expected_category": "other",
         "expected_priority": "high",
-        "note": "Priority is High due to active physical bite injuries and severe rabies hazard to children.",
+        "note": "Corrected from sanitation to other: no civic-engineering department among the 9 owns animal control (same rule as case 195's near-miss dog pack). Priority stays High here, one level above case 195's medium, because bites have already happened — this is the realized version of that same hazard, not just a scare.",
     },
 
     # 82. English - Low (Routine municipal anti-larval mosquito fogging requested for War...)
@@ -701,20 +701,20 @@ HOLDOUT_SET = [
         "note": "Priority is Medium as severe public insanitary conditions degrade public space without biohazard lockdown.",
     },
 
-    # 84. Marathi - Medium (Stray cattle squatting on main road causing severe traffic snarl...)
+    # 84. Marathi - High (Stray cattle squatting on main road causing severe traffic snarls and accidents)
     {
         "text": "बेवारस जनावरे मुख्य रस्त्यावर बसल्यामुळे वाहतूक कोंडी होत आहे आणि अपघात घडत आहेत.",
         "expected_category": "roads",
-        "expected_priority": "medium",
-        "note": "Priority is Medium as cattle on roads cause transit delays and vehicular dodging without fatal pileups.",
+        "expected_priority": "high",
+        "note": "Corrected from medium to high: the cattle are a physical obstruction on the road surface itself (roads' 'anything obstructing it' clause), and the text explicitly states accidents are already occurring — the same accidents-already-happened tie-breaker that pushes an ordinary pothole from medium to high.",
     },
 
     # 85. English - High (Unlicensed roadside poultry slaughtering releasing biological bl...)
     {
         "text": "Illegal open meat stall slaughtering chickens on open footpath without health clearance or drainage.",
-        "expected_category": "sanitation",
+        "expected_category": "other",
         "expected_priority": "high",
-        "note": "Priority is High because unhygienic unregulated animal slaughtering generates acute disease outbreak risks.",
+        "note": "Corrected from sanitation to other: this is an unlicensed/unregulated activity, not a failure of a cleaning service the sanitation department performs — sanitation covers 'whether a service is being performed,' not policing an illegal operation. No single department among the 9 clearly owns licensing enforcement. Priority stays High because unregulated slaughter waste on an open footpath is an acute disease-outbreak risk.",
     },
 
     # 86. English - High (Large active bee hive on children swing frame creating immediate...)
