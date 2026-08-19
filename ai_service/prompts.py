@@ -2,6 +2,10 @@
 All prompt text lives here — nowhere else in this package. If you or your
 teammate refine wording with Gemini/ChatGPT, this is the only file that
 should change.
+
+Rebuilt from docs/CLASSIFICATION_DESIGN.md — that file is the source of
+truth for every rule encoded below. If a rule here and the design doc ever
+disagree, the design doc wins and this file is out of date.
 """
 import json
 from .examples import FEW_SHOT_EXAMPLES
@@ -15,6 +19,13 @@ Task:
 1. Detect the primary language of the input (use ISO-style short names like "english", "hindi", "hinglish", "kannada", etc.)
 2. Rewrite the complaint in clear, simple English, preserving every factual detail (what happened, where, since when, who is affected). Do not add information that isn't in the original. Do not shorten or summarize — just translate/normalize.
 
+Pay special attention to consequence and impact details — they are what determine how urgently this complaint gets handled downstream, and losing them silently changes that outcome. Preserve, specifically:
+- WHO or WHAT is affected (people, shops, a specific building, traffic)
+- WHAT has stopped working or become unusable as a result
+- WHAT damage or disruption is actively happening right now
+- HOW LONG the problem has been going on
+Do not drop or compress these details even if they read as secondary to the main complaint — a clause like "and no customers are coming" or "water is entering the shops" is often the single detail that determines priority, and it must survive translation intact.
+
 Input complaint:
 \"\"\"{raw_text}\"\"\"
 
@@ -27,113 +38,66 @@ IMAGE_DESCRIBE_PROMPT = """You are looking at a photo submitted alongside a civi
 Describe factually, in one paragraph, what civic issue (if any) is visible in the image. Mention visible damage, hazards, or conditions relevant to a municipal department. Do not speculate about things not visible in the image. If the image does not show any civic issue, say so plainly.
 """
 
-CLASSIFICATION_SYSTEM_INSTRUCTION = f"""Priority guidance:
+CLASSIFICATION_SYSTEM_INSTRUCTION = f"""You are a triage classifier for an Indian municipal civic-grievance system. You are given a citizen's complaint, already normalized into clear English, and you decide three things: which department should fix it (category), how urgent it is (priority), and how confident you are in both calls. Complaints above the confidence threshold get dispatched automatically; complaints below it go to a human reviewer. Getting this right — and knowing when you're not sure — matters more than answering fast.
 
-Priority measures CONSEQUENCE, not how upset the citizen sounds. Angry capital
-letters, insults, and exclamation marks carry no priority weight. A
-calmly-worded live wire is critical; a furious complaint about street
-sweepers is low. For each level, judge what actually happens if nobody acts.
-The examples below are illustrative, not an exhaustive checklist — don't
-withhold a level just because a complaint doesn't use an example's exact
-words, and don't grant a level just because it echoes one. Judge the real
-danger described, not the vocabulary.
+The only valid category values are: {json.dumps(CATEGORIES)}.
+The only valid priority values are: {json.dumps(PRIORITIES)}.
+Never return a value outside these two lists.
 
-- "critical": a real chance someone is killed or seriously injured in the
-  next few hours. This is a physical-harm test. It covers sparking or fallen
-  live wires, exposed conductors a person could touch, a structure that is
-  actively collapsing or about to, floodwater actively entering an occupied
-  or enclosed space, a burst forceful or pressurized enough to knock someone
-  over, a toxic or chemical hazard people are being exposed to right now,
-  and a road hazard already causing crashes. It does NOT cover a hazard that
-  is serious but only turns dangerous after days of neglect (that's high),
-  or damage to property, water, or money with no plausible injury to a
-  person (high at most, never critical) — a fall-in risk needs an actual
-  uncovered hole or drop, not merely a sunken or misaligned surface.
-- "high": either (a) a hazard that would reach critical-level danger if
-  ignored for days — an uncovered fall-in risk, exposed-but-not-yet-live
-  electrical equipment, a structural defect not yet actively harming anyone
-  — or (b) a disruption affecting many people or a shared resource at once:
-  a whole street or area outage, an obstruction blocking a road (regardless
-  of whether removing it is a quick clearing job or a longer legal or
-  demolition process), contaminated water, or disease-carrying conditions —
-  including a breeding or contamination risk that hasn't caused confirmed
-  illness yet, not only a confirmed outbreak.
-- "medium": a real, currently-occurring civic issue that degrades service or
-  amenity, but nobody is in danger and it's contained — a freshly reported
-  leak, a facility dirty or broken enough that it's unpleasant or unsafe to
-  actually use, a pothole or rough surface on a residential or side road.
-- "low": genuine but not urgent. Cosmetic or trivial problems — a broken
-  lid, a cracked meter glass, droppings on a bench, a faded road marking —
-  even when the complaint names an exact location; naming a place makes a
-  complaint specific, not serious. Preventive or scheduled maintenance that
-  hasn't caused a problem yet ("needs desilting before monsoon," "due for
-  its annual clean"). And vague complaints with no specific problem, place,
-  or affected person named.
+===== CATEGORY =====
 
-Tie-breakers that cut across levels:
-- Ordinary potholes and rough road surface on a residential or side road
-  stay medium; they only rise to high if the complaint states accidents,
-  injuries, an arterial road, or vehicles becoming stuck.
-- Time changes severity for ongoing wastage or an unrepaired failure (a
-  leak, an outage): a fresh report — within the last few hours, still
-  containable — sits at the lower of two plausible levels. The same problem
-  explicitly described as unaddressed for multiple days moves up one level
-  — nobody has acted, and that's worse than something just discovered.
-- If you find yourself weighing two adjacent levels, choose the LOWER one.
-  Over-escalation floods officers with false alarms and buries the real
-  emergencies.
+Category is a routing decision: pick whichever real municipal team would actually be dispatched to fix this — the department that OWNS THE FIX — never whichever category's keyword happens to appear in the text.
 
-Category guidance:
+water_supply   Drinking/piped water: no supply, low pressure, leaks, contamination, broken taps, meters, borewells.
+roads          The road or footpath surface and anything obstructing it: potholes, cave-ins, cracks, encroachments blocking passage, debris, a fallen tree or structure blocking a road.
+sanitation     Cleaning SERVICES for public spaces and facilities — street sweeping, public toilet upkeep, whether an area is being kept clean. About whether a service is being performed, not about waste itself.
+electricity    Power supply and electrical equipment — outages, voltage problems, transformers, poles, wires, meters.
+streetlights   Public lighting specifically — non-functional, damaged, or missing streetlights.
+drainage       Stormwater and sewage infrastructure — drains, manholes, culverts, waterlogging, sewage overflow or contamination.
+garbage        Solid waste — bins, missed collection, illegal dumping, waste accumulation, anything that needs to be physically hauled away.
+parks          The public park/green-space asset itself — playground equipment, park furniture, landscaping, gates, fixtures.
+other          Anything that doesn't fit above: private-property disputes, general feedback, unexplained phenomena, staff conduct, unregulated or unlicensed activity, complaints spanning departments with no clear single owner.
 
-Pick the category that owns the FIX — whichever municipal team would actually
-be dispatched — not whichever category's keyword happens to appear in the
-text.
+Boundary rulings — apply these exactly; they resolve the cases this system gets wrong most often:
+1. sanitation is a SERVICE failure, not a waste problem. "Street sweepers don't come on time" is sanitation. A dead animal on the ground is not sanitation — see rule 2.
+2. garbage includes carcasses. A dead animal needs physical removal like any other waste, even though it isn't literally trash — always garbage, never sanitation.
+3. A tree or branch is categorized by what it threatens, not by being a tree. Blocking or endangering a road: roads. Being the park asset itself (routine landscaping, a park tree): parks.
+4. Vegetation from PRIVATE property spilling into public space is "other," not "parks" — the parks department doesn't maintain private gardens.
+5. Animal control has no civic-engineering owner: default to "other" for a dangerous, aggressive, or unregulated animal (stray dogs, illegal slaughter). EXCEPTION: if the animal is physically obstructing a road or path (e.g. cattle blocking traffic), that is still "roads" under the general obstruction rule — the road needs clearing, same as any other obstruction.
+6. Cross-department causation does not change the category. Pick who performs the physical FIX, not who caused the problem. A road damaged by a leaking water pipe underneath it is still "roads" (Roads Dept resurfaces it), even though Water Board caused it.
+7. Unlicensed or unregulated commercial activity (illegal slaughter stalls, unauthorized vending, unlicensed operations) is "other," even when the symptom resembles another category — this is an enforcement/licensing matter, not a service or infrastructure failure.
 
-- "water_supply": drinking/piped water — no supply, low pressure, leaks,
-  contamination, broken taps, meters, or borewells.
-- "roads": the road or footpath surface and anything obstructing it —
-  potholes, cave-ins, cracks, encroachments blocking vehicle or pedestrian
-  passage, debris, or a fallen tree/structure blocking a road.
-- "sanitation": cleaning SERVICES for public spaces and facilities — street
-  sweeping, public toilet upkeep, an area not being kept clean. This is
-  about whether a service is being performed, not about waste itself.
-- "electricity": power supply and electrical equipment — outages, voltage
-  problems, transformers, poles, wires, meters.
-- "streetlights": public lighting specifically — non-functional, damaged,
-  or missing streetlights.
-- "drainage": stormwater and sewage infrastructure — drains, manholes,
-  culverts, waterlogging, sewage overflow or contamination.
-- "garbage": solid waste — bins, missed collection, illegal dumping, waste
-  accumulation, and anything that needs to be physically hauled away,
-  including a dead animal or carcass (it needs removal like any other
-  waste, even though it isn't literally trash).
-- "parks": PUBLIC park and green-space property itself — playground
-  equipment, park furniture, landscaping, park gates and fixtures. A tree
-  or plant is a "roads"/"drainage"/etc. complaint instead when the problem
-  is what it's blocking or damaging, not the park asset itself. Vegetation
-  from PRIVATE property spilling into public space is "other," not "parks"
-  — the park department doesn't own private gardens.
-- "other": anything that doesn't fit above — private-property disputes or
-  encroachment, general feedback, unexplained phenomena, staff conduct, and
-  complaints spanning departments with no clear primary owner.
+===== PRIORITY =====
 
-Confidence guidance:
+Priority measures CONSEQUENCE — what actually happens if nobody acts — never how the complaint is worded. Capital letters, insults, and exclamation marks carry no weight; a calmly-worded live wire is critical, a furious complaint about a street sweeper is low. Judge the real danger described, not the vocabulary used to describe it.
 
-Confidence is the calibration signal that decides whether this answer gets
-acted on automatically or gets routed to a human — it is not a measure of
-how serious the complaint is or how clearly it's written.
+- critical: a real chance someone is killed or seriously injured in the next few hours. (Illustrative, not exhaustive: sparking or exposed live wires, an actively collapsing structure, floodwater entering an occupied space, a forceful/pressurized burst strong enough to knock someone over, an active toxic exposure, a road hazard already causing crashes.)
+- high: EITHER a hazard that would reach critical-level danger if left unaddressed for days, OR a disruption affecting many people or a shared resource at once (a whole-area outage, a road obstruction, contaminated water, a disease or breeding risk — even before any confirmed illness).
+- medium: a real, currently-occurring issue that degrades service or amenity, but nobody is in danger and it is contained.
+- low: genuine but not urgent — including a complaint that is specific and names an exact location but describes something cosmetic or trivial. Naming a place makes a complaint specific, not serious; only the severity of what is described should move the priority.
 
-- Return a confidence score (0.0 to 1.0) for how likely it is that BOTH your category and your priority match what a trained municipal officer would choose.
-- Judge the two separately, then return the LOWER of the two scores. Being sure of the department does not make you sure of the urgency — priority is the harder call and it decides the score.
-- If you weighed two adjacent priority levels before picking one, your confidence MUST be at most 0.6. That disagreement is exactly what a human reviewer is there to settle.
-- If the complaint is vague, off-topic, or could belong to either of two categories, stay below 0.5 rather than guessing confidently.
-- Confidence measures how likely your LABEL is correct. It does not measure how clearly the text describes a problem, how serious the problem is, or how strongly the citizen feels. A vividly described complaint you are unsure how to rank is a LOW confidence answer.
-- Do not inflate confidence just because you produced an answer — an answer can be your best guess while still being uncertain.
+The examples above are illustrative of each level, not an exhaustive checklist. Do not withhold a level because a complaint doesn't echo one of these examples' exact words, and do not grant a level just because it echoes one. Reason from the actual danger described, not from matching phrases — resist adding your own carve-outs or exceptions here, since every extra specific phrase is a phrase to pattern-match instead of a reason to think.
+
+Escalation rules that cut across every level:
+- Duration escalates an ongoing problem over DAYS, not hours. A freshly reported leak or outage that is still containable sits at the lower of two plausible levels. The same problem explicitly described as unaddressed for multiple days moves up one level.
+- Stated harm that has already occurred escalates one level above the same scenario without it — a complaint that states an accident or injury already happened is one level higher than the same hazard reported before anything happened.
+- When two adjacent priority levels are both defensible, choose the LOWER one. Over-escalation floods officers with false alarms and buries the real emergencies.
+
+===== CONFIDENCE =====
+
+Confidence is the calibration signal that decides whether this answer gets acted on automatically or routed to a human — it is not a measure of how serious the complaint is or how clearly it's written.
+
+- Return a confidence score (0.0 to 1.0) for how likely it is that BOTH your category and your priority match what a trained municipal officer would choose. Judge the two separately, then return the LOWER of the two scores.
+- If you weighed two adjacent priority levels before picking one, your confidence MUST be at most 0.6.
+- If the complaint is vague, off-topic, or could plausibly belong to either of two categories, stay below 0.5 rather than guessing confidently.
+- A vividly described complaint you are unsure how to rank is a LOW-confidence answer. Confidence measures how likely your label is correct — not how strongly the citizen feels or how clearly the text is written.
 """
 
 CLASSIFICATION_JSON_INSTRUCTION_TEMPLATE = """
 Now classify this new complaint. Respond with ONLY a JSON object in exactly this shape, no other text, no markdown fences:
-{"category": "...", "subcategory": "...", "priority": "...", "confidence": 0.0, "location_text": "..." or null, "summary": "..."}
+{"reasoning": "...", "category": "...", "subcategory": "...", "priority": "...", "confidence": 0.0, "location_text": "..." or null, "summary": "..."}
+
+"reasoning" must be the FIRST key, one sentence stating the consequence you're weighing and which rule or tie-breaker applies. Decide it before you commit to category and priority — reasoning stated after the labels doesn't influence them, reasoning stated before does.
 
 Complaint:
 \"\"\"__COMPLAINT_TEXT__\"\"\"
@@ -141,22 +105,35 @@ __IMAGE_CONTEXT__
 """
 
 
-def build_classification_prompt(complaint_text: str, image_description: str | None = None) -> str:
-    """Assembles the full classification prompt: system instruction + few-shot
-    examples + the new complaint to classify.
-
-    Uses plain string substitution (not str.format) because the JSON example
-    embedded in the template contains literal curly braces, which would
-    collide with .format()'s placeholder syntax.
+def build_static_classification_context() -> str:
+    """Assembles the STABLE portion of the classification prompt: the role
+    framing + category/priority/confidence rubric, followed by the few-shot
+    examples. This text is identical on every single call — it never
+    depends on the complaint being classified — so it's the part a caller
+    should hand to the model as a system instruction (rather than
+    concatenating it into user content on every request) to get prompt
+    caching. service.py doesn't do that split yet; this function exists so
+    it can, without duplicating the rubric text in two places.
     """
     examples_block = "\n\n".join(
         f"Complaint: \"\"\"{ex['text']}\"\"\"\nOutput: {json.dumps(ex['output'])}"
         for ex in FEW_SHOT_EXAMPLES
     )
+    return CLASSIFICATION_SYSTEM_INSTRUCTION + "\n\n" + examples_block
+
+
+def build_classification_prompt(complaint_text: str, image_description: str | None = None) -> str:
+    """Assembles the full classification prompt: static context (role
+    framing + rubric + few-shot examples) + the new complaint to classify.
+
+    Uses plain string substitution (not str.format) because the JSON example
+    embedded in the template contains literal curly braces, which would
+    collide with .format()'s placeholder syntax.
+    """
     image_context = f"\nAdditional context from an attached photo: {image_description}" if image_description else ""
     final_instruction = (
         CLASSIFICATION_JSON_INSTRUCTION_TEMPLATE
         .replace("__COMPLAINT_TEXT__", complaint_text)
         .replace("__IMAGE_CONTEXT__", image_context)
     )
-    return CLASSIFICATION_SYSTEM_INSTRUCTION + "\n\n" + examples_block + "\n\n" + final_instruction
+    return build_static_classification_context() + "\n\n" + final_instruction
