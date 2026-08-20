@@ -140,6 +140,10 @@ class Grievance(Base):
     parent_id = Column(Integer, ForeignKey("grievances.id"), nullable=True)
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    # Set only when the citizen was logged in (via Account) at submission
+    # time — distinct from user_id, which is the older WhatsApp-contact
+    # profile. Null for anonymous web submissions and WhatsApp intake.
+    account_id = Column(Integer, ForeignKey("accounts.id"), nullable=True)
 
     category = Column(SAEnum(Category, name="category_enum"), nullable=False)
     subcategory = Column(String, nullable=True)

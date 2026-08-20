@@ -1,4 +1,4 @@
-import type { GrievanceStatusResponse, IntakeResponse, VerifyResponse } from '@/types';
+import type { GrievanceStatusResponse, IntakeResponse, MyGrievanceItem, VerifyResponse } from '@/types';
 
 const MOCK_GRIEVANCE: GrievanceStatusResponse = {
   tracking_id: 'GRV-10023',
@@ -99,6 +99,30 @@ export async function mockGetStatus(trackingId: string): Promise<GrievanceStatus
   if (id === 'GRV-10024') return { ...MOCK_GRIEVANCE_RESOLVED };
   if (id === 'GRV-10025') return { ...MOCK_GRIEVANCE_SUBTASKS };
   return { ...MOCK_GRIEVANCE };
+}
+
+export async function mockGetMyGrievances(): Promise<MyGrievanceItem[]> {
+  await delay(500);
+  return [
+    {
+      tracking_id: 'GRV-10023',
+      status: 'in_progress',
+      category: 'water_supply',
+      priority: 'high',
+      department: 'Water Board',
+      summary: MOCK_GRIEVANCE.summary,
+      created_at: MOCK_GRIEVANCE.created_at,
+    },
+    {
+      tracking_id: 'GRV-10024',
+      status: 'resolved',
+      category: 'water_supply',
+      priority: 'high',
+      department: 'Water Board',
+      summary: MOCK_GRIEVANCE_RESOLVED.summary,
+      created_at: MOCK_GRIEVANCE_RESOLVED.created_at,
+    },
+  ];
 }
 
 export async function mockVerify(_trackingId: string, confirmed: boolean): Promise<VerifyResponse> {

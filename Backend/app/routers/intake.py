@@ -11,9 +11,11 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app import ai_client
+from app.auth import get_current_account_optional
 from app.db import get_db
 from app.models import (
     OPEN_STATUSES,
+    Account,
     Category,
     ComplaintVector,
     Department,
@@ -164,6 +166,7 @@ def _create_split_family(
     lat: Optional[float],
     lng: Optional[float],
     user_id: Optional[int],
+    account_id: Optional[int],
     category: Category,
     priority: Priority,
     confidence: float,
@@ -182,6 +185,7 @@ def _create_split_family(
     parent = Grievance(
         tracking_id=new_tracking_id(),
         user_id=user_id,
+        account_id=account_id,
         category=category,
         subcategory=None,
         description=description,
@@ -290,6 +294,7 @@ def _create_grievance(
     lat: Optional[float],
     lng: Optional[float],
     user_id: Optional[int] = None,
+    account_id: Optional[int] = None,
     media_urls: Optional[List[str]] = None,
     image_description: Optional[str] = None,
 ) -> Grievance:
@@ -362,6 +367,7 @@ def _create_grievance(
                 lat=lat,
                 lng=lng,
                 user_id=user_id,
+                account_id=account_id,
                 category=category,
                 priority=priority,
                 confidence=confidence,
@@ -385,6 +391,7 @@ def _create_grievance(
     grievance = Grievance(
         tracking_id=new_tracking_id(),
         user_id=user_id,
+        account_id=account_id,
         category=category,
         subcategory=subcategory,
         description=description,
@@ -455,7 +462,11 @@ def _to_intake_response(grievance: Grievance, db: Session) -> IntakeResponse:
 
 
 @router.post("/intake/web", response_model=IntakeResponse)
-def intake_web(payload: WebIntakeRequest, db: Session = Depends(get_db)):
+def intake_web(
+    payload: WebIntakeRequest,
+    db: Session = Depends(get_db),
+    account: Optional[Account] = Depends(get_current_account_optional),
+):
     if not payload.description.strip():
         raise HTTPException(status_code=422, detail="description must not be empty")
 
@@ -467,6 +478,7 @@ def intake_web(payload: WebIntakeRequest, db: Session = Depends(get_db)):
         address=payload.address,
         lat=payload.lat,
         lng=payload.lng,
+        account_id=account.id if account else None,
         media_urls=payload.media_urls,
         image_description=payload.image_description,
     )

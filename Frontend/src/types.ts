@@ -49,6 +49,16 @@ export interface VerifyResponse {
   message?: string;
 }
 
+export interface MyGrievanceItem {
+  tracking_id: string;
+  status: GrievanceStatus;
+  category: string;
+  priority: string;
+  department: string | null;
+  summary: string | null;
+  created_at: string;
+}
+
 export interface MediaUploadResponse {
   media_url: string;
   kind: 'image' | 'audio';
@@ -56,4 +66,4 @@ export interface MediaUploadResponse {
   description?: string | null;
 }
 
-export type Screen = 'home' | 'report' | 'track';
+export type Screen = 'home' | 'report' | 'track' | 'my-complaints';

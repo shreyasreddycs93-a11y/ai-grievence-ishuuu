@@ -174,6 +174,16 @@ const en: TranslationDict = {
   'status.closed': 'Closed',
   'status.reopened': 'Reopened',
   'status.update': 'Update',
+
+  // My Complaints
+  'header.myComplaints': 'My Complaints',
+  'myComplaints.back': 'Back to home',
+  'myComplaints.title': 'My Complaints',
+  'myComplaints.subtitle': 'Complaints you have submitted while logged in.',
+  'myComplaints.empty': 'No complaints yet',
+  'myComplaints.emptyHint': 'Complaints you submit while logged in will show up here.',
+  'myComplaints.noSummary': 'No summary available',
+  'myComplaints.error': 'We could not load your complaints right now. Please try again.',
 };
 
 const hi: TranslationDict = {
@@ -329,6 +339,16 @@ const hi: TranslationDict = {
   'status.closed': 'बंद',
   'status.reopened': 'फिर से खोली गई',
   'status.update': 'अपडेट',
+
+  // My Complaints
+  'header.myComplaints': 'मेरी शिकायतें',
+  'myComplaints.back': 'होम पर वापस',
+  'myComplaints.title': 'मेरी शिकायतें',
+  'myComplaints.subtitle': 'लॉग इन करते समय आपने जो शिकायतें दर्ज कीं।',
+  'myComplaints.empty': 'अभी तक कोई शिकायत नहीं',
+  'myComplaints.emptyHint': 'लॉग इन करते समय आप जो शिकायतें दर्ज करेंगे, वे यहां दिखेंगी।',
+  'myComplaints.noSummary': 'कोई सारांश उपलब्ध नहीं',
+  'myComplaints.error': 'हम अभी आपकी शिकायतें लोड नहीं कर सके। कृपया पुनः प्रयास करें।',
 };
 
 const kn: TranslationDict = {
@@ -484,6 +504,16 @@ const kn: TranslationDict = {
   'status.closed': 'ಮುಚ್ಚಲಾಗಿದೆ',
   'status.reopened': 'ಮತ್ತೆ ತೆರೆಯಲಾಗಿದೆ',
   'status.update': 'ಅಪ್‌ಡೇಟ್',
+
+  // My Complaints
+  'header.myComplaints': 'ನನ್ನ ದೂರುಗಳು',
+  'myComplaints.back': 'ಮುಖಪುಟಕ್ಕೆ ಹಿಂದಿರುಗಿ',
+  'myComplaints.title': 'ನನ್ನ ದೂರುಗಳು',
+  'myComplaints.subtitle': 'ಲಾಗ್ ಇನ್ ಆಗಿರುವಾಗ ನೀವು ಸಲ್ಲಿಸಿದ ದೂರುಗಳು.',
+  'myComplaints.empty': 'ಇನ್ನೂ ಯಾವುದೇ ದೂರುಗಳಿಲ್ಲ',
+  'myComplaints.emptyHint': 'ಲಾಗ್ ಇನ್ ಆಗಿರುವಾಗ ನೀವು ಸಲ್ಲಿಸುವ ದೂರುಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.',
+  'myComplaints.noSummary': 'ಸಾರಾಂಶ ಲಭ್ಯವಿಲ್ಲ',
+  'myComplaints.error': 'ಈಗ ನಿಮ್ಮ ದೂರುಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
 };
 
 export const translations: Record<Language, TranslationDict> = { en, hi, kn };

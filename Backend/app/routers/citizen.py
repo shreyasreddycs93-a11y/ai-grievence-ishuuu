@@ -1,14 +1,18 @@
 """
 Citizen-facing endpoints: check status, confirm/reopen resolution.
 """
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.auth import get_current_account
 from app.db import get_db
-from app.models import Department, Grievance, GrievanceStatus, StatusHistory
+from app.models import Account, Department, Grievance, GrievanceStatus, StatusHistory
 from app.schemas import (
     GrievanceStatusResponse,
     MediaItem,
+    MyGrievanceItem,
     SubtaskEntry,
     TimelineEntry,
     VerifyRequest,
@@ -16,6 +20,40 @@ from app.schemas import (
 )
 
 router = APIRouter(tags=["citizen"])
+
+
+@router.get("/citizen/my-grievances", response_model=List[MyGrievanceItem])
+def get_my_grievances(db: Session = Depends(get_db), account: Account = Depends(get_current_account)):
+    """Grievances the logged-in citizen has submitted while logged in —
+    anonymous submissions made before/without logging in aren't linked to
+    any account, so they can't appear here. Only top-level tickets (not
+    split-family sub-tickets) are listed; parent's status/timeline already
+    reflects the sub-tickets."""
+    grievances = (
+        db.query(Grievance)
+        .filter(Grievance.account_id == account.id, Grievance.parent_id.is_(None))
+        .order_by(Grievance.created_at.desc())
+        .all()
+    )
+
+    department_ids = {g.department_id for g in grievances if g.department_id}
+    departments = {}
+    if department_ids:
+        for dept in db.query(Department).filter(Department.id.in_(department_ids)).all():
+            departments[dept.id] = dept.name
+
+    return [
+        MyGrievanceItem(
+            tracking_id=g.tracking_id,
+            status=g.status,
+            category=g.category,
+            priority=g.priority,
+            department=departments.get(g.department_id),
+            summary=g.description[:140],
+            created_at=g.created_at,
+        )
+        for g in grievances
+    ]
 
 
 def _get_grievance_or_404(db: Session, tracking_id: str) -> Grievance:

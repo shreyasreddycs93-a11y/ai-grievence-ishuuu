@@ -46,4 +46,7 @@ def init_db() -> None:
         conn.execute(
             text("ALTER TABLE grievances ADD COLUMN IF NOT EXISTS report_count INTEGER NOT NULL DEFAULT 1")
         )
+        conn.execute(
+            text("ALTER TABLE grievances ADD COLUMN IF NOT EXISTS account_id INTEGER REFERENCES accounts(id)")
+        )
         conn.commit()

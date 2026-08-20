@@ -2,13 +2,26 @@ import type {
   GrievanceStatusResponse,
   IntakeResponse,
   MediaUploadResponse,
+  MyGrievanceItem,
   VerifyResponse,
 } from '@/types';
-import { mockIntake, mockGetStatus, mockVerify } from './mockApi';
+import { mockIntake, mockGetStatus, mockVerify, mockGetMyGrievances } from './mockApi';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
 
 export const isMockMode = !API_BASE_URL;
+
+// Written by the Landing app on login/signup — shared via localStorage since
+// all three apps run on the same origin. Optional here: the citizen app
+// works anonymously too, this just links new submissions to the account
+// when present.
+export function getAuthToken(): string | null {
+  return localStorage.getItem('grievance_token');
+}
+
+export function isLoggedIn(): boolean {
+  return getAuthToken() !== null;
+}
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -28,9 +41,22 @@ export async function submitIntake(data: unknown): Promise<IntakeResponse> {
   if (isMockMode) {
     return mockIntake(data);
   }
+  const token = getAuthToken();
   return request<IntakeResponse>(`${API_BASE_URL}/intake/web`, {
     method: 'POST',
     body: JSON.stringify(data),
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+}
+
+export async function getMyGrievances(): Promise<MyGrievanceItem[]> {
+  if (isMockMode) {
+    return mockGetMyGrievances();
+  }
+  const token = getAuthToken();
+  if (!token) return [];
+  return request<MyGrievanceItem[]>(`${API_BASE_URL}/citizen/my-grievances`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
 

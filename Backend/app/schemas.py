@@ -35,6 +35,7 @@ __all__ = [
     "LoginRequest",
     "AccountOut",
     "AuthResponse",
+    "MyGrievanceItem",
 ]
 
 
@@ -193,3 +194,13 @@ class AuthResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     account: AccountOut
+
+
+class MyGrievanceItem(BaseModel):
+    tracking_id: str
+    status: GrievanceStatus
+    category: Category
+    priority: Priority
+    department: Optional[str] = None
+    summary: Optional[str] = None
+    created_at: datetime

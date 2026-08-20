@@ -1,9 +1,14 @@
-import { ShieldCheck } from 'lucide-react';
-import { isMockMode } from '@/lib/api';
+import { FileText, ShieldCheck } from 'lucide-react';
+import { isMockMode, isLoggedIn } from '@/lib/api';
 import { useI18n } from '@/i18n/I18nContext';
 import LanguageSelector from '@/components/LanguageSelector';
+import type { Screen } from '@/types';
 
-export default function Header() {
+interface HeaderProps {
+  onNavigate?: (screen: Screen) => void;
+}
+
+export default function Header({ onNavigate }: HeaderProps) {
   const { t } = useI18n();
 
   return (
@@ -21,6 +26,15 @@ export default function Header() {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {onNavigate && isLoggedIn() && (
+            <button
+              onClick={() => onNavigate('my-complaints')}
+              className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-primary-600"
+            >
+              <FileText size={16} />
+              <span className="hidden sm:inline">{t('header.myComplaints')}</span>
+            </button>
+          )}
           {isMockMode && (
             <span className="hidden rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-200 sm:inline">
               {t('header.demoMode')}

@@ -4,6 +4,8 @@ by any route that needs to require a logged-in officer/citizen.
 """
 from datetime import datetime, timedelta, timezone
 
+from typing import Optional
+
 import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -47,6 +49,22 @@ def get_current_account(
     if account is None:
         raise HTTPException(status_code=401, detail="Account no longer exists")
     return account
+
+
+def get_current_account_optional(
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    db: Session = Depends(get_db),
+) -> Optional[Account]:
+    """Same as get_current_account, but for routes usable both logged-in and
+    anonymously (e.g. /intake/web) — no/invalid token just means None,
+    never a 401."""
+    if credentials is None:
+        return None
+    try:
+        payload = jwt.decode(credentials.credentials, settings.JWT_SECRET, algorithms=["HS256"])
+    except jwt.PyJWTError:
+        return None
+    return db.get(Account, int(payload["sub"]))
 
 
 def require_officer(account: Account = Depends(get_current_account)) -> Account:

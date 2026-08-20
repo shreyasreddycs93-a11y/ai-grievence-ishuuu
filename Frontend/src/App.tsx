@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Home from '@/screens/Home';
 import Report from '@/screens/Report';
 import Track from '@/screens/Track';
+import MyComplaints from '@/screens/MyComplaints';
 import { useI18n } from '@/i18n/I18nContext';
 
 function App() {
@@ -16,21 +17,21 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const goToTrack = (id: string) => {
+    setTrackingId(id);
+    navigate('track');
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Header onNavigate={navigate} />
       <main>
         {screen === 'home' && <Home onNavigate={navigate} />}
-        {screen === 'report' && (
-          <Report
-            onBack={() => navigate('home')}
-            onTrack={(id) => {
-              setTrackingId(id);
-              navigate('track');
-            }}
-          />
-        )}
+        {screen === 'report' && <Report onBack={() => navigate('home')} onTrack={goToTrack} />}
         {screen === 'track' && <Track initialTrackingId={trackingId} onBack={() => navigate('home')} />}
+        {screen === 'my-complaints' && (
+          <MyComplaints onBack={() => navigate('home')} onTrack={goToTrack} />
+        )}
       </main>
 
       <footer className="border-t border-slate-200/70 bg-slate-50">
