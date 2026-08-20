@@ -1,5 +1,5 @@
 """
-GrievanceAI FastAPI application entrypoint.
+CivicSahayak FastAPI application entrypoint.
 """
 import logging
 
@@ -18,9 +18,27 @@ from app.scheduler import start_scheduler, stop_scheduler
 UPLOAD_DIR = Path(__file__).resolve().parents[1] / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+CITIZEN_DIST = REPO_ROOT / "Frontend" / "dist"
+OFFICER_DIST = REPO_ROOT / "OfficerFrontend" / "dist"
+LANDING_DIST = REPO_ROOT / "Landing" / "dist"
+
 logger = logging.getLogger("grievanceai")
 
-app = FastAPI(title="GrievanceAI", version="0.1.0")
+
+class SPAStaticFiles(StaticFiles):
+    """StaticFiles that falls back to index.html for any unmatched path,
+    so client-side routes (e.g. /officer/queue) work on direct load/refresh."""
+
+    async def get_response(self, path: str, scope):
+        try:
+            return await super().get_response(path, scope)
+        except StarletteHTTPException as exc:
+            if exc.status_code == 404:
+                return await super().get_response("index.html", scope)
+            raise
+
+app = FastAPI(title="CivicSahayak", version="0.1.0")
 
 # CORS: allow all origins for now (SIH prototype). Tighten before production.
 app.add_middleware(
@@ -69,11 +87,26 @@ def health():
     return {"ok": True}
 
 
-from app.routers import admin, citizen, intake, media  # noqa: E402
+from app.routers import admin, auth, citizen, intake, media  # noqa: E402
 
 app.include_router(intake.router)
 app.include_router(media.router)
 app.include_router(citizen.router)
 app.include_router(admin.router)
+app.include_router(auth.router)
 
 app.mount("/media", StaticFiles(directory=str(UPLOAD_DIR)), name="media")
+
+# Serve the three built frontend apps off this same port. Order matters:
+# API routes/mounts above always win on an exact prefix match; "/" is
+# mounted last so it only catches whatever nothing else claimed.
+for path, dist in (("/citizen", CITIZEN_DIST), ("/officer", OFFICER_DIST)):
+    if dist.is_dir():
+        app.mount(path, SPAStaticFiles(directory=str(dist), html=True), name=path.strip("/"))
+    else:
+        logger.warning("%s not built yet — run `npm run build` there, then restart. Skipping mount for %s.", dist, path)
+
+if LANDING_DIST.is_dir():
+    app.mount("/", SPAStaticFiles(directory=str(LANDING_DIST), html=True), name="landing")
+else:
+    logger.warning("%s not built yet — run `npm run build` there, then restart. Skipping mount for /.", LANDING_DIST)

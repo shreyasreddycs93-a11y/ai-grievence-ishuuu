@@ -12,10 +12,10 @@ export const SUPPORTED_LANGUAGES: { code: Language; label: string; short: string
 
 const en: TranslationDict = {
   // Header / footer
-  'header.brand': 'GrievanceAI',
+  'header.brand': 'CivicSahayak',
   'header.tagline': 'Smart City Civic Portal',
   'header.demoMode': 'Demo Mode',
-  'footer.tagline': 'GrievanceAI · Smart India Hackathon · Built for citizens, powered by AI',
+  'footer.tagline': 'CivicSahayak · Smart India Hackathon · Built for citizens, powered by AI',
 
   // Home — hero
   'home.badge': 'AI-Powered Civic Grievance System',
@@ -177,10 +177,10 @@ const en: TranslationDict = {
 };
 
 const hi: TranslationDict = {
-  'header.brand': 'ग्रिवेंसएआई',
+  'header.brand': 'CivicSahayak',
   'header.tagline': 'स्मार्ट सिटी सिविक पोर्टल',
   'header.demoMode': 'डेमो मोड',
-  'footer.tagline': 'ग्रिवेंसएआई · स्मार्ट इंडिया हैकाथॉन · नागरिकों के लिए, एआई द्वारा संचालित',
+  'footer.tagline': 'CivicSahayak · स्मार्ट इंडिया हैकाथॉन · नागरिकों के लिए, एआई द्वारा संचालित',
 
   'home.badge': 'एआई-संचालित नागरिक शिकायत प्रणाली',
   'home.heroTitlePre': 'आपका शहर,',
@@ -332,10 +332,10 @@ const hi: TranslationDict = {
 };
 
 const kn: TranslationDict = {
-  'header.brand': 'ಗ್ರೀವೆನ್ಸ್‌ಎಐ',
+  'header.brand': 'CivicSahayak',
   'header.tagline': 'ಸ್ಮಾರ್ಟ್ ಸಿಟಿ ಸಿವಿಕ್ ಪೋರ್ಟಲ್',
   'header.demoMode': 'ಡೆಮೋ ಮೋಡ್',
-  'footer.tagline': 'ಗ್ರೀವೆನ್ಸ್‌ಎಐ · ಸ್ಮಾರ್ಟ್ ಇಂಡಿಯಾ ಹ್ಯಾಕಥಾನ್ · ನಾಗರಿಕರಿಗಾಗಿ, ಎಐ ಚಾಲಿತ',
+  'footer.tagline': 'CivicSahayak · ಸ್ಮಾರ್ಟ್ ಇಂಡಿಯಾ ಹ್ಯಾಕಥಾನ್ · ನಾಗರಿಕರಿಗಾಗಿ, ಎಐ ಚಾಲಿತ',
 
   'home.badge': 'ಎಐ-ಚಾಲಿತ ಸಿವಿಕ್ ದೂರು ವ್ಯವಸ್ಥೆ',
   'home.heroTitlePre': 'ನಿಮ್ಮ ನಗರ,',

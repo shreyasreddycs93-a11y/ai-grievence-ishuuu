@@ -12,6 +12,7 @@ import {
   Image as ImageIcon,
   Mic,
   BrainCircuit,
+  Users,
 } from 'lucide-react'
 import { getGrievanceStatus, updateGrievance, escalateGrievance, CATEGORY_LABELS } from '../api/client'
 import type { GrievanceStatusResponse, GrievanceStatus } from '../api/types'
@@ -169,6 +170,14 @@ export default function GrievanceDetail() {
               {data.status === 'escalated' && (
                 <span className="flex items-center gap-1 text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded-lg">
                   <AlertTriangle size={11} /> Escalated
+                </span>
+              )}
+              {data.report_count > 1 && (
+                <span
+                  title="Later submissions matched this one by content similarity and were merged in rather than filed as new tickets"
+                  className="flex items-center gap-1 text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg"
+                >
+                  <Users size={11} /> Reported {data.report_count} times
                 </span>
               )}
             </div>

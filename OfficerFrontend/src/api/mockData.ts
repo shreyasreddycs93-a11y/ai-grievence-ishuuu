@@ -18,6 +18,7 @@ export const MOCK_QUEUE: QueueItem[] = [
     created_at: h(10),
     sla_due_at: due(2),
     parent_tracking_id: null,
+    report_count: 1,
   },
   {
     tracking_id: 'GRV-10024',
@@ -31,6 +32,7 @@ export const MOCK_QUEUE: QueueItem[] = [
     created_at: h(48),
     sla_due_at: due(0),
     parent_tracking_id: null,
+    report_count: 6,
   },
   {
     tracking_id: 'GRV-10025',
@@ -44,6 +46,7 @@ export const MOCK_QUEUE: QueueItem[] = [
     created_at: h(5),
     sla_due_at: due(19),
     parent_tracking_id: null,
+    report_count: 9,
   },
   {
     tracking_id: 'GRV-10026',
@@ -57,6 +60,7 @@ export const MOCK_QUEUE: QueueItem[] = [
     created_at: h(6),
     sla_due_at: overdue(2),
     parent_tracking_id: null,
+    report_count: 14,
   },
   {
     tracking_id: 'GRV-10027',
@@ -70,6 +74,7 @@ export const MOCK_QUEUE: QueueItem[] = [
     created_at: h(12),
     sla_due_at: due(12),
     parent_tracking_id: null,
+    report_count: 1,
   },
   {
     tracking_id: 'GRV-10028',
@@ -83,6 +88,7 @@ export const MOCK_QUEUE: QueueItem[] = [
     created_at: h(2),
     sla_due_at: due(46),
     parent_tracking_id: null,
+    report_count: 1,
   },
   {
     tracking_id: 'GRV-10029',
@@ -96,6 +102,7 @@ export const MOCK_QUEUE: QueueItem[] = [
     created_at: h(24),
     sla_due_at: due(5),
     parent_tracking_id: 'GRV-10030',
+    report_count: 1,
   },
   {
     tracking_id: 'GRV-10030',
@@ -109,6 +116,7 @@ export const MOCK_QUEUE: QueueItem[] = [
     created_at: h(24),
     sla_due_at: due(48),
     parent_tracking_id: null,
+    report_count: 3,
   },
   {
     tracking_id: 'GRV-10031',
@@ -122,6 +130,7 @@ export const MOCK_QUEUE: QueueItem[] = [
     created_at: h(36),
     sla_due_at: overdue(5),
     parent_tracking_id: null,
+    report_count: 4,
   },
   {
     tracking_id: 'GRV-10032',
@@ -135,6 +144,7 @@ export const MOCK_QUEUE: QueueItem[] = [
     created_at: h(72),
     sla_due_at: null,
     parent_tracking_id: null,
+    report_count: 1,
   },
 ]
 
@@ -150,6 +160,7 @@ export const MOCK_DETAILS: Record<string, GrievanceStatusResponse> = {
     confidence: 0.91,
     created_at: h(10),
     sla_due_at: due(2),
+    report_count: 1,
     timeline: [
       { status: 'new', note: 'Grievance created via intake', at: h(10) },
       { status: 'assigned', note: 'Assigned to Roads department', at: h(9) },
@@ -171,6 +182,7 @@ export const MOCK_DETAILS: Record<string, GrievanceStatusResponse> = {
     confidence: 0.94,
     created_at: h(6),
     sla_due_at: overdue(2),
+    report_count: 14,
     timeline: [
       { status: 'new', note: 'Grievance created via intake', at: h(6) },
       { status: 'assigned', note: 'Assigned to Electricity department', at: h(5) },
@@ -190,6 +202,7 @@ export const MOCK_DETAILS: Record<string, GrievanceStatusResponse> = {
     confidence: 0.71,
     created_at: h(24),
     sla_due_at: due(48),
+    report_count: 3,
     timeline: [
       { status: 'new', note: 'Parent grievance created via intake; split into 2 departments', at: h(24) },
       { status: 'in_progress', note: 'Sub-issues dispatched', at: h(20) },
@@ -219,6 +232,7 @@ export function getMockDetail(trackingId: string): GrievanceStatusResponse {
     confidence: item.confidence,
     created_at: item.created_at,
     sla_due_at: item.sla_due_at,
+    report_count: item.report_count,
     timeline: [
       { status: 'new', note: 'Grievance created via intake', at: item.created_at },
       ...(item.status !== 'new'

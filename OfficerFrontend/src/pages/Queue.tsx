@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, SlidersHorizontal, AlertTriangle, ChevronRight } from 'lucide-react'
+import { Search, SlidersHorizontal, AlertTriangle, ChevronRight, Users } from 'lucide-react'
 import { getQueue, DEPARTMENTS } from '../api/client'
 import type { QueueItem, GrievanceStatus, Priority } from '../api/types'
 import StatusBadge from '../components/ui/StatusBadge'
@@ -213,6 +213,15 @@ export default function Queue() {
                         )}
                         {item.parent_tracking_id && (
                           <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">sub</span>
+                        )}
+                        {item.report_count > 1 && (
+                          <span
+                            title={`Reported ${item.report_count} times — likely the same issue, already merged into this ticket`}
+                            className="flex items-center gap-0.5 text-[10px] font-medium text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full"
+                          >
+                            <Users size={10} />
+                            ×{item.report_count}
+                          </span>
                         )}
                       </div>
                     </td>

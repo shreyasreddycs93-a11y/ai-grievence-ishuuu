@@ -7,7 +7,7 @@ import Intake from './pages/Intake'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/officer">
       <Routes>
         <Route element={<DashboardLayout />}>
           <Route index element={<Overview />} />

@@ -22,6 +22,15 @@ export type Category =
   | 'parks'
   | 'other'
 
+// GET /auth/me  →  Account
+export interface Account {
+  id: number
+  name: string
+  email: string
+  role: 'citizen' | 'officer'
+  department_id: number | null
+}
+
 // GET /admin/queue  →  QueueItem[]
 // NOTE (Gap #2): The backend QueueItem schema does NOT expose the internal
 // integer PK. PATCH /admin/grievance/{id} requires that PK. Until the backend
@@ -41,6 +50,7 @@ export interface QueueItem {
   created_at: string        // ISO datetime
   sla_due_at: string | null // ISO datetime
   parent_tracking_id: string | null
+  report_count: number      // >1 means the backend merged repeat reports of this same issue
 }
 
 // GET /grievance/{tracking_id}/status  →  GrievanceStatusResponse
@@ -72,6 +82,7 @@ export interface GrievanceStatusResponse {
   confidence: number
   created_at: string
   sla_due_at: string | null
+  report_count: number
   timeline: TimelineEntry[]
   subtasks: SubtaskEntry[]
   media: MediaItem[]

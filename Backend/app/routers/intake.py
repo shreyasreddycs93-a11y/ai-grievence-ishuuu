@@ -84,20 +84,28 @@ def _safe_embed(text: str) -> Optional[list]:
         return None
 
 
-def _find_duplicate(db: Session, embedding: list) -> Optional[Grievance]:
+def _find_duplicate(db: Session, embedding: list, exclude_grievance_id: Optional[int] = None) -> Optional[Grievance]:
     """
     Search complaint_vectors for the closest OPEN grievance by cosine
     distance. Returns the matching Grievance if distance < threshold,
     else None.
+
+    `exclude_grievance_id` is for callers checking a grievance that already
+    has its own row in complaint_vectors (e.g. the scheduler's vector-repair
+    job, re-checking after fixing a broken embedding) — without it, a
+    grievance would trivially "match" itself at distance 0. The normal
+    intake path doesn't need it: the new grievance's vector isn't committed
+    yet when this runs.
     """
     distance_col = ComplaintVector.embedding.cosine_distance(embedding).label("distance")
-    row = (
+    query = (
         db.query(Grievance, distance_col)
         .join(ComplaintVector, ComplaintVector.grievance_id == Grievance.id)
         .filter(Grievance.status.in_(OPEN_STATUSES))
-        .order_by(distance_col)
-        .first()
     )
+    if exclude_grievance_id is not None:
+        query = query.filter(Grievance.id != exclude_grievance_id)
+    row = query.order_by(distance_col).first()
     if row is None:
         return None
 
@@ -327,9 +335,10 @@ def _create_grievance(
         duplicate = _find_duplicate(db, embedding)
         if duplicate is not None:
             duplicate._merged = True  # transient flag, not persisted
+            duplicate.report_count += 1
             if media_urls:
                 _attach_media(db, duplicate.id, media_urls)
-                db.commit()
+            db.commit()
             return duplicate
 
     # Only worth asking "does this span multiple departments?" when

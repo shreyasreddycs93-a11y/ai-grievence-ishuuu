@@ -62,6 +62,7 @@ def get_status(tracking_id: str, db: Session = Depends(get_db)):
         confidence=grievance.confidence,
         created_at=grievance.created_at,
         sla_due_at=grievance.sla_due_at,
+        report_count=grievance.report_count,
         timeline=timeline,
         subtasks=subtasks,
         media=media,

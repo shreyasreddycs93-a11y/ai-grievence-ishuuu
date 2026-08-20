@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     GEMINI_API_KEY: str = ""
     WHATSAPP_TOKEN: str = ""
+    JWT_SECRET: str = "dev-secret-change-me"
+    JWT_EXPIRE_MINUTES: int = 60 * 24 * 7
+    DEPARTMENT_INVITE_CODE: str = "grievanceai-officer-2026"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

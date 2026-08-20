@@ -38,3 +38,12 @@ def init_db() -> None:
         conn.commit()
 
     Base.metadata.create_all(bind=engine)
+
+    # create_all only creates missing tables, it never alters existing ones.
+    # For a DB that already had `grievances` before report_count was added
+    # to the model, patch the column in manually (no-op once it exists).
+    with engine.connect() as conn:
+        conn.execute(
+            text("ALTER TABLE grievances ADD COLUMN IF NOT EXISTS report_count INTEGER NOT NULL DEFAULT 1")
+        )
+        conn.commit()

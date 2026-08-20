@@ -9,13 +9,14 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-from app.models import Category, GrievanceStatus, Priority
+from app.models import AccountRole, Category, GrievanceStatus, Priority
 
 # Re-export for convenient `from app.schemas import Category` imports elsewhere.
 __all__ = [
     "Category",
     "GrievanceStatus",
     "Priority",
+    "AccountRole",
     "WebIntakeRequest",
     "MediaUploadResponse",
     "IntakeResponse",
@@ -30,6 +31,10 @@ __all__ = [
     "AdminUpdateRequest",
     "EscalateRequest",
     "EscalateResponse",
+    "SignupRequest",
+    "LoginRequest",
+    "AccountOut",
+    "AuthResponse",
 ]
 
 
@@ -99,6 +104,7 @@ class GrievanceStatusResponse(BaseModel):
     confidence: float = 0.0
     created_at: datetime
     sla_due_at: Optional[datetime] = None
+    report_count: int = 1
     timeline: List[TimelineEntry] = []
     subtasks: List[SubtaskEntry] = []
     media: List[MediaItem] = []
@@ -130,6 +136,7 @@ class QueueItem(BaseModel):
     created_at: datetime
     sla_due_at: Optional[datetime] = None
     parent_tracking_id: Optional[str] = None
+    report_count: int = 1
 
 
 class DepartmentItem(BaseModel):
@@ -155,3 +162,34 @@ class EscalateResponse(BaseModel):
     status: GrievanceStatus
     escalated_to: Optional[str] = None
     reason: Optional[str] = None
+
+
+# ---------------------------------------------------------------------------
+# Auth
+# ---------------------------------------------------------------------------
+class SignupRequest(BaseModel):
+    name: str = Field(..., min_length=1)
+    email: str
+    password: str = Field(..., min_length=8)
+    role: AccountRole
+    department_id: Optional[int] = None
+    invite_code: Optional[str] = None
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class AccountOut(BaseModel):
+    id: int
+    name: str
+    email: str
+    role: AccountRole
+    department_id: Optional[int] = None
+
+
+class AuthResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    account: AccountOut

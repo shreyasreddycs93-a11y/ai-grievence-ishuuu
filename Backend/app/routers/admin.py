@@ -61,6 +61,7 @@ def get_queue(
             created_at=g.created_at,
             sla_due_at=g.sla_due_at,
             parent_tracking_id=parent_tracking_ids.get(g.parent_id) if g.parent_id else None,
+            report_count=g.report_count,
         )
         for g in grievances
     ]

@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: civicsahayak
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEPARTMENT_INVITE_CODE
+        sync: false

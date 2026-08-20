@@ -1,4 +1,5 @@
 import type {
+  Account,
   AdminUpdateRequest,
   EscalateRequest,
   EscalateResponse,
@@ -90,6 +91,30 @@ export const DEPARTMENTS: { id: number; name: string }[] = [
   { id: 4, name: 'Electricity' },
   { id: 5, name: 'Parks' },
 ]
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+// Token/role are written to localStorage by the Landing app on login/signup.
+
+const TOKEN_KEY = 'grievance_token'
+const ROLE_KEY = 'grievance_role'
+
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY)
+}
+
+export async function getMe(): Promise<Account> {
+  const token = getToken()
+  if (!token) throw new ApiError(401, 'Not authenticated')
+  return request<Account>('/auth/me', {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+}
+
+export function signOut(): void {
+  localStorage.removeItem(TOKEN_KEY)
+  localStorage.removeItem(ROLE_KEY)
+  window.location.href = '/'
+}
 
 // ── Admin endpoints ──────────────────────────────────────────────────────────
 

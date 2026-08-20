@@ -85,6 +85,29 @@ class Category(str, enum.Enum):
     other = "other"
 
 
+class AccountRole(str, enum.Enum):
+    citizen = "citizen"
+    officer = "officer"
+
+
+class Account(Base):
+    """Login credentials, distinct from `User` (a WhatsApp-contact profile
+    with no password). Citizens can use the app anonymously via `User`;
+    `Account` is only for people who explicitly sign up / log in."""
+    __tablename__ = "accounts"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False, index=True)
+    phone = Column(String, nullable=True)
+    password_hash = Column(String, nullable=False)
+    role = Column(SAEnum(AccountRole, name="account_role_enum"), nullable=False)
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
+
+    department = relationship("Department")
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -129,6 +152,13 @@ class Grievance(Base):
 
     confidence = Column(Float, nullable=False, default=0.0)
     needs_human_review = Column(Boolean, nullable=False, default=False)
+
+    # How many separate intake submissions (by embedding similarity) have
+    # been merged into this grievance. 1 = only ever reported once; >1
+    # means /intake/web or the WhatsApp webhook matched an existing open
+    # grievance instead of creating a new one — see _find_duplicate in
+    # app/routers/intake.py.
+    report_count = Column(Integer, nullable=False, default=1)
 
     lat = Column(Float, nullable=True)
     lng = Column(Float, nullable=True)
