@@ -1,0 +1,547 @@
+"""
+Intake endpoints: where new grievances enter the system (web form,
+WhatsApp webhook — the latter added in a later step).
+"""
+import logging
+from datetime import datetime, timedelta, timezone
+from typing import List, Optional
+
+from fastapi import APIRouter, Body, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
+
+from app import ai_client
+from app.db import get_db
+from app.models import (
+    OPEN_STATUSES,
+    Category,
+    ComplaintVector,
+    Department,
+    Grievance,
+    GrievanceMedia,
+    GrievanceStatus,
+    Priority,
+    ProcessedMessage,
+    StatusHistory,
+    User,
+    new_tracking_id,
+)
+from app.schemas import IntakeResponse, WebIntakeRequest
+
+logger = logging.getLogger("grievanceai.intake")
+
+router = APIRouter(tags=["intake"])
+
+# Simple category -> department-name mapping. Kept as a plain dict per the
+# spec ("simple dict in code") rather than a DB-driven routing table for now.
+CATEGORY_TO_DEPARTMENT = {
+    Category.water_supply: "Water Board",
+    Category.roads: "Roads",
+    Category.sanitation: "Sanitation",
+    Category.electricity: "Electricity",
+    Category.streetlights: "Electricity",
+    Category.drainage: "Sanitation",
+    Category.garbage: "Sanitation",
+    Category.parks: "Parks",
+    Category.other: "Roads",  # fallback bucket for uncategorized complaints
+}
+
+# Cosine distance threshold for treating two complaints as duplicates.
+# distance < 0.15  <=>  cosine similarity > 0.85
+DUPLICATE_DISTANCE_THRESHOLD = 0.15
+
+# Classification confidence below this means: the ticket still gets
+# created and routed normally, but needs_human_review is set to True so
+# an officer can double-check the AI's classification before/while it's
+# worked (per the original spec: "still create and route the ticket but
+# set needs_human_review=true").
+ROUTING_CONFIDENCE_THRESHOLD = 0.6
+
+
+def _safe_classify(text: str, image_description: Optional[str] = None) -> dict:
+    """
+    Wraps ai_client.classify_complaint with the fallback behavior required
+    by the spec: if the AI call fails for any reason, intake must still
+    succeed with category="other", priority="medium", confidence=0, and
+    needs_human_review=True.
+    """
+    try:
+        result = ai_client.classify_complaint(text, image_description)
+        # Guard against an AI response with confidence below threshold —
+        # caller decides needs_human_review from this, not us.
+        return {"ok": True, "data": result}
+    except Exception:
+        logger.exception("classify_complaint failed; falling back to defaults")
+        return {"ok": False, "data": None}
+
+
+def _safe_embed(text: str) -> Optional[list]:
+    try:
+        result = ai_client.embed_text(text)
+        return result["vector"]
+    except Exception:
+        logger.exception("embed_text failed; skipping duplicate-detection for this intake")
+        return None
+
+
+def _find_duplicate(db: Session, embedding: list) -> Optional[Grievance]:
+    """
+    Search complaint_vectors for the closest OPEN grievance by cosine
+    distance. Returns the matching Grievance if distance < threshold,
+    else None.
+    """
+    distance_col = ComplaintVector.embedding.cosine_distance(embedding).label("distance")
+    row = (
+        db.query(Grievance, distance_col)
+        .join(ComplaintVector, ComplaintVector.grievance_id == Grievance.id)
+        .filter(Grievance.status.in_(OPEN_STATUSES))
+        .order_by(distance_col)
+        .first()
+    )
+    if row is None:
+        return None
+
+    grievance, distance = row
+    if distance is not None and distance < DUPLICATE_DISTANCE_THRESHOLD:
+        return grievance
+    return None
+
+
+def _department_for_category(db: Session, category: Category) -> Optional[Department]:
+    name = CATEGORY_TO_DEPARTMENT.get(category)
+    if not name:
+        return None
+    return db.query(Department).filter(Department.name == name).first()
+
+
+def _infer_media_type(url: str) -> str:
+    """Best-effort guess at media type from the URL's file extension."""
+    filename = url.split("?", 1)[0].rsplit("/", 1)[-1]
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    if ext in {"jpg", "jpeg", "png", "gif", "webp", "bmp"}:
+        return "image"
+    if ext in {"mp3", "wav", "ogg", "m4a", "aac"}:
+        return "audio"
+    if ext in {"mp4", "mov", "webm", "avi"}:
+        return "video"
+    return "other"
+
+
+def _attach_media(db: Session, grievance_id: int, media_urls: Optional[List[str]]) -> None:
+    for url in media_urls or []:
+        db.add(
+            GrievanceMedia(
+                grievance_id=grievance_id,
+                type=_infer_media_type(url),
+                storage_url=url,
+            )
+        )
+
+
+def _resolve_department_for_category(db: Session, category_value: str) -> Optional[Department]:
+    try:
+        category = Category(category_value)
+    except ValueError:
+        category = Category.other
+    return _department_for_category(db, category)
+
+
+def _create_split_family(
+    db: Session,
+    *,
+    description: str,
+    original_text: str,
+    language: Optional[str],
+    address: Optional[str],
+    lat: Optional[float],
+    lng: Optional[float],
+    user_id: Optional[int],
+    category: Category,
+    priority: Priority,
+    confidence: float,
+    needs_human_review: bool,
+    embedding: Optional[list],
+    split_result: dict,
+) -> Grievance:
+    """
+    Creates one parent Grievance (an umbrella ticket, not assigned to any
+    single department — department_id stays None) plus one child Grievance
+    per department the AI split-check identified, each with parent_id
+    pointing back to the parent and its own department_id, tracking_id,
+    and SLA. Returns the parent, with the child tracking_ids stashed as a
+    transient attribute for the caller to surface in the API response.
+    """
+    parent = Grievance(
+        tracking_id=new_tracking_id(),
+        user_id=user_id,
+        category=category,
+        subcategory=None,
+        description=description,
+        original_text=original_text,
+        language=language,
+        priority=priority,
+        status=GrievanceStatus.new,
+        confidence=confidence,
+        needs_human_review=needs_human_review,
+        lat=lat,
+        lng=lng,
+        address=address,
+        department_id=None,  # umbrella ticket — each sub-issue is routed individually below
+    )
+
+    for attempt in range(2):
+        try:
+            db.add(parent)
+            db.flush()
+            break
+        except IntegrityError:
+            db.rollback()
+            if attempt == 1:
+                raise
+            parent.tracking_id = new_tracking_id()
+
+    db.add(
+        StatusHistory(
+            grievance_id=parent.id,
+            status=GrievanceStatus.new,
+            changed_by="system",
+            note=f"Parent grievance created via intake; split into {len(split_result['departments'])} department(s)",
+        )
+    )
+
+    if embedding is not None:
+        db.add(ComplaintVector(grievance_id=parent.id, embedding=embedding))
+
+    child_tracking_ids: list = []
+    for entry in split_result["departments"]:
+        entry_category_value = entry.get("category", "other")
+        child_department = _resolve_department_for_category(db, entry_category_value)
+        child_category = (
+            Category(entry_category_value)
+            if entry_category_value in Category._value2member_map_
+            else Category.other
+        )
+
+        child = Grievance(
+            tracking_id=new_tracking_id(),
+            parent_id=parent.id,
+            user_id=user_id,
+            category=child_category,
+            subcategory=None,
+            description=entry.get("sub_issue") or description,
+            original_text=original_text,
+            language=language,
+            priority=priority,
+            status=GrievanceStatus.new,
+            confidence=confidence,
+            needs_human_review=needs_human_review,
+            lat=lat,
+            lng=lng,
+            address=address,
+            department_id=child_department.id if child_department else None,
+        )
+        if child_department is not None:
+            child.sla_due_at = datetime.now(timezone.utc) + timedelta(hours=child_department.sla_hours)
+
+        for attempt in range(2):
+            try:
+                db.add(child)
+                db.flush()
+                break
+            except IntegrityError:
+                db.rollback()
+                if attempt == 1:
+                    raise
+                child.tracking_id = new_tracking_id()
+
+        db.add(
+            StatusHistory(
+                grievance_id=child.id,
+                status=GrievanceStatus.new,
+                changed_by="system",
+                note=f"Sub-ticket created from split of {parent.tracking_id}",
+            )
+        )
+        child_tracking_ids.append(child.tracking_id)
+
+    db.commit()
+    db.refresh(parent)
+    parent._merged = False  # transient, not persisted
+    parent._split = True  # transient, not persisted
+    parent._child_tracking_ids = child_tracking_ids  # transient, not persisted
+    return parent
+
+
+def _create_grievance(
+    db: Session,
+    *,
+    description: str,
+    original_text: str,
+    language: Optional[str],
+    address: Optional[str],
+    lat: Optional[float],
+    lng: Optional[float],
+    user_id: Optional[int] = None,
+    media_urls: Optional[List[str]] = None,
+    image_description: Optional[str] = None,
+) -> Grievance:
+    """
+    Shared creation flow used by both /intake/web and the WhatsApp webhook:
+    classify -> embed -> dedupe-check -> route-or-triage -> create-or-merge.
+    Returns the Grievance that should be reported back to the caller
+    (either a brand-new one, or the existing one it was merged into).
+    The caller can distinguish "merged" by checking whether the returned
+    grievance was already persisted before this call (see `merged` flag
+    set on the returned object as a transient attribute).
+
+    Each URL in media_urls gets a GrievanceMedia row attached to whichever
+    grievance is ultimately returned (new or merged-into) — treating them
+    as supporting evidence for that ticket either way.
+    """
+    classification = _safe_classify(description, image_description)
+
+    if classification["ok"]:
+        data = classification["data"]
+        category = Category(data["category"]) if data["category"] in Category._value2member_map_ else Category.other
+        priority = Priority(data["priority"]) if data["priority"] in Priority._value2member_map_ else Priority.medium
+        confidence = float(data.get("confidence", 0.0))
+        subcategory = data.get("subcategory")
+        summary = data.get("summary") or description[:140]
+        needs_human_review = confidence < ROUTING_CONFIDENCE_THRESHOLD
+        # Geotagging: prefer the client-supplied address (usually GPS-
+        # derived and more precise); fall back to whatever location the
+        # AI classification extracted from the complaint text itself.
+        effective_address = address or data.get("location_text")
+    else:
+        category = Category.other
+        priority = Priority.medium
+        confidence = 0.0
+        subcategory = None
+        summary = description[:140]
+        needs_human_review = True
+        effective_address = address
+
+    embedding = _safe_embed(description)
+
+    if embedding is not None:
+        duplicate = _find_duplicate(db, embedding)
+        if duplicate is not None:
+            duplicate._merged = True  # transient flag, not persisted
+            if media_urls:
+                _attach_media(db, duplicate.id, media_urls)
+                db.commit()
+            return duplicate
+
+    # Only worth asking "does this span multiple departments?" when
+    # classification actually succeeded — if it failed we've already
+    # fallen back to category=other/confidence=0, and there's nothing
+    # meaningful to split.
+    if classification["ok"]:
+        try:
+            split_result = ai_client.split_departments(description, classification["data"])
+        except Exception:
+            logger.exception("split_departments failed; falling back to a single ticket")
+            split_result = {"needs_split": False, "departments": []}
+
+        if split_result.get("needs_split") and len(split_result.get("departments", [])) >= 2:
+            parent = _create_split_family(
+                db,
+                description=description,
+                original_text=original_text,
+                language=language,
+                address=effective_address,
+                lat=lat,
+                lng=lng,
+                user_id=user_id,
+                category=category,
+                priority=priority,
+                confidence=confidence,
+                needs_human_review=needs_human_review,
+                embedding=embedding,
+                split_result=split_result,
+            )
+            if media_urls:
+                _attach_media(db, parent.id, media_urls)
+                db.commit()
+            return parent
+
+    # Original spec: always route to a department, regardless of
+    # confidence — low confidence just sets needs_human_review=True so
+    # an officer can double-check the auto-classification, not skip
+    # routing altogether. (Earlier this held low-confidence tickets back
+    # from routing entirely, per a newer planning doc that conflicted
+    # with the original spec on this point — reverted per instruction.)
+    department = _department_for_category(db, category)
+
+    grievance = Grievance(
+        tracking_id=new_tracking_id(),
+        user_id=user_id,
+        category=category,
+        subcategory=subcategory,
+        description=description,
+        original_text=original_text,
+        language=language,
+        priority=priority,
+        status=GrievanceStatus.new,
+        confidence=confidence,
+        needs_human_review=needs_human_review,
+        lat=lat,
+        lng=lng,
+        address=effective_address,
+        department_id=department.id if department else None,
+    )
+
+    if department is not None:
+        grievance.sla_due_at = datetime.now(timezone.utc) + timedelta(hours=department.sla_hours)
+
+    # Retry once on tracking_id collision (astronomically unlikely, but cheap to handle).
+    for attempt in range(2):
+        try:
+            db.add(grievance)
+            db.flush()
+            break
+        except IntegrityError:
+            db.rollback()
+            if attempt == 1:
+                raise
+            grievance.tracking_id = new_tracking_id()
+
+    db.add(
+        StatusHistory(
+            grievance_id=grievance.id,
+            status=GrievanceStatus.new,
+            changed_by="system",
+            note="Grievance created via intake",
+        )
+    )
+
+    if embedding is not None:
+        db.add(ComplaintVector(grievance_id=grievance.id, embedding=embedding))
+
+    _attach_media(db, grievance.id, media_urls)
+
+    db.commit()
+    db.refresh(grievance)
+    grievance._merged = False  # transient flag, not persisted
+    return grievance
+
+
+def _to_intake_response(grievance: Grievance, db: Session) -> IntakeResponse:
+    department_name = None
+    if grievance.department_id:
+        dept = db.get(Department, grievance.department_id)
+        department_name = dept.name if dept else None
+
+    return IntakeResponse(
+        tracking_id=grievance.tracking_id,
+        status=grievance.status,
+        category=grievance.category,
+        priority=grievance.priority,
+        department=department_name,
+        summary=grievance.description[:140],
+        merged=getattr(grievance, "_merged", False),
+        split=getattr(grievance, "_split", False),
+        subtask_tracking_ids=getattr(grievance, "_child_tracking_ids", []),
+    )
+
+
+@router.post("/intake/web", response_model=IntakeResponse)
+def intake_web(payload: WebIntakeRequest, db: Session = Depends(get_db)):
+    if not payload.description.strip():
+        raise HTTPException(status_code=422, detail="description must not be empty")
+
+    grievance = _create_grievance(
+        db,
+        description=payload.description,
+        original_text=payload.description,
+        language=payload.language,
+        address=payload.address,
+        lat=payload.lat,
+        lng=payload.lng,
+        media_urls=payload.media_urls,
+        image_description=payload.image_description,
+    )
+    return _to_intake_response(grievance, db)
+
+
+def _extract_whatsapp_message(payload: dict) -> Optional[dict]:
+    """
+    Defensively parses a WhatsApp Business API webhook payload and pulls
+    out the message id, sender id, and text body. Returns None if this
+    payload isn't a text message we can handle yet (e.g. a status/delivery
+    callback, or an audio/image message — those come in a later step).
+
+    Phase 1 assumes text messages only, per the spec.
+    """
+    try:
+        entry = payload.get("entry", [])[0]
+        change = entry.get("changes", [])[0]
+        value = change.get("value", {})
+        messages = value.get("messages")
+        if not messages:
+            return None  # e.g. a delivery/read status callback, not a message
+
+        message = messages[0]
+        if message.get("type") != "text":
+            return None  # audio/image handled in a later phase
+
+        message_id = message.get("id")
+        whatsapp_id = message.get("from")
+        text = (message.get("text") or {}).get("body")
+
+        if not message_id or not text:
+            return None
+
+        return {"message_id": message_id, "whatsapp_id": whatsapp_id, "text": text}
+    except (AttributeError, IndexError, TypeError):
+        return None
+
+
+@router.post("/intake/whatsapp/webhook")
+def intake_whatsapp_webhook(payload: dict = Body(...), db: Session = Depends(get_db)):
+    parsed = _extract_whatsapp_message(payload)
+    if parsed is None:
+        # Not a text message we handle yet (status callback, unsupported
+        # media type, malformed payload, ...). Ack with 200 and do nothing,
+        # same as WhatsApp expects for any webhook it doesn't need retried.
+        return {"ok": True}
+
+    message_id = parsed["message_id"]
+
+    # Idempotency: atomically claim this message_id. If it's already been
+    # processed, INSERT will violate the unique constraint and we return
+    # 200 having done nothing else, per the spec. Doing this as an
+    # insert-and-catch (rather than check-then-insert) avoids a race
+    # condition between two nearly-simultaneous deliveries of the same
+    # webhook, which WhatsApp does occasionally send.
+    try:
+        db.add(ProcessedMessage(message_id=message_id))
+        db.flush()
+    except IntegrityError:
+        db.rollback()
+        return {"ok": True}
+
+    whatsapp_id = parsed["whatsapp_id"]
+    user = None
+    if whatsapp_id:
+        user = db.query(User).filter(User.whatsapp_id == whatsapp_id).first()
+        if user is None:
+            user = User(whatsapp_id=whatsapp_id)
+            db.add(user)
+            db.flush()
+
+    try:
+        grievance = _create_grievance(
+            db,
+            description=parsed["text"],
+            original_text=parsed["text"],
+            language=None,
+            address=None,
+            lat=None,
+            lng=None,
+            user_id=user.id if user else None,
+        )
+    except Exception:
+        db.rollback()
+        raise
+    return _to_intake_response(grievance, db)

@@ -1,0 +1,5882 @@
+{
+  "summary": {
+    "scored": 100,
+    "total": 100,
+    "fallbacks": 0,
+    "errors": 0,
+    "exact_accuracy": 0.67,
+    "split_decision_accuracy": 1.0,
+    "department_count_accuracy": 1.0,
+    "category_set_accuracy": 0.97,
+    "priority_accuracy": 0.8195121951219512,
+    "priority_comparable": 205,
+    "priority_over_escalated": 20,
+    "priority_under_escalated": 17,
+    "over_split_count": 0,
+    "under_split_count": 0,
+    "false_split_rate": 0.0,
+    "missed_split_rate": 0.0,
+    "mean_recall": 0.8116666666666668,
+    "mean_precision": 0.8116666666666668,
+    "cap_violations": 0,
+    "is_split_inconsistencies": 0,
+    "stub_classification": true,
+    "provider_mix": {
+      "gemini": 99,
+      "groq": 1
+    }
+  },
+  "rows": [
+    {
+      "text": "There is a pothole in our residential lane near the third house, it has been getting deeper since the rain but no vehicle has been damaged so far.",
+      "lang": "en",
+      "tags": [
+        "no_split"
+      ],
+      "note": "Ordinary side-lane pothole, no accident stated, so no escalation fires.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "pothole in our residential lane near the third house",
+          "location_text": "residential lane near the third house"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Humare ghar ke saamne wali street light parso raat se band ho gayi hai, baaki lane ki lights chal rahi hain.",
+      "lang": "hinglish",
+      "tags": [
+        "no_split"
+      ],
+      "note": "One lamp out with the rest of the lane lit is not an area outage; recent enough that duration does not escalate.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "streetlights",
+          "subcategory": "single_lamp_out",
+          "priority": "medium",
+          "confidence": 0.88,
+          "excerpt": "street light parso raat se band ho gayi hai",
+          "location_text": "ghar ke saamne wali street"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "आज सुबह से नल से मटमैला और बदबूदार पानी आ रहा है, पूरे बिल्डिंग में यही हाल है।",
+      "lang": "hi",
+      "tags": [
+        "no_split"
+      ],
+      "note": "Contaminated supply is high on the shared-resource clause even before any illness is reported.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "contaminated_water",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "आज सुबह से नल से मटमैला और बदबूदार पानी आ रहा है, पूरे बिल्डिंग में यही हाल है।",
+          "location_text": "पूरे बिल्डिंग में"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "எங்கள் தெருவில் மூன்று நாட்களாக குப்பை வண்டி வரவில்லை, குப்பை மூலையில் குவிந்து கிடக்கிறது.",
+      "lang": "ta",
+      "tags": [
+        "no_split"
+      ],
+      "note": "A collection backlog with no new consequence stated stays at its base level regardless of the three days.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "garbage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "garbage",
+          "subcategory": "missed_collection",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "மூன்று நாட்களாக குப்பை வண்டி வரவில்லை, குப்பை மூலையில் குவிந்து கிடக்கிறது",
+          "location_text": "எங்கள் தெருவில்"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ನಮ್ಮ ಪಾರ್ಕಿನ ಮೂಲೆಯಲ್ಲಿರುವ ಜಾರುಬಂಡಿ ಮುರಿದು ಬಹಳ ದಿನಗಳಾಗಿವೆ, ಈಗ ಯಾರೂ ಅಲ್ಲಿಗೆ ಹೋಗುವುದಿಲ್ಲ.",
+      "lang": "kn",
+      "tags": [
+        "no_split"
+      ],
+      "note": "An already-idle broken fixture nobody uses is the rubric low tier: nothing anyone relies on has been lost.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "parks",
+          "subcategory": "broken_equipment",
+          "priority": "low",
+          "confidence": 0.88,
+          "excerpt": "ಪಾರ್ಕಿನ ಮೂಲೆಯಲ್ಲಿರುವ ಜಾರುಬಂಡಿ ಮುರಿದು ಬಹಳ ದಿನಗಳಾಗಿವೆ",
+          "location_text": "ಪಾರ್ಕಿನ ಮೂಲೆ"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "మా వీధిలో పారిశుద్ధ్య కార్మికులు వారానికి ఒకసారి మాత్రమే వస్తున్నారు, ప్రతిరోజూ ఊడ్చాలి కదా.",
+      "lang": "te",
+      "tags": [
+        "no_split"
+      ],
+      "note": "Sweeping is a service being performed badly, which is sanitation, not garbage. A scheduled service actually degraded is medium.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "sanitation",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "sanitation",
+          "subcategory": "infrequent_sweeping",
+          "priority": "low",
+          "confidence": 0.85,
+          "excerpt": "పారిశుద్ధ్య కార్మికులు వారానికి ఒకసారి మాత్రమే వస్తున్నారు",
+          "location_text": "మా వీధిలో"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "priority_matched": 0,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "আমাদের রাস্তার ম্যানহোলের ঢাকনাটা ফেটে গেছে কিন্তু এখনও জায়গায় বসানো আছে, ভেঙে পড়ার আগে বদলে দিন।",
+      "lang": "bn",
+      "tags": [
+        "no_split"
+      ],
+      "note": "Cover cracked but still in place means nobody is exposed yet, so this is a scheduled replacement, not a fall-in risk.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "damaged_manhole",
+          "priority": "high",
+          "confidence": 0.82,
+          "excerpt": "ম্যানহোলের ঢাকনাটা ফেটে গেছে",
+          "location_text": "আমাদের রাস্তা"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "priority_matched": 0,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "आमच्या भागातील रोहित्रातून मोठा आवाज येतो, पण ठिणग्या दिसत नाहीत आणि वीजपुरवठा सुरळीत आहे.",
+      "lang": "mr",
+      "tags": [
+        "no_split"
+      ],
+      "note": "Deliberate contrast to a sparking transformer: noise without sparks or outage has no stated path to harm, so not critical.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "transformer_noise",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "रोहित्रातून मोठा आवाज येतो",
+          "location_text": "आमच्या भागातील"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "One of the footpath tiles outside the post office is loose and rocks when stepped on, the rest of the footpath is fine.",
+      "lang": "en",
+      "tags": [
+        "no_split"
+      ],
+      "note": "One tile out of an otherwise sound footpath is the margin-nobody-depends-on case, so low despite naming an exact spot.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "damaged_footpath",
+          "priority": "low",
+          "confidence": 0.85,
+          "excerpt": "One of the footpath tiles outside the post office is loose and rocks when stepped on",
+          "location_text": "outside the post office"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Poore area me roz 6-7 ghante bijli jaati hai, do hafte se yahi chal raha hai, sab pareshan hain.",
+      "lang": "hinglish",
+      "tags": [
+        "no_split"
+      ],
+      "note": "A whole-area supply disruption affecting everyone is high on the shared-resource clause.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "frequent_outages",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "roz 6-7 ghante bijli jaati hai, do hafte se yahi chal raha hai",
+          "location_text": "poore area me"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "गली की नाली से बदबू आ रही है, पानी अभी बह रहा है लेकिन गंदगी किनारे जम गई है।",
+      "lang": "hi",
+      "tags": [
+        "no_split"
+      ],
+      "note": "Still flowing and contained, no breeding or spread stated, so medium.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "गली की नाली से बदबू आ रही है, पानी अभी बह रहा है लेकिन गंदगी किनारे जम गई है।",
+          "location_text": "गली की नाली"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "পার্কের বেঞ্চগুলোর রং উঠে গেছে, দেখতে খারাপ লাগে, একটু রং করে দিলে ভালো হয়।",
+      "lang": "bn",
+      "tags": [
+        "no_split"
+      ],
+      "note": "Peeling paint is the rubric own example of cosmetic; the benches still work.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "parks",
+          "subcategory": "bench_painting",
+          "priority": "low",
+          "confidence": 0.9,
+          "excerpt": "পার্কের বেঞ্চগুলোর রং উঠে গেছে, দেখতে খারাপ লাগে",
+          "location_text": "পার্কে"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "A water main has burst outside the temple and is gushing hard right now, the water is spreading across the road and the tar has started lifting at the edges.",
+      "lang": "en",
+      "tags": [
+        "no_split",
+        "causation_trap"
+      ],
+      "note": "CAUSATION TRAP, active. Lifting tar is downstream of a leak still running; roads cannot resurface until the water is off.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "burst_pipe",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "water main has burst outside the temple and is gushing hard right now",
+          "location_text": "outside the temple"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ನಮ್ಮ ರಸ್ತೆಯಲ್ಲಿ ಮೂರು ದಿನಗಳಿಂದ ನೀರಿನ ಪೈಪ್ ಸೋರುತ್ತಿದೆ, ಈಗ ರಸ್ತೆಯಲ್ಲಿ ಬಿರುಕು ಬಿಟ್ಟಿದೆ.",
+      "lang": "kn",
+      "tags": [
+        "no_split",
+        "causation_trap"
+      ],
+      "note": "CAUSATION TRAP, active. Road cracking is damage from the live leak; three days unaddressed escalates the leak itself.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "pipe_leak",
+          "priority": "high",
+          "confidence": 0.82,
+          "excerpt": "ಮೂರು ದಿನಗಳಿಂದ ನೀರಿನ ಪೈಪ್ ಸೋರುತ್ತಿದೆ, ಈಗ ರಸ್ತೆಯಲ್ಲಿ ಬಿರುಕು ಬಿಟ್ಟಿದೆ",
+          "location_text": "ನಮ್ಮ ರಸ್ತೆಯಲ್ಲಿ"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "सीवर लाइन फट गई है और गंदा पानी लगातार सड़क पर बह रहा है, सड़क की मिट्टी बहती जा रही है।",
+      "lang": "hi",
+      "tags": [
+        "no_split",
+        "causation_trap"
+      ],
+      "note": "CAUSATION TRAP, active. Sewage owner keeps it; the eroding road surface is downstream of a break that is still open.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "burst_sewer_line",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "सीवर लाइन फट गई है और गंदा पानी लगातार सड़क पर बह रहा है, सड़क की मिट्टी बहती जा रही है।",
+          "location_text": "सड़क"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "குழாய் உடைந்து தண்ணீர் கசிந்து நடைபாதையின் மண்ணை அரித்துக் கொண்டே இருக்கிறது, இன்னும் நிற்கவில்லை.",
+      "lang": "ta",
+      "tags": [
+        "no_split",
+        "causation_trap"
+      ],
+      "note": "CAUSATION TRAP, active. Explicitly still running, so the footpath erosion is not yet a roads job.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "pipe_leak",
+          "priority": "high",
+          "confidence": 0.82,
+          "excerpt": "குழாய் உடைந்து தண்ணீர் கசிந்து நடைபாதையின் மண்ணை அரித்துக் கொண்டே இருக்கிறது, இன்னும் நிற்கவில்லை.",
+          "location_text": "நடைபாதை"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "కాలువ పొంగి రోడ్డు అంచు కోతకు గురవుతోంది, నీరు ఇంకా పారుతూనే ఉంది.",
+      "lang": "te",
+      "tags": [
+        "no_split",
+        "causation_trap"
+      ],
+      "note": "CAUSATION TRAP, active. The eroding road edge belongs to the overflow owner while the overflow continues.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "overflow_and_erosion",
+          "priority": "high",
+          "confidence": 0.82,
+          "excerpt": "కాలువ పొంగి రోడ్డు అంచు కోతకు గురవుతోంది, నీరు ఇంకా పారుతూనే ఉంది.",
+          "location_text": "రోడ్డు అంచు"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "चार दिवसांपासून पाण्याची पाईप फुटली आहे, रस्ता खचला आहे आणि अजूनही पाणी वाहत आहे.",
+      "lang": "mr",
+      "tags": [
+        "no_split",
+        "causation_trap"
+      ],
+      "note": "CAUSATION TRAP, active, hardest form: the road has visibly subsided, but the leak is stated to be ongoing.",
+      "borderline": true,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "burst_pipe",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "चार दिवसांपासून पाण्याची पाईप फुटली आहे, रस्ता खचला आहे आणि अजूनही पाणी वाहत आहे.",
+          "location_text": "घटनास्थळ"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "পাইপ ফেটে কাদা জল রাস্তায় ছড়িয়ে পড়ছে, এখনও জল বেরোচ্ছে, রাস্তা পিছল হয়ে গেছে।",
+      "lang": "bn",
+      "tags": [
+        "no_split",
+        "causation_trap"
+      ],
+      "note": "CAUSATION TRAP, active. Slippery road is a symptom of the live leak; no fall stated so no further escalation.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "burst_pipe",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "পাইপ ফেটে কাদা জল রাস্তায় ছড়িয়ে পড়ছে, এখনও জল বেরোচ্ছে",
+          "location_text": "রাস্তায়"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Pipeline leak ki wajah se road pe kaai jam gayi hai aur log phisal rahe hain, leak abhi bhi chal raha hai.",
+      "lang": "hinglish",
+      "tags": [
+        "no_split",
+        "causation_trap"
+      ],
+      "note": "CAUSATION TRAP, active. People slipping is a near-miss, not a stated injury, so no escalation above the leak base.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "pipeline_leak",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "Pipeline leak ki wajah se road pe kaai jam gayi hai aur log phisal rahe hain, leak abhi bhi chal raha hai.",
+          "location_text": "road"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "A pipe leak damaged our road last month. The water department repaired the pipe three weeks ago, but the broken road surface they left behind is still not repaired.",
+      "lang": "en",
+      "tags": [
+        "no_split",
+        "causation_trap",
+        "resolved_cause"
+      ],
+      "note": "CAUSATION REVERSAL. The causing leak is explicitly already fixed, so nothing remains for water_supply and the leftover damage is an ordinary roads job.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "broken road surface they left behind is still not repaired",
+          "location_text": "our road"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "बिजली विभाग ने केबल डालने के लिए सड़क खोदी थी, काम पूरा हो गया लेकिन सड़क वैसी ही खुदी पड़ी है।",
+      "lang": "hi",
+      "tags": [
+        "no_split",
+        "causation_trap",
+        "resolved_cause"
+      ],
+      "note": "CAUSATION REVERSAL. Electricity caused it but their work is finished; road reinstatement is what physically remains.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "excavated_road",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "सड़क वैसी ही खुदी पड़ी है",
+          "location_text": "खोदी गई सड़क"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ಪೈಪ್ ದುರಸ್ತಿ ಮುಗಿದಿದೆ ಆದರೆ ಕಿತ್ತು ಹಾಕಿದ ಪಾದಚಾರಿ ಮಾರ್ಗದ ಟೈಲ್ಸ್ ಅನ್ನು ಮತ್ತೆ ಹಾಕಿಲ್ಲ.",
+      "lang": "kn",
+      "tags": [
+        "no_split",
+        "causation_trap",
+        "resolved_cause"
+      ],
+      "note": "CAUSATION REVERSAL. Repair complete; the un-relaid footpath tiles are now purely a roads reinstatement.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "missing_tiles",
+          "priority": "medium",
+          "confidence": 0.92,
+          "excerpt": "ಕಿದ್ದು ಹಾಕಿದ ಪಾದಚಾರಿ ಮಾರ್ಗದ ಟೈಲ್ಸ್ ಅನ್ನು ಮತ್ತೆ ಹಾಕಿಲ್ಲ.",
+          "location_text": null
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "groq",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ట్రాన్స్‌ఫార్మర్ నుండి ఆయిల్ లీక్ అయి పార్కులోని గడ్డి అంతా చచ్చిపోయింది, లీక్ ఇంకా ఆగలేదు.",
+      "lang": "te",
+      "tags": [
+        "no_split",
+        "causation_trap"
+      ],
+      "note": "CAUSATION TRAP, active, different flavour: the dead grass is downstream of an ongoing equipment leak, so electricity owns it, not parks.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "transformer_leak",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "ట్రాన్స్‌ఫార్మర్ నుండి ఆయిల్ లీక్ అయి... లీక్ ఇంకా ఆగలేదు",
+          "location_text": "పార్కులో"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "priority_matched": 0,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "మా వీధి కాలువ పూర్తిగా మూసుకుపోయి మురుగు రోడ్డుపై పారుతోంది, దుర్వాసనతో పాటు దోమలు పెరుగుతున్నాయి.",
+      "lang": "te",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. Sewage, smell and mosquitoes are all downstream of one blockage; breeding risk makes it high.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "మా వీధి కాలువ పూర్తిగా మూసుకుపోయి మురుగు రోడ్డుపై పారుతోంది, దుర్వాసనతో పాటు దోమలు పెరుగుతున్నాయి.",
+          "location_text": "మా వీధి"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "नाली में कचरा फंसकर पानी रुक गया है, ऊपर से और कूड़ा जमा हो रहा है।",
+      "lang": "hi",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. Rubbish inside the drain is part of the drain-clearing job, not a separate collection dispatch.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "नाली में कचरा फंसकर पानी रुक गया है, ऊपर से और कूड़ा जमा हो रहा है।",
+          "location_text": "नाली"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "சாக்கடை அடைப்பால் தேங்கிய நீரில் கொசு பெருகி, அருகில் உள்ள வீடுகளில் அனைவரும் கடிபடுகிறார்கள்.",
+      "lang": "ta",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. Mosquitoes are the symptom; clearing the blockage removes them. Breeding risk alone reaches high.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "high",
+          "confidence": 0.81,
+          "excerpt": "சாக்கடை அடைப்பால் தேங்கிய நீரில் கொசு பெருகி, அருகில் உள்ள வீடுகளில் அனைவரும் கடிபடுகிறார்கள்.",
+          "location_text": "அருகில் உள்ள வீடுகள்"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "নর্দমা বন্ধ থাকায় বৃষ্টি হলেই গলিতে জল জমে যায়, জল নামতে অনেক সময় লাগে।",
+      "lang": "bn",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. Waterlogging is conditional on rain and contained, so medium.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "নর্দমা বন্ধ থাকায় বৃষ্টি হলেই গলিতে জল জমে যায়",
+          "location_text": "গলিতে"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ಚರಂಡಿ ಕಟ್ಟಿಕೊಂಡು ಕೆಸರು ರಸ್ತೆಗೆ ಹರಡಿದೆ, ವಾಹನಗಳು ಜಾರುತ್ತಿವೆ.",
+      "lang": "kn",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. Mud on the road came out of the drain; clearing the drain fixes it. No accident stated.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "ಚರಂಡಿ ಕಟ್ಟಿಕೊಂಡು ಕೆಸರು ರಸ್ತೆಗೆ ಹರಡಿದೆ, ವಾಹನಗಳು ಜಾರುತ್ತಿವೆ.",
+          "location_text": "ರಸ್ತೆ"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "priority_matched": 0,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "The drain outside the shops is choked and dirty water has spread over the pavement, flies are everywhere and shopkeepers are complaining.",
+      "lang": "en",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. Flies and spread water both trace to the choke; vector risk makes it high.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "drain outside the shops is choked and dirty water has spread over the pavement, flies are everywhere",
+          "location_text": "outside the shops"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "सेप्टिक टँक भरून सांडपाणी अंगणात पसरत आहे आणि दुर्गंधी सुटली आहे.",
+      "lang": "mr",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. The smell and wet ground are one overflow; sewage spreading where people walk is a disease risk.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "sewage_overflow",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "सेप्टिक टँक भरून सांडपाणी अंगणात पसरत आहे आणि दुर्गंधी सुटली आहे",
+          "location_text": "अंगणात"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Naali jam hone se paani road pe aa gaya hai aur usme kachra bhi tair raha hai, badbu bahut hai.",
+      "lang": "hinglish",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. Floating rubbish is being carried by the blocked drain, not a separate garbage pickup.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "Naali jam hone se paani road pe aa gaya hai aur usme kachra bhi tair raha hai, badbu bahut hai.",
+          "location_text": "road"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "priority_matched": 0,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "The streetlight globe outside our gate shattered and the broken glass pieces are now scattered across the footpath below it.",
+      "lang": "en",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. The glass came out of the broken lamp; replacing the fitting includes clearing its own debris, so no roads or garbage entry.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "streetlights",
+          "subcategory": "damaged_fixture",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "streetlight globe outside our gate shattered and the broken glass pieces are now scattered across the footpath",
+          "location_text": "outside our gate"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "कूड़ेदान भर जाने से कचरा चारों तरफ बिखर गया है और कुत्ते उसे और फैला रहे हैं।",
+      "lang": "hi",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. The scattering and the dogs both follow from the overflowing bin; emptying it resolves all of it. Vector risk lifts it to high.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "garbage",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "garbage",
+          "subcategory": "overflow",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "कूड़ेदान भर जाने से कचरा चारों तरफ बिखर गया है और कुत्ते उसे और फैला रहे हैं।",
+          "location_text": "कूड़ेदान"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "priority_matched": 0,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "పార్కులో చెట్టు విరిగి పడింది, దాని కొమ్మలు నడక దారి అంతా పరుచుకుని ఉన్నాయి.",
+      "lang": "te",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. Branches on the park path are part of removing the fallen tree, one job. Tree is inside the park and blocks no road, so parks.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "parks",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "parks",
+          "subcategory": "fallen_tree",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "పార్కులో చెట్టు విరిగి పడింది, దాని కొమ్మలు నడక దారి అంతా పరుచుకుని ఉన్నాయి.",
+          "location_text": "పార్కులో"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "পাবলিক টয়লেটের কমোড বন্ধ হয়ে যাওয়ায় ভেতরে দুর্গন্ধ আর কেউ ব্যবহার করতে পারছে না।",
+      "lang": "bn",
+      "tags": [
+        "no_split",
+        "symptom_trap"
+      ],
+      "note": "SYMPTOM TRAP. Smell and unusability are one blockage in a facility sanitation maintains.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "sanitation",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "sanitation",
+          "subcategory": "uncleaned_facility",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "পাবলিক টয়লেটের কমোড বন্ধ হয়ে যাওয়ায় ভেতরে দুর্গন্ধ আর কেউ ব্যবহার করতে পারছে না।",
+          "location_text": "পাবলিক টয়লেট"
+        }
+      ],
+      "expected_count": 1,
+      "got_count": 1,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "A live wire is hanging low over the footpath near the school and sparks when the wind blows. Also the paint on the park railing has completely faded.",
+      "lang": "en",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Widest gap: sparking wire over a school footpath is critical, faded railing paint is cosmetic low.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "live_wire_hazard",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "live wire is hanging low over the footpath and sparks when the wind blows",
+          "location_text": "near the school"
+        },
+        {
+          "category": "parks",
+          "subcategory": "faded_paint",
+          "priority": "low",
+          "confidence": 0.72,
+          "excerpt": "paint on the park railing has completely faded",
+          "location_text": "park"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "কল থেকে দুর্গন্ধযুক্ত জল আসছে আর দুটি বাচ্চা অসুস্থ হয়ে পড়েছে। এছাড়া পার্কের একটা বেঞ্চ ভাঙা পড়ে আছে।",
+      "lang": "bn",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Contamination is high, escalated to critical because illness has already occurred. Broken bench is low.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "critical"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "contaminated_water",
+          "priority": "critical",
+          "confidence": 0.89,
+          "excerpt": "কল থেকে দুর্গন্ধযুক্ত জল আসছে আর দুটি বাচ্চা অসুস্থ হয়ে পড়েছে",
+          "location_text": "কল"
+        },
+        {
+          "category": "parks",
+          "subcategory": "broken_fixture",
+          "priority": "low",
+          "confidence": 0.85,
+          "excerpt": "পারকের একটা বেঞ্চ ভাঙা পড়ে আছে",
+          "location_text": "পার্ক"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "सड़क के बीच मैनहोल का ढक्कन गायब है, रात में दिखता नहीं और कोई भी गिर सकता है। पार्क की घास भी बहुत बढ़ गई है।",
+      "lang": "hi",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Uncovered fall-in risk is the rubric high exemplar; no fall stated so tie-break holds it at high. Overgrown grass is low.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "missing_manhole_cover",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "सड़क के बीच मैनहोल का ढक्कन गायब है, रात में दिखता नहीं और कोई भी गिर सकता है।",
+          "location_text": "सड़क के बीच"
+        },
+        {
+          "category": "parks",
+          "subcategory": "overgrown_vegetation",
+          "priority": "low",
+          "confidence": 0.85,
+          "excerpt": "पार्क की घास भी बहुत बढ़ गई है।",
+          "location_text": "पार्क"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ವಿದ್ಯುತ್ ತಂತಿ ತುಂಡಾಗಿ ನೆಲದ ಮೇಲೆ ಬಿದ್ದಿದೆ ಮತ್ತು ಕಿಡಿ ಹಾರುತ್ತಿದೆ. ಜೊತೆಗೆ ಬೀದಿ ದೀಪ ಒಂದು ಮಿನುಗುತ್ತಿದೆ.",
+      "lang": "kn",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "A live wire on the ground sparking is critical; a single flickering lamp that still lights is low.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "streetlights",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "live_wire_hazard",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "ವಿದ್ಯುತ್ ತಂತಿ ತುಂಡಾಗಿ ನೆಲದ ಮೇಲೆ ಬಿದ್ದಿದೆ ಮತ್ತು ಕಿಡಿ ಹಾರುತ್ತಿದೆ",
+          "location_text": "ನೆಲದ ಮೇಲೆ"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "flickering_lamp",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "ಬೀದಿ ದೀಪ ಒಂದು ಮಿನುಗುತ್ತಿದೆ",
+          "location_text": "ಸ್ಥಳ"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "பழைய சுவர் ஒன்று சாய்ந்து எப்போது வேண்டுமானாலும் இடிந்து விழும் நிலையில் உள்ளது, குழந்தைகள் அருகில் விளையாடுகிறார்கள். குப்பைத் தொட்டியின் மூடியும் உடைந்துள்ளது.",
+      "lang": "ta",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "A leaning wall is a structural defect not yet collapsing, so high not critical; no civic-engineering wing owns private wall safety, hence other. Broken bin lid is the rubric own low example.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "other",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "other",
+          "subcategory": "unsafe_structure",
+          "priority": "critical",
+          "confidence": 0.85,
+          "excerpt": "பழைய சுவர் ஒன்று சாய்ந்து எப்போது வேண்டுமானாலும் இடிந்து விழும் நிலையில் உள்ளது, குழந்தைகள் அறிகிறார்கள்",
+          "location_text": "near children playing area"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "broken_bin",
+          "priority": "low",
+          "confidence": 0.8,
+          "excerpt": "குப்பைத் தொட்டியின் மூடியும் உடைந்துள்ளது",
+          "location_text": "garbage bin location"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "रोहित्रातून ठिणग्या उडत आहेत, कधीही आग लागू शकते. आणि उद्यानाचा फलक तुटून लटकत आहे.",
+      "lang": "mr",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Sparking transformer with fire risk is critical; a broken hanging signboard endangers nobody.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "transformer_hazard",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "रोहित्रातून ठिणग्या उडत आहेत, कधीही आग लागू शकते.",
+          "location_text": "उद्यान परिसर"
+        },
+        {
+          "category": "parks",
+          "subcategory": "broken_sign",
+          "priority": "low",
+          "confidence": 0.85,
+          "excerpt": "उद्यानाचा फलक तुटून लटकत आहे.",
+          "location_text": "उद्यान"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Road beech me dhas gaya hai aur ek auto usme fas gaya, traffic ruk gaya hai. Park ke gate ka rang bhi utar gaya hai.",
+      "lang": "hinglish",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "A cave-in with a vehicle already stuck is a road hazard actively causing incidents, so critical. Peeling gate paint is low.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "critical"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "cave_in",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "Road beech me dhas gaya hai aur ek auto usme fas gaya, traffic ruk gaya hai",
+          "location_text": "Road beech me"
+        },
+        {
+          "category": "parks",
+          "subcategory": "gate_maintenance",
+          "priority": "low",
+          "confidence": 0.82,
+          "excerpt": "Park ke gate ka rang bhi utar gaya hai",
+          "location_text": "Park ke gate"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "కరెంటు స్తంభం రోడ్డుపై పడిపోయింది, తీగలు కూడా కింద ఉన్నాయి. పార్కులో గడ్డి పెరిగిపోయింది.",
+      "lang": "te",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "A downed pole with wires on the ground is an immediate electrocution risk. Overgrown grass is routine.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "fallen_pole_wires",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "కరెంటు స్తంభం రోడ్డుపై పడిపోయింది, తీగలు కూడా కింద ఉన్నాయి.",
+          "location_text": "రోడ్డుపై"
+        },
+        {
+          "category": "parks",
+          "subcategory": "overgrown_grass",
+          "priority": "low",
+          "confidence": 0.9,
+          "excerpt": "పార్కులో గడ్డి పెరిగిపోయింది.",
+          "location_text": "పార్కులో"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "The entire block has had no water supply for three days and tankers have not come either. Also one of the lights inside the park is not working.",
+      "lang": "en",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Whole-block outage for three days is high. A single park light out is a margin nobody depends on.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "no_water_supply",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "entire block has had no water supply for three days and tankers have not come either",
+          "location_text": "entire block"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "park_light_out",
+          "priority": "low",
+          "confidence": 0.75,
+          "excerpt": "one of the lights inside the park is not working",
+          "location_text": "inside the park"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": false,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "निर्माण का मलबा पूरी सड़क पर फैला है और गाड़ियाँ निकल नहीं पा रही हैं। ज़ेबरा क्रॉसिंग की पट्टियाँ भी मिट गई हैं।",
+      "lang": "hi",
+      "tags": [
+        "obvious_split",
+        "priority_independent",
+        "same_category_split"
+      ],
+      "note": "Both halves are roads but at very different urgencies: debris blocking passage is an obstruction (high), faded crossing markings are cosmetic (low). Tests that two entries can share a category.",
+      "borderline": true,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "high"
+        },
+        {
+          "category": "roads",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "debris_obstruction",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "निर्माण का मलबा पूरी सड़क पर फैला है और गाड़ियाँ निकल नहीं पा रही हैं",
+          "location_text": "सड़क पर"
+        },
+        {
+          "category": "roads",
+          "subcategory": "faded_markings",
+          "priority": "low",
+          "confidence": 0.8,
+          "excerpt": "ज़ेबरा क्रॉसिंग की पट्टियाँ भी मिट गई हैं",
+          "location_text": "ज़ेबरा क्रॉसिंग"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "নিকাশি উপচে বাড়ির ভেতরে নোংরা জল ঢুকে পড়েছে। আর পার্কের দোলনার চেন ছিঁড়ে গেছে।",
+      "lang": "bn",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Sewage entering an occupied home is floodwater in an enclosed space, the rubric critical example. Broken swing chain is low.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "critical"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "sewage_overflow",
+          "priority": "high",
+          "confidence": 0.82,
+          "excerpt": "নিকাশি উপচে বাড়ির ভেতরে নোংরা জল ঢুকে পড়েছে।",
+          "location_text": "বাড়ির ভেতর"
+        },
+        {
+          "category": "parks",
+          "subcategory": "broken_equipment",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "পারকের দোলনার চেন ছিঁড়ে গেছে।",
+          "location_text": "পার্ক"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "priority_matched": 0,
+      "priority_over": 1,
+      "priority_under": 1,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ಎರಡು ವಾರಗಳಿಂದ ಇಡೀ ರಸ್ತೆಯ ಬೀದಿ ದೀಪಗಳು ಉರಿಯುತ್ತಿಲ್ಲ. ನಮ್ಮ ಬೀದಿಯ ನಾಮಫಲಕವೂ ಮುರಿದಿದೆ.",
+      "lang": "kn",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Whole-road blackout for two weeks is an area outage (high). A broken street nameplate is trivial and owned by nobody in the eight service wings.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "streetlights",
+          "priority": "high"
+        },
+        {
+          "category": "other",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "streetlights",
+          "subcategory": "streetlights_out",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "ಎರಡು ವಾರಗಳಿಂದ ಇಡೀ ರಸ್ತೆಯ ಬೀದಿ ದೀಪಗಳು ಉರಿಯುತ್ತಿಲ್ಲ.",
+          "location_text": "ಇಡೀ ರಸ್ತೆ"
+        },
+        {
+          "category": "other",
+          "subcategory": "broken_signage",
+          "priority": "low",
+          "confidence": 0.78,
+          "excerpt": "ನಮ್ಮ ಬೀದಿಯ ನಾಮಫಲಕವೂ ಮುರಿದಿದೆ.",
+          "location_text": "ನಮ್ಮ ಬೀದಿ"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ஒரு நாய் இறந்து மூன்று நாட்களாக சாலையோரம் கிடக்கிறது, துர்நாற்றம் வீசுகிறது. பூங்காவின் குழாய் சொட்டுச் சொட்டாக ஒழுகுகிறது.",
+      "lang": "ta",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "A carcass is garbage not sanitation, and three days uncollected escalates it to high. A dripping park tap is trivial.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "garbage",
+          "priority": "high"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "garbage",
+          "subcategory": "animal_carcass",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "ஒரு நாய் இறந்து மூன்று நாட்களாக சாலையோரம் கிடக்கிறது",
+          "location_text": "சாலையோரம்"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "leaking_tap",
+          "priority": "low",
+          "confidence": 0.8,
+          "excerpt": "பூங்காவின் குழாய் சொட்டுச் சொட்டாக ஒழுகுகிறது",
+          "location_text": "பூங்கா"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": false,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 1,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "रस्त्यावरील खड्ड्यात रोज दुचाकीस्वार पडत आहेत. उद्यानातील झुडुपे खूप वाढली आहेत.",
+      "lang": "mr",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Riders falling daily is stated harm already occurring, lifting an ordinary pothole to high. Overgrown hedges are routine.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "high"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "रस्त्यावरील खड्ड्यात रोज दुचाकीस्वार पडत आहेत",
+          "location_text": "रस्ता"
+        },
+        {
+          "category": "parks",
+          "subcategory": "overgrown_vegetation",
+          "priority": "low",
+          "confidence": 0.8,
+          "excerpt": "उद्यानातील झुडुपे खूप वाढली आहेत",
+          "location_text": "उद्यान"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Kachre ke dher me roz koi aag laga deta hai aur poore mohalle me dhuan bhar jaata hai, saans lena mushkil hai. Park ka jhoola bhi awaaz karta hai.",
+      "lang": "hinglish",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Burning waste filling a neighbourhood with smoke is a shared-resource health disruption (high); the thing burnt is an uncollected heap so garbage owns it. A squeaky swing is trivial.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "garbage",
+          "priority": "high"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "garbage",
+          "subcategory": "illegal_dumping_burn",
+          "priority": "high",
+          "confidence": 0.82,
+          "excerpt": "Kachre ke dher me roz koi aag laga deta hai aur poore mohalle me dhuan bhar jaata hai",
+          "location_text": "poore mohalle"
+        },
+        {
+          "category": "parks",
+          "subcategory": "broken_equipment",
+          "priority": "low",
+          "confidence": 0.85,
+          "excerpt": "Park ka jhoola bhi awaaz karta hai",
+          "location_text": "Park"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "నీటిలో మట్టి కలిసి వస్తోంది, తాగడానికి పనికిరావడం లేదు. పార్కు గేటు కీలు వదులైంది.",
+      "lang": "te",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Undrinkable supply is contaminated water, high. A loose gate hinge still holding is low.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        },
+        {
+          "category": "parks",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "contamination",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "నీటిలో మట్టి కలిసి వస్తోంది, తాగడానికి పనికిరావడం లేదు.",
+          "location_text": "local area"
+        },
+        {
+          "category": "parks",
+          "subcategory": "gate_damage",
+          "priority": "low",
+          "confidence": 0.82,
+          "excerpt": "పార్కు గేటు కీలు వదులైంది.",
+          "location_text": "park"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Hamari gali ki saari street lights das din se band hain aur kachra gaadi bhi hafte bhar se nahi aayi.",
+      "lang": "hinglish",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Whole-lane blackout is an area outage (high); a collection gap with no stated new consequence stays medium.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "streetlights",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "streetlights",
+          "subcategory": "streetlights_out",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "saari street lights das din se band hain",
+          "location_text": "Hamari gali"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "missed_collection",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "kachra gaadi bhi hafte bhar se nahi aayi",
+          "location_text": "Hamari gali"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "The water tanker has not come to our colony for two days. Separately, the footpath slabs outside the school are broken.",
+      "lang": "en",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Two days without supply to a whole colony is high; broken slabs with nobody stated hurt tie-break down to medium.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        },
+        {
+          "category": "roads",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "missed_tanker",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "The water tanker has not come to our colony for two days.",
+          "location_text": "our colony"
+        },
+        {
+          "category": "roads",
+          "subcategory": "broken_footpath",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "the footpath slabs outside the school are broken.",
+          "location_text": "outside the school"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "हमारी गली की स्ट्रीट लाइट खराब है और आवारा कुत्तों का झुंड भी रोज़ सुबह लोगों के पीछे भागता है।",
+      "lang": "hi",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "One lamp is medium; stray dogs chasing but not biting is other at medium per the animal-control rule.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        },
+        {
+          "category": "other",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "streetlights",
+          "subcategory": "lamp_out",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "स्ट्रीट लाइट खराब है",
+          "location_text": "हमारी गली"
+        },
+        {
+          "category": "other",
+          "subcategory": "stray_animals",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "आवारा कुत्तों का झुंड भी रोज़ सुबह लोगों के पीछे भागता है",
+          "location_text": "हमारी गली"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ಖಾಲಿ ನಿವೇಶನದಲ್ಲಿ ಕಸ ಸುರಿಯುತ್ತಿದ್ದಾರೆ, ದೊಡ್ಡ ರಾಶಿಯಾಗಿದೆ. ವಿದ್ಯುತ್ ಕಂಬವೂ ವಾಲಿದೆ, ಯಾವಾಗ ಬೇಕಾದರೂ ಬೀಳಬಹುದು.",
+      "lang": "kn",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Less urgent issue is stated first on purpose. Dumping is medium; a leaning pole expected to fall is high.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "garbage",
+          "priority": "medium"
+        },
+        {
+          "category": "electricity",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "garbage",
+          "subcategory": "illegal_dumping",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "ಖಾಲಿ ನಿವೇಶನದಲ್ಲಿ ಕಸ ಸುರಿಯುತ್ತಿದ್ದಾರೆ, ದೊಡ್ಡ ರಾಶಿಯಾಗಿದೆ.",
+          "location_text": "ಖಾಲಿ ನಿವೇಶನದಲ್ಲಿ"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "leaning_pole",
+          "priority": "critical",
+          "confidence": 0.9,
+          "excerpt": "ವಿದ್ಯುತ್ ಕಂಬವೂ ವಾಲಿದೆ, ಯಾವಾಗ ಬೇಕಾದರೂ ಬೀಳಬಹುದು.",
+          "location_text": "ಖಾಲಿ ನಿವೇಶನದಲ್ಲಿ"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "சாக்கடை அடைத்துக் கொண்டது, மேலும் தெரு விளக்கு இரண்டு வாரமாக எரியவில்லை.",
+      "lang": "ta",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Two unrelated crews. Blocked drain contained (medium); a single lamp out, even for two weeks, is not an area outage.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "medium"
+        },
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "சாக்கடை அடைத்துக் கொண்டது",
+          "location_text": "தெரு"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "single_lamp_out",
+          "priority": "medium",
+          "confidence": 0.88,
+          "excerpt": "தெரு விளக்கு இரண்டு வாரமாக எரியவில்லை",
+          "location_text": "தெரு"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "నీటి పైపు లీక్ అవుతోంది, పక్కనే పార్కు గేటు విరిగిపోయింది.",
+      "lang": "te",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "A freshly reported leak is medium; a broken park gate is a real amenity loss at medium. Nothing links them.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "medium"
+        },
+        {
+          "category": "parks",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "pipe_leak",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "నీటి పైపు లీక్ అవుతోంది",
+          "location_text": "పక్కనే పార్కు గేటు వద్ద"
+        },
+        {
+          "category": "parks",
+          "subcategory": "broken_gate",
+          "priority": "low",
+          "confidence": 0.85,
+          "excerpt": "పార్కు గేటు విరిగిపోయింది",
+          "location_text": "పార్కు"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "রাস্তায় বড় গর্ত হয়েছে আর ভ্যাটের আবর্জনা এক সপ্তাহ ধরে উপচে পড়ছে, ইঁদুর ঘুরছে।",
+      "lang": "bn",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Pothole with no accident stays medium; a week of overflow with rats present is a vector risk at high.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "medium"
+        },
+        {
+          "category": "garbage",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "রাস্তায় বড় গর্ত হয়েছে",
+          "location_text": "রাস্তা"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "overflow",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "ভ্যাটের আবর্জনা এক সপ্তাহ ধরে উপচে পড়ছে, ইঁদুর ঘুরছে",
+          "location_text": "ভ্যাট"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "गटाराचे पाणी रस्त्यावर आले आहे आणि आमच्या भागात वीजपुरवठा तीन दिवसांपासून खंडित आहे.",
+      "lang": "mr",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Sewage on the road is a disease risk; a three-day area power cut is a shared-resource outage. Both high, unrelated crews.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        },
+        {
+          "category": "electricity",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "sewage_overflow",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "गटाराचे पाणी रस्त्यावर आले आहे",
+          "location_text": "आमच्या भागात"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "power_outage",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "वीजपुरवठा तीन दिवसांपासून खंडित आहे",
+          "location_text": "आमच्या भागात"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "The swings and see-saw in the park are broken. Also the street sweepers have not come to our lane in two weeks.",
+      "lang": "en",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Broken play equipment is a real amenity loss; a sweeping beat that stopped running is a service failure. Both medium.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "parks",
+          "priority": "medium"
+        },
+        {
+          "category": "sanitation",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "parks",
+          "subcategory": "broken_equipment",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "The swings and see-saw in the park are broken",
+          "location_text": "the park"
+        },
+        {
+          "category": "sanitation",
+          "subcategory": "missed_sweeping",
+          "priority": "low",
+          "confidence": 0.8,
+          "excerpt": "street sweepers have not come to our lane in two weeks",
+          "location_text": "our lane"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Bijli do din se nahi aa rahi aur paani ki supply bhi band hai, dono ek saath.",
+      "lang": "hinglish",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Two separate utilities both out for two days; simultaneity is coincidence, not causation, so they split.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "high"
+        },
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "power_outage",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "Bijli do din se nahi aa rahi",
+          "location_text": "local area"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "no_supply",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "paani ki supply bhi band hai",
+          "location_text": "local area"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "चौराहे पर कूड़ा जमा है और दूसरी तरफ गली की नाली भी जाम है, दोनों अलग जगह हैं।",
+      "lang": "hi",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Deliberately states the two are in different places, so the garbage is NOT the drain blockage: this splits where slot 26 does not.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "garbage",
+          "priority": "medium"
+        },
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "garbage",
+          "subcategory": "illegal_dumping",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "चौराहे पर कूड़ा जमा है",
+          "location_text": "चौराहे पर"
+        },
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "गली की नाली भी जाम है",
+          "location_text": "गली"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ಬೀದಿ ದೀಪ ಉರಿಯುತ್ತಿಲ್ಲ ಮತ್ತು ಪಾದಚಾರಿ ಮಾರ್ಗದ ಕಲ್ಲುಗಳು ಕಿತ್ತು ಹೋಗಿವೆ.",
+      "lang": "kn",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Two ordinary defects, two crews, neither escalated.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        },
+        {
+          "category": "roads",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "streetlights",
+          "subcategory": "single_lamp_out",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "ಬೀದಿ ದೀಪ ಉರಿಯುತ್ತಿಲ್ಲ",
+          "location_text": "ಪಾದಚಾರಿ ಮಾರ್ಗ"
+        },
+        {
+          "category": "roads",
+          "subcategory": "damaged_footpath",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "ಪಾದಚಾರಿ ಮಾರ್ಗದ ಕಲ್ಲುಗಳು ಕಿತ್ತು ಹೋಗಿವೆ",
+          "location_text": "ಪಾದಚಾರಿ ಮಾರ್ಗ"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "குப்பை வண்டி வரவில்லை, மேலும் குடிநீரில் நிறம் மாறி வருகிறது.",
+      "lang": "ta",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Discoloured drinking water is contamination (high) regardless of the routine collection gap beside it.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "garbage",
+          "priority": "medium"
+        },
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "garbage",
+          "subcategory": "missed_collection",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "குப்பை வண்டி வரவில்லை",
+          "location_text": "Not specified"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "water_contamination",
+          "priority": "high",
+          "confidence": 0.82,
+          "excerpt": "குடிநீரில் நிறம் மாறி வருகிறது",
+          "location_text": "Not specified"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "రోడ్డులో గుంత ఉంది, వీధి దీపం కూడా వెలగడం లేదు.",
+      "lang": "te",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Short, plain two-issue complaint with no escalating detail on either half.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "medium"
+        },
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "రోడ్డులో గుంత ఉంది",
+          "location_text": "రోడ్డులో"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "single_lamp_out",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "వీధి దీపం కూడా వెలగడం లేదు",
+          "location_text": "వీధి"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "নর্দমা পরিষ্কার হয় না আর পার্কের গেট ভাঙা, দুটোই অনেকদিন ধরে।",
+      "lang": "bn",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Long-standing but neither has a stated new consequence, so duration does not escalate either half.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "medium"
+        },
+        {
+          "category": "parks",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "নর্দমা পরিষ্কার হয় না",
+          "location_text": "পার্ক"
+        },
+        {
+          "category": "parks",
+          "subcategory": "gate_damage",
+          "priority": "low",
+          "confidence": 0.82,
+          "excerpt": "পার্কের গেট ভাঙা",
+          "location_text": "পার্ক"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 1,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "वीजेचे तार लोंबकळत आहेत आणि कचराकुंडी भरून वाहत आहे.",
+      "lang": "mr",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Hanging wires with no spark stated are exposed-but-not-yet-live, so high not critical. Overflowing bin without vector detail stays medium.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "hanging_wire",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "वीजेचे तार लोंबकळत आहेत",
+          "location_text": "Not specified"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "overflowing_bin",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "कचराकुंडी भरून वाहत आहे",
+          "location_text": "Not specified"
+        }
+      ],
+      "expected_count": 2,
+      "got_count": 2,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "After the storm a large tree is lying across the main road and traffic cannot pass, a wire it brought down is sparking on the footpath, and a dead dog has been near the junction since morning.",
+      "lang": "en",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Tree categorised by what it blocks (roads), carcass is garbage, sparking wire is critical. Three crews.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "high"
+        },
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "fallen_tree",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "large tree is lying across the main road and traffic cannot pass",
+          "location_text": "main road"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "sparking_wire",
+          "priority": "critical",
+          "confidence": 0.92,
+          "excerpt": "wire it brought down is sparking on the footpath",
+          "location_text": "footpath"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "animal_carcass",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "dead dog has been near the junction",
+          "location_text": "junction"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "रस्त्यावर खड्डा आहे आणि दुचाकीस्वार पडत आहेत, गटार तुंबले आहे, आणि दोन आठवड्यांपासून सर्व पथदिवे बंद आहेत.",
+      "lang": "mr",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Falls already happening lift the pothole to high; blocked drain contained at medium; all lights out for two weeks is an area outage at high.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "high"
+        },
+        {
+          "category": "drainage",
+          "priority": "medium"
+        },
+        {
+          "category": "streetlights",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "रस्त्यावर खड्डा आहे आणि दुचाकीस्वार पडत आहेत",
+          "location_text": "रस्त्यावर"
+        },
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "गटार तुंबले आहे",
+          "location_text": "रस्त्यावर"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "area_outage",
+          "priority": "medium",
+          "confidence": 0.9,
+          "excerpt": "दोन आठवड्यांपासून सर्व पथदिवे बंद आहेत",
+          "location_text": "रस्त्यावर"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 0.6666666666666666,
+      "precision": 0.6666666666666666,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "पानी तीन दिन से नहीं आ रहा, कूड़ा भी नहीं उठा, और गली की लाइट भी बंद है।",
+      "lang": "hi",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Three days without water is high; the other two are routine gaps with no new consequence.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        },
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "no_supply",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "पानी तीन दिन से नहीं आ रहा",
+          "location_text": "गली"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "missed_collection",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "कूड़ा भी नहीं उठा",
+          "location_text": "गली"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "single_lamp_out",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "गली की लाइट भी बंद है",
+          "location_text": "गली"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ರಸ್ತೆಯಲ್ಲಿ ಗುಂಡಿ ಬಿದ್ದಿದೆ, ವಿದ್ಯುತ್ ತಂತಿ ಜೋತಾಡುತ್ತಿದೆ, ಮತ್ತು ಚರಂಡಿ ಕಟ್ಟಿಕೊಂಡಿದೆ.",
+      "lang": "kn",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Hanging wire without sparks is high; the pothole and drain are ordinary medium.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "medium"
+        },
+        {
+          "category": "electricity",
+          "priority": "high"
+        },
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "ರಸ್ತೆಯಲ್ಲಿ ಗುಂಡಿ ಬಿದ್ದಿದೆ",
+          "location_text": "ರಸ್ತೆ"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "dangling_wire",
+          "priority": "critical",
+          "confidence": 0.9,
+          "excerpt": "ವಿದ್ಯುತ್ ತಂತಿ ಜೋತಾಡುತ್ತಿದೆ",
+          "location_text": "ರಸ್ತೆ"
+        },
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "ಚರಂಡಿ ಕಟ್ಟಿಕೊಂಡಿದೆ",
+          "location_text": "ರಸ್ತೆ"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.3333333333333333,
+      "precision": 0.3333333333333333,
+      "priority_matched": 1,
+      "priority_over": 2,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "சாக்கடை அடைத்துள்ளது, குப்பை எடுக்கப்படவில்லை, தெரு விளக்கும் எரியவில்லை.",
+      "lang": "ta",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Three separate routine failures, none escalated. Tests that a 3-way split does not by itself imply high priorities.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "medium"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        },
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "சாக்கடை அடைத்துள்ளது",
+          "location_text": "தெரு"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "missed_collection",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "குப்பை எடுக்கப்படவில்லை",
+          "location_text": "தெரு"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "single_lamp_out",
+          "priority": "low",
+          "confidence": 0.78,
+          "excerpt": "தெரு விளக்கும் எரியவில்லை",
+          "location_text": "தெரு"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 0.6666666666666666,
+      "precision": 0.6666666666666666,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "రోడ్డులో పెద్ద గుంత, విద్యుత్ తీగ వేలాడుతోంది, నీటి పైపు లీక్ అవుతోంది - మూడూ వేర్వేరు చోట్ల.",
+      "lang": "te",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Explicitly states the three are in different places, so the leak is not causing the pothole: this is a genuine 3-way, not a causation trap.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "medium"
+        },
+        {
+          "category": "electricity",
+          "priority": "high"
+        },
+        {
+          "category": "water_supply",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "రోడ్డులో పెద్ద గుంత",
+          "location_text": "వేర్వేరు చోట్ల"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "hanging_wire",
+          "priority": "critical",
+          "confidence": 0.9,
+          "excerpt": "విద్యుత్ తీగ వేలాడుతోంది",
+          "location_text": "వేర్వేరు చోట్ల"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "pipe_leak",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "నీటి పైపు లీక్ అవుతోంది",
+          "location_text": "వేర్వేరు చోట్ల"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 0.6666666666666666,
+      "precision": 0.6666666666666666,
+      "priority_matched": 2,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "আবর্জনা জমে আছে, নর্দমা আলাদা জায়গায় বন্ধ, আর পার্কের দোলনা ভাঙা।",
+      "lang": "bn",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "States the drain and the garbage are in different places, so the symptom rule does not apply.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "garbage",
+          "priority": "medium"
+        },
+        {
+          "category": "drainage",
+          "priority": "medium"
+        },
+        {
+          "category": "parks",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "garbage",
+          "subcategory": "waste_accumulation",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "আবর্জনা জমে আছে",
+          "location_text": "specified area"
+        },
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "নর্দমা আলাদা জায়গায় বন্ধ",
+          "location_text": " আলাদা জায়গায়"
+        },
+        {
+          "category": "parks",
+          "subcategory": "broken_equipment",
+          "priority": "low",
+          "confidence": 0.85,
+          "excerpt": "পারকের দোলনা ভাঙা",
+          "location_text": "পার্ক"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 0.6666666666666666,
+      "precision": 0.6666666666666666,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Light nahi jal rahi, kachra pada hua hai, aur paani bhi nahi aa raha do din se.",
+      "lang": "hinglish",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "Only the water half carries a duration with real consequence, so only it escalates.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        },
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "streetlights",
+          "subcategory": "single_lamp_out",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "Light nahi jal rahi",
+          "location_text": "our area"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "garbage_accumulation",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "kachra pada hua hai",
+          "location_text": "our area"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "no_supply",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "paani bhi nahi aa raha do din se",
+          "location_text": "our area"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "The park gate has been broken for weeks, the public tap beside it has been running non-stop for four days, and garbage is piling up where the bin was removed.",
+      "lang": "en",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "One location, three crews. Four days of continuous waste escalates the tap; the other two stay medium.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "parks",
+          "priority": "medium"
+        },
+        {
+          "category": "water_supply",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "parks",
+          "subcategory": "broken_gate",
+          "priority": "low",
+          "confidence": 0.85,
+          "excerpt": "The park gate has been broken for weeks",
+          "location_text": "park"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "leaking_tap",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "public tap beside it has been running non-stop for four days",
+          "location_text": "beside the park gate"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "illegal_dumping",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "garbage is piling up where the bin was removed",
+          "location_text": "where the bin was removed"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 0.6666666666666666,
+      "precision": 0.6666666666666666,
+      "priority_matched": 2,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "सड़क टूटी है, बिजली का मीटर बॉक्स खुला पड़ा है, और सफाई कर्मचारी नहीं आते।",
+      "lang": "hi",
+      "tags": [
+        "obvious_split",
+        "priority_independent"
+      ],
+      "note": "An open meter box is exposed electrical equipment, which the rubric puts at high even before anyone is hurt.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "medium"
+        },
+        {
+          "category": "electricity",
+          "priority": "high"
+        },
+        {
+          "category": "sanitation",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "broken_road",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "सड़क टूटी है",
+          "location_text": "local street"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "open_meter_box",
+          "priority": "high",
+          "confidence": 0.8,
+          "excerpt": "बिजली का मीटर बॉक्स खुला पड़ा है",
+          "location_text": "local street"
+        },
+        {
+          "category": "sanitation",
+          "subcategory": "missing_sweepers",
+          "priority": "medium",
+          "confidence": 0.75,
+          "excerpt": "सफाई कर्मचारी नहीं आते",
+          "location_text": "local street"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "गटार तुंबले आहे, पथदिवा बंद आहे, आणि कचरा उचलला जात नाही.",
+      "lang": "mr",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "Three routine failures at medium, deliberately flat so a model cannot pass by escalating everything it splits.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "medium"
+        },
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.88,
+          "excerpt": "गटार तुंबले आहे",
+          "location_text": "येथे"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "single_lamp_out",
+          "priority": "medium",
+          "confidence": 0.88,
+          "excerpt": "पथदिवा बंद आहे",
+          "location_text": "येथे"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "missed_collection",
+          "priority": "medium",
+          "confidence": 0.88,
+          "excerpt": "कचरा उचलला जात नाही",
+          "location_text": "येथे"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ಕುಡಿಯುವ ನೀರು ಬರುತ್ತಿಲ್ಲ, ರಸ್ತೆ ಹಾಳಾಗಿದೆ, ಮತ್ತು ಉದ್ಯಾನದ ಬೇಲಿ ಮುರಿದಿದೆ.",
+      "lang": "kn",
+      "tags": [
+        "obvious_split"
+      ],
+      "note": "No duration or harm stated on any of the three, so all sit at their base level.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "medium"
+        },
+        {
+          "category": "roads",
+          "priority": "medium"
+        },
+        {
+          "category": "parks",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "no_water_supply",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "ಕುಡಿಯುವ ನೀರು ಬರುತ್ತಿಲ್ಲ",
+          "location_text": "general location"
+        },
+        {
+          "category": "roads",
+          "subcategory": "damaged_road",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "ರಸ್ತೆ ಹಾಳಾಗಿದೆ",
+          "location_text": "general location"
+        },
+        {
+          "category": "parks",
+          "subcategory": "broken_fence",
+          "priority": "low",
+          "confidence": 0.82,
+          "excerpt": "ಉದ್ಯಾನದ ಬೇಲಿ ಮುರಿದಿದೆ",
+          "location_text": "ಉದ್ಯಾನ"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.3333333333333333,
+      "precision": 0.3333333333333333,
+      "priority_matched": 1,
+      "priority_over": 1,
+      "priority_under": 1,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ट्रान्सफॉर्मरमधून ठिणग्या उडत आहेत. बाजूच्या मोकळ्या जागेत बांधकामाचा राडारोडा टाकला आहे. आणि रात्री तिथे लोक दारू पिऊन गोंधळ घालतात.",
+      "lang": "mr",
+      "tags": [
+        "confidence_variance"
+      ],
+      "note": "One unambiguous critical plus two murky items: C&D debris as garbage-haulage is arguable, and public nuisance has no service-wing owner.",
+      "borderline": true,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        },
+        {
+          "category": "other",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "transformer_sparking",
+          "priority": "critical",
+          "confidence": 0.9,
+          "excerpt": "ट्रान्सफॉर्मरमधून ठिणग्या उडत आहेत.",
+          "location_text": "बाजूच्या मोकळ्या जागेत"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "illegal_dumping",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "बाजूच्या मोकळ्या जागेत बांधकामाचा राडारोडा टाकला आहे.",
+          "location_text": "बाजूच्या मोकळ्या जागेत"
+        },
+        {
+          "category": "other",
+          "subcategory": "public_nuisance",
+          "priority": "low",
+          "confidence": 0.8,
+          "excerpt": "रात्री तिथे लोक दारू पिऊन गोंधळ घालतात.",
+          "location_text": "तिथे"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "स्कूल के सामने गड्ढे में रोज़ बच्चे गिरते हैं। पास में एक खंडहर मकान कभी भी गिर सकता है। और पार्क के झूले टूटे हैं जिन पर बच्चे अब भी खेलते हैं।",
+      "lang": "hi",
+      "tags": [
+        "confidence_variance"
+      ],
+      "note": "Children falling daily makes the pothole clearly high; the derelict building is ambiguous in category but clearly serious; broken swings still in use sit between medium and high.",
+      "borderline": true,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "high"
+        },
+        {
+          "category": "other",
+          "priority": "high"
+        },
+        {
+          "category": "parks",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "high",
+          "confidence": 0.82,
+          "excerpt": "स्कूल के सामने गड्ढे में रोज़ बच्चे गिरते हैं",
+          "location_text": "स्कूल के सामने"
+        },
+        {
+          "category": "other",
+          "subcategory": "unsafe_structure",
+          "priority": "critical",
+          "confidence": 0.85,
+          "excerpt": "पास में एक खंडहर मकान कभी भी गिर सकता है",
+          "location_text": "पास में"
+        },
+        {
+          "category": "parks",
+          "subcategory": "broken_equipment",
+          "priority": "high",
+          "confidence": 0.8,
+          "excerpt": "पार्क के झूले टूटे हैं जिन पर बच्चे अब भी खेलते हैं",
+          "location_text": "पार्क"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.3333333333333333,
+      "precision": 0.3333333333333333,
+      "priority_matched": 1,
+      "priority_over": 2,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "A live wire is sparking above the lane. A neighbour's tree branches are hanging over the public footpath. And someone has set up a tea stall on the pavement without any licence.",
+      "lang": "en",
+      "tags": [
+        "confidence_variance"
+      ],
+      "note": "Obvious critical first, then two other-category items: private vegetation over public space is other per the boundary rule, and unlicensed vending is an enforcement matter at low.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "other",
+          "priority": "medium"
+        },
+        {
+          "category": "other",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "live_wire_hazard",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "live wire is sparking above the lane",
+          "location_text": "the lane"
+        },
+        {
+          "category": "other",
+          "subcategory": "vegetation_hazard",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "neighbour's tree branches are hanging over the public footpath",
+          "location_text": "public footpath"
+        },
+        {
+          "category": "other",
+          "subcategory": "unlicensed_activity",
+          "priority": "low",
+          "confidence": 0.85,
+          "excerpt": "someone has set up a tea stall on the pavement without any licence",
+          "location_text": "pavement"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "নর্দমার জল রাস্তায় উপচে পড়ছে। গরু রাস্তার মাঝখানে বসে থাকে। আর রাতে লাউডস্পিকার বাজে।",
+      "lang": "bn",
+      "tags": [
+        "confidence_variance"
+      ],
+      "note": "Cattle sitting in the road are an obstruction, so roads under the animal-control exception, not other. Loudspeaker noise has no service-wing owner.",
+      "borderline": true,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        },
+        {
+          "category": "roads",
+          "priority": "high"
+        },
+        {
+          "category": "other",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "sewage_overflow",
+          "priority": "high",
+          "confidence": 0.82,
+          "excerpt": "নর্দমার জল রাস্তায় উপচে পড়ছে",
+          "location_text": "রাস্তায়"
+        },
+        {
+          "category": "roads",
+          "subcategory": "animal_obstruction",
+          "priority": "high",
+          "confidence": 0.78,
+          "excerpt": "গরু রাস্তার মাঝখানে বসে থাকে",
+          "location_text": "রাস্তার মাঝখানে"
+        },
+        {
+          "category": "other",
+          "subcategory": "noise_nuisance",
+          "priority": "low",
+          "confidence": 0.75,
+          "excerpt": "রাতে লাউডস্পিকার বাজে",
+          "location_text": "রাতে"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "குடிநீரில் அழுக்கு கலந்து வருகிறது. அருகில் அனுமதியின்றி கட்டிடம் கட்டுகிறார்கள். பூங்காவின் ஒரு பகுதியை யாரோ ஆக்கிரமித்துள்ளனர்.",
+      "lang": "ta",
+      "tags": [
+        "confidence_variance"
+      ],
+      "note": "Contamination is the clear one; unauthorised construction is other (licensing), and park encroachment is ambiguous between parks-asset and other-enforcement.",
+      "borderline": true,
+      "expected_departments": [
+        {
+          "category": "water_supply",
+          "priority": "high"
+        },
+        {
+          "category": "other",
+          "priority": "medium"
+        },
+        {
+          "category": "parks",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "water_supply",
+          "subcategory": "contamination",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "குடிநீரில் அழுக்கு கலந்து வருகிறது",
+          "location_text": "அருகில்"
+        },
+        {
+          "category": "other",
+          "subcategory": "unauthorized_construction",
+          "priority": "medium",
+          "confidence": 0.75,
+          "excerpt": "அனுமதியின்றி கட்டிடம் கட்டுகிறார்கள்",
+          "location_text": "அருகில்"
+        },
+        {
+          "category": "parks",
+          "subcategory": "encroachment",
+          "priority": "medium",
+          "confidence": 0.78,
+          "excerpt": "பூங்காவின் ஒரு பகுதியை யாரோ ஆக்கிரமித்துள்ளனர்",
+          "location_text": "பூங்கா"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "కరెంటు స్తంభం విరిగి పడింది. పక్కనే ఎవరో చెత్తను తగలబెడుతున్నారు. వీధి కుక్కలు కూడా గుంపుగా తిరుగుతున్నాయి.",
+      "lang": "te",
+      "tags": [
+        "confidence_variance"
+      ],
+      "note": "Fallen pole is critical; burning waste is a health disruption at high and the thing burnt is refuse so garbage owns it; roaming dogs with no bite stated are other at medium.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "garbage",
+          "priority": "high"
+        },
+        {
+          "category": "other",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "broken_pole",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "కరెంటు స్తంభం విరిగి పడింది",
+          "location_text": "లొకేషన్ పేర్కొనలేదు"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "illegal_burning",
+          "priority": "high",
+          "confidence": 0.8,
+          "excerpt": "చెత్తను తగలబెడుతున్నారు",
+          "location_text": "పక్కనే"
+        },
+        {
+          "category": "other",
+          "subcategory": "stray_animals",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "వీధి కుక్కలు కూడా గుంపుగా తిరుగుతున్నాయి",
+          "location_text": "లొకేషన్ పేర్కొనలేదు"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ಮ್ಯಾನ್‌ಹೋಲ್ ತೆರೆದೇ ಇದೆ. ಯಾರೋ ತಮ್ಮ ಮನೆಯ ಚರಂಡಿಯನ್ನು ನೇರವಾಗಿ ರಸ್ತೆಗೆ ಬಿಟ್ಟಿದ್ದಾರೆ. ಬೀದಿಯ ಫಲಕ ಮಾಸಿ ಹೋಗಿದೆ.",
+      "lang": "kn",
+      "tags": [
+        "confidence_variance"
+      ],
+      "note": "Open manhole is the clear high; an illegal private drain connection is an enforcement matter (other); a faded sign is trivial.",
+      "borderline": true,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        },
+        {
+          "category": "other",
+          "priority": "medium"
+        },
+        {
+          "category": "other",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "open_manhole",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "ಮ್ಯಾನ್ಹೋಲ್ ತೆರೆದೇ ಇದೆ.",
+          "location_text": "ಬೀಧಿ"
+        },
+        {
+          "category": "other",
+          "subcategory": "illegal_drain_discharge",
+          "priority": "medium",
+          "confidence": 0.72,
+          "excerpt": "ಯಾರೋ ತಮ್ಮ ಮನೆಯ ಚರಂಡಿಯನ್ನು ನೇರವಾಗಿ ರಸ್ತೆಗೆ ಬಿಟ್ಟಿದ್ದಾರೆ.",
+          "location_text": "ರಸ್ತೆ"
+        },
+        {
+          "category": "other",
+          "subcategory": "faded_nameplate",
+          "priority": "low",
+          "confidence": 0.75,
+          "excerpt": "ಬೀದಿಯ ಫಲಕ ಮಾಸಿ ಹೋಗಿದೆ.",
+          "location_text": "ಬೀಧಿ"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 3,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Transformer se spark nikal raha hai. Ek badi hoarding tedhi ho kar latak rahi hai. Aur park me log kachra phenk kar jaate hain.",
+      "lang": "hinglish",
+      "tags": [
+        "confidence_variance"
+      ],
+      "note": "Sparking transformer is critical; a leaning hoarding about to fall is a structural risk with no service-wing owner (other, high); casual littering in a park is minor.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "other",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "low"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "transformer_hazard",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "Transformer se spark nikal raha hai",
+          "location_text": "site location"
+        },
+        {
+          "category": "roads",
+          "subcategory": "hanging_structure",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "Ek badi hoarding tedhi ho kar latak rahi hai",
+          "location_text": "site location"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "illegal_dumping",
+          "priority": "medium",
+          "confidence": 0.9,
+          "excerpt": "park me log kachra phenk kar jaate hain",
+          "location_text": "park"
+        }
+      ],
+      "expected_count": 3,
+      "got_count": 3,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": false,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 1,
+      "recall": 0.3333333333333333,
+      "precision": 0.3333333333333333,
+      "priority_matched": 1,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 2,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Toofan ke baad - ped gir kar main road band hai, bijli ka taar spark kar raha hai, poori colony ka paani band hai, saari street lights band hain, aur park ke benches ka rang utar gaya hai.",
+      "lang": "hinglish",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT. Five departments named; peeling bench paint is the unambiguous lowest and is dropped.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "roads",
+          "priority": "high"
+        },
+        {
+          "category": "water_supply",
+          "priority": "high"
+        },
+        {
+          "category": "streetlights",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "fallen_tree",
+          "priority": "high",
+          "confidence": 0.9,
+          "excerpt": "ped gir kar main road band hai",
+          "location_text": "main road"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "sparking_wire",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "bijli ka taar spark kar raha hai",
+          "location_text": "colony"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "no_supply",
+          "priority": "high",
+          "confidence": 0.9,
+          "excerpt": "poori colony ka paani band hai",
+          "location_text": "poori colony"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "multiple_lamps_out",
+          "priority": "medium",
+          "confidence": 0.88,
+          "excerpt": "saari street lights band hain",
+          "location_text": "colony"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 0.75,
+      "precision": 0.75,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "எங்கள் பகுதியில் - சாக்கடை சாலையில் பாய்கிறது, குப்பை ஒரு வாரமாக எடுக்கவில்லை, தெரு விளக்குகள் எதுவும் எரியவில்லை, மூன்று நாட்களாக குடிநீர் இல்லை, பூங்கா வாயில் உடைந்துள்ளது.",
+      "lang": "ta",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT. Broken park gate is dropped as least consequential. Garbage stays medium: a week with no new consequence does not escalate.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        },
+        {
+          "category": "streetlights",
+          "priority": "high"
+        },
+        {
+          "category": "water_supply",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "sewage_overflow",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "சாக்கடை சாலையில் பாய்கிறது",
+          "location_text": "எங்கள் பகுதியில்"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "missed_collection",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "குப்பை ஒரு வாரமாக எடுக்கவில்லை",
+          "location_text": "எங்கள் பகுதியில்"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "multiple_lamps_out",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "தெரு விளக்குகள் எதுவும் எரியவில்லை",
+          "location_text": "எங்கள் பகுதியில்"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "no_supply",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "மூன்று நாட்களாக குடிநீர் இல்லை",
+          "location_text": "எங்கள் பகுதியில்"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 0.75,
+      "precision": 0.75,
+      "priority_matched": 3,
+      "priority_over": 0,
+      "priority_under": 1,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "ನಮ್ಮ ವಾರ್ಡಿನಲ್ಲಿ - ರಸ್ತೆಯಲ್ಲಿ ಗುಂಡಿ ಮತ್ತು ಅಪಘಾತಗಳಾಗುತ್ತಿವೆ, ಕಂಬದಿಂದ ತಂತಿ ಜೋತಾಡುತ್ತಿದೆ, ಚರಂಡಿ ಕಟ್ಟಿಕೊಂಡಿದೆ, ಸತ್ತ ನಾಯಿ ಮೂರು ದಿನಗಳಿಂದ ಬಿದ್ದಿದೆ, ಉದ್ಯಾನದ ಬೆಂಚು ಮುರಿದಿದೆ.",
+      "lang": "kn",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT with a mixed-priority cap: the retained four are not all high, so a model cannot pass by keeping only the highs. Broken bench dropped.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "high"
+        },
+        {
+          "category": "electricity",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "high"
+        },
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "dangling_wire",
+          "priority": "critical",
+          "confidence": 0.9,
+          "excerpt": "ಕಂಬದಿಂದ ತಂತಿ ಜೋತಾಡುತ್ತಿದೆ",
+          "location_text": "ನಮ್ಮ ವಾರ್ಡಿನಲ್ಲಿ - ರಸ್ತೆ"
+        },
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "ರಸ್ತೆಯಲ್ಲಿ ಗುಂಡಿ ಮತ್ತು ಅಪಘಾತಗಳಾಗುತ್ತಿವೆ",
+          "location_text": "ನಮ್ಮ ವಾರ್ಡಿನಲ್ಲಿ - ರಸ್ತೆ"
+        },
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "ಚರಂಡಿ ಕಟ್ಟಿಕೊಂಡಿದೆ",
+          "location_text": "ನಮ್ಮ ವಾರ್ಡಿನಲ್ಲಿ"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "carcass",
+          "priority": "high",
+          "confidence": 0.87,
+          "excerpt": "ಸತ್ತ ನಾಯಿ ಮೂರು ದಿನಗಳಿಂದ ಬಿದ್ದಿದೆ",
+          "location_text": "ನಮ್ಮ ವಾರ್ಡಿನಲ್ಲಿ"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 2,
+      "priority_over": 2,
+      "priority_under": 0,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Our ward has several problems: sewage is flowing across the main road, a live wire is sparking near the bus stop, the borewell has stopped working so nobody has water, two streetlights are out, and the notice board at the park has fallen down.",
+      "lang": "en",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT. The fallen notice board is dropped. Note two lamps out is medium, not the area-outage high.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        },
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "water_supply",
+          "priority": "high"
+        },
+        {
+          "category": "streetlights",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "sewage_overflow",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "sewage is flowing across the main road",
+          "location_text": "main road"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "sparking_wire",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "a live wire is sparking",
+          "location_text": "near the bus stop"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "borewell_failure",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "the borewell has stopped working so nobody has water",
+          "location_text": "our ward"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "lights_out",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "two streetlights are out",
+          "location_text": "our ward"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 4,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 4,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "हमारे इलाके में - सड़क धंस गई है, बिजली का खंभा झुका है, नाली बंद है, कूड़ा नहीं उठता, और पार्क का फाटक टूटा है।",
+      "lang": "hi",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT. Broken park gate dropped. A road cave-in is an obstruction/hazard at high; leaning pole high; the other two routine.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "roads",
+          "priority": "high"
+        },
+        {
+          "category": "electricity",
+          "priority": "high"
+        },
+        {
+          "category": "drainage",
+          "priority": "medium"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "roads",
+          "subcategory": "cave_in",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "सड़क धंस गई है",
+          "location_text": "हमारे इलाके में"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "leaning_pole",
+          "priority": "high",
+          "confidence": 0.8,
+          "excerpt": "बिजली का खंभा झुका है",
+          "location_text": "हमारे इलाके में"
+        },
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "नाली बंद है",
+          "location_text": "हमारे इलाके में"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "missed_collection",
+          "priority": "medium",
+          "confidence": 0.78,
+          "excerpt": "कूड़ा नहीं उठता",
+          "location_text": "हमारे इलाके में"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 4,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 4,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "আমাদের এলাকায় - নর্দমা উপচে পড়ছে, তার ঝুলছে, তিন দিন জল নেই, আবর্জনা জমে আছে, আর পার্কের বেঞ্চ ভাঙা।",
+      "lang": "bn",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT. Broken bench dropped as the only low-consequence item.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        },
+        {
+          "category": "electricity",
+          "priority": "high"
+        },
+        {
+          "category": "water_supply",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "sewage_overflow",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "নর্দমা উপচে পড়ছে",
+          "location_text": "আমাদের এলাকায়"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "dangling_wires",
+          "priority": "critical",
+          "confidence": 0.9,
+          "excerpt": "তার ঝুলছে",
+          "location_text": "আমাদের এলাকায়"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "no_supply",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "তিন দিন জল নেই",
+          "location_text": "আমাদের এলাকায়"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "waste_accumulation",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "আবর্জনা জমে আছে",
+          "location_text": "আমাদের এলাকায়"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 0.75,
+      "precision": 0.75,
+      "priority_matched": 3,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "आमच्या भागात - रस्त्यावर खड्डे आहेत, वीजेचे तार तुटले आहेत आणि ठिणग्या उडत आहेत, पाणी येत नाही, कचरा उचलला जात नाही, आणि उद्यानातील फलक मोडला आहे.",
+      "lang": "mr",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT where only ONE item is severe: the sparking broken wire is critical, the rest are ordinary. Park signboard dropped. Tests that the cap keeps the most consequential rather than the first four mentioned.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "roads",
+          "priority": "medium"
+        },
+        {
+          "category": "water_supply",
+          "priority": "medium"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "live_wire_hazard",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "वीजेचे तार तुटले आहेत आणि ठिणग्या उडत आहेत",
+          "location_text": "आमच्या भागात"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "no_supply",
+          "priority": "high",
+          "confidence": 0.9,
+          "excerpt": "पाणी येत नाही",
+          "location_text": "आमच्या भागात"
+        },
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "रस्त्यावर खड्डे आहेत",
+          "location_text": "आमच्या भागात"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "missed_collection",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "कचरा उचलला जात नाही",
+          "location_text": "आमच्या भागात"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 3,
+      "recall": 0.75,
+      "precision": 0.75,
+      "priority_matched": 3,
+      "priority_over": 1,
+      "priority_under": 0,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "మా వార్డులో - మ్యాన్‌హోల్ తెరిచి ఉంది, వీధి దీపాలు ఏవీ వెలగడం లేదు, చెత్త వారం నుండి పేరుకుపోయింది, రోడ్డు పాడైంది, పార్కు గేటు విరిగింది.",
+      "lang": "te",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT. Park gate dropped. Open manhole and a total lighting outage are the two highs.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        },
+        {
+          "category": "streetlights",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "medium"
+        },
+        {
+          "category": "roads",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "open_manhole",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "మ్యాన్‌హోల్ తెరిచి ఉంది",
+          "location_text": "మా వార్డులో"
+        },
+        {
+          "category": "streetlights",
+          "subcategory": "area_outage",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "వీధి దీపాలు ఏవీ వెలగడం లేదు",
+          "location_text": "మా వార్డులో"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "uncollected_waste",
+          "priority": "high",
+          "confidence": 0.82,
+          "excerpt": "చెత్త వారం నుండి పేరుకుపోయింది",
+          "location_text": "మా వార్డులో"
+        },
+        {
+          "category": "roads",
+          "subcategory": "damaged_road",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "రోడ్డు పాడైంది",
+          "location_text": "మా వార్డులో"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": false,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 2,
+      "recall": 0.5,
+      "precision": 0.5,
+      "priority_matched": 2,
+      "priority_over": 1,
+      "priority_under": 1,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "There are many issues on our street: a transformer is sparking, the road has caved in and a car got stuck this morning, sewage is overflowing, garbage has not been collected for ten days and rats are around, the streetlights are out, and the park hedge needs trimming.",
+      "lang": "en",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT with SIX issues named, the hardest cap: streetlights and the park hedge are both dropped. The cave-in reaches critical because a vehicle is already stuck.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "roads",
+          "priority": "critical"
+        },
+        {
+          "category": "drainage",
+          "priority": "high"
+        },
+        {
+          "category": "garbage",
+          "priority": "high"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "transformer_hazard",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "transformer is sparking",
+          "location_text": "our street"
+        },
+        {
+          "category": "roads",
+          "subcategory": "cave_in",
+          "priority": "critical",
+          "confidence": 0.92,
+          "excerpt": "road has caved in and a car got stuck this morning",
+          "location_text": "our street"
+        },
+        {
+          "category": "drainage",
+          "subcategory": "sewage_overflow",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "sewage is overflowing",
+          "location_text": "our street"
+        },
+        {
+          "category": "garbage",
+          "subcategory": "uncollected_waste",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "garbage has not been collected for ten days and rats are around",
+          "location_text": "our street"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 4,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 4,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "Hamare area me - manhole khula hai, taar latak raha hai, naali jam hai, paani nahi aa raha, aur park ka board toota hai.",
+      "lang": "hinglish",
+      "tags": [
+        "max_limit",
+        "same_category_split"
+      ],
+      "note": "MAX LIMIT with TWO drainage entries at different priorities: the open manhole (high) and the jammed drain (medium) are separate chambers needing separate work. Park board dropped.",
+      "borderline": true,
+      "expected_departments": [
+        {
+          "category": "drainage",
+          "priority": "high"
+        },
+        {
+          "category": "electricity",
+          "priority": "high"
+        },
+        {
+          "category": "water_supply",
+          "priority": "medium"
+        },
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "drainage",
+          "subcategory": "open_manhole",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "manhole khula hai",
+          "location_text": "Hamare area me"
+        },
+        {
+          "category": "electricity",
+          "subcategory": "hanging_wire",
+          "priority": "high",
+          "confidence": 0.88,
+          "excerpt": "taar latak raha hai",
+          "location_text": "Hamare area me"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "no_supply",
+          "priority": "medium",
+          "confidence": 0.82,
+          "excerpt": "paani nahi aa raha",
+          "location_text": "Hamare area me"
+        },
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "naali jam hai",
+          "location_text": "Hamare area me"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 4,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 4,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "हमारी कॉलोनी में - बिजली नहीं है, पानी नहीं है, सड़क टूटी है, नाली जाम है, कूड़ा पड़ा है, और स्ट्रीट लाइट भी बंद है।",
+      "lang": "hi",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT with SIX flatly-listed issues and no severity cues at all, forcing the cap to be decided on department consequence alone. Garbage and streetlights dropped as the two least consequential.",
+      "borderline": true,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "high"
+        },
+        {
+          "category": "water_supply",
+          "priority": "high"
+        },
+        {
+          "category": "roads",
+          "priority": "medium"
+        },
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "power_outage",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "बिजली नहीं है",
+          "location_text": "हमारी कॉलोनी में"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "no_supply",
+          "priority": "high",
+          "confidence": 0.85,
+          "excerpt": "पानी नहीं है",
+          "location_text": "हमारी कॉलोनी में"
+        },
+        {
+          "category": "roads",
+          "subcategory": "broken_road",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "सड़क टूटी है",
+          "location_text": "हमारी कॉलोनी में"
+        },
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.8,
+          "excerpt": "नाली जाम है",
+          "location_text": "हमारी कॉलोनी में"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 4,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 4,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    },
+    {
+      "text": "আমাদের পাড়ায় অনেক সমস্যা - বিদ্যুতের তার ছিঁড়ে ঝুলছে ও স্ফুলিঙ্গ বেরোচ্ছে, রাস্তায় বড় গর্ত ও দুর্ঘটনা ঘটছে, জল আসছে না, নর্দমা বন্ধ, আর পার্কের আলো নষ্ট।",
+      "lang": "bn",
+      "tags": [
+        "max_limit"
+      ],
+      "note": "MAX LIMIT. Park light dropped. Sparking snapped wire is critical; accidents already happening lift the pothole to high.",
+      "borderline": false,
+      "expected_departments": [
+        {
+          "category": "electricity",
+          "priority": "critical"
+        },
+        {
+          "category": "roads",
+          "priority": "high"
+        },
+        {
+          "category": "water_supply",
+          "priority": "medium"
+        },
+        {
+          "category": "drainage",
+          "priority": "medium"
+        }
+      ],
+      "got_departments": [
+        {
+          "category": "electricity",
+          "subcategory": "live_wire_hazard",
+          "priority": "critical",
+          "confidence": 0.95,
+          "excerpt": "বিদ্যুতের তার ছিঁড়ে ঝুলছে ও স্ফুলিঙ্গ বেরোচ্ছে",
+          "location_text": "আমাদের পাড়ায়"
+        },
+        {
+          "category": "roads",
+          "subcategory": "pothole",
+          "priority": "high",
+          "confidence": 0.92,
+          "excerpt": "রাস্তায় বড় গর্ত ও দুর্ঘটনা ঘটছে",
+          "location_text": "রাস্তায়"
+        },
+        {
+          "category": "water_supply",
+          "subcategory": "no_supply",
+          "priority": "medium",
+          "confidence": 0.88,
+          "excerpt": "জল আসছে না",
+          "location_text": "আমাদের পাড়ায়"
+        },
+        {
+          "category": "drainage",
+          "subcategory": "blocked_drain",
+          "priority": "medium",
+          "confidence": 0.85,
+          "excerpt": "নর্দমা বন্ধ",
+          "location_text": "আমাদের পাড়ায়"
+        }
+      ],
+      "expected_count": 4,
+      "got_count": 4,
+      "exact_ok": true,
+      "count_ok": true,
+      "category_set_ok": true,
+      "split_decision_ok": true,
+      "over_split": false,
+      "under_split": false,
+      "matched": 4,
+      "recall": 1.0,
+      "precision": 1.0,
+      "priority_matched": 4,
+      "priority_over": 0,
+      "priority_under": 0,
+      "priority_comparable": 4,
+      "exceeded_cap": false,
+      "is_split_consistent": true,
+      "source": "gemini",
+      "fallback": false,
+      "error": null
+    }
+  ]
+}

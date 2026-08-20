@@ -9,6 +9,8 @@ from .service import (
     normalize_text,
     describe_image,
     classify_complaint,
+    classify_from_raw_input,
+    split_departments,
     embed_text,
 )
 
@@ -17,5 +19,7 @@ __all__ = [
     "normalize_text",
     "describe_image",
     "classify_complaint",
+    "classify_from_raw_input",
+    "split_departments",
     "embed_text",
 ]

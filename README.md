@@ -72,4 +72,4 @@ Every function times out, retries twice, then returns a safe fallback with `"fal
 ## What's next (Phase 2 / Phase 3, not built yet)
 
 - Phase 2 (SLA + escalation) needs no new AI function — that's backend/scheduling logic.
-- Phase 3 adds `split_departments(text, classification)` for multi-department complaints. Build this only once Phase 1 has been tested against real backend integration.
+- Phase 3 adds `split_departments(text, classification)` for multi-department complaints. Build this only once Phase 1 has been tested against real backend integration. Output contract is locked in `docs/SPLIT_DEPARTMENTS_DESIGN.md`.

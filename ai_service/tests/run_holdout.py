@@ -18,6 +18,15 @@ Options:
     --start N       Skip the first N cases (for resuming a chunked run)
     --limit N       Only run N cases
     --delay N       Seconds between API calls (default 15, for free-tier limits)
+    --batch N       TEST-ONLY: classify N cases per API call instead of one
+                     per call (see ai_service/tests/batch_classify.py). Cuts
+                     request count by ~Nx — use this when a provider's
+                     per-day or per-minute request-count limit, not raw
+                     throughput, is what's blocking a full run. Forces raw
+                     mode (no translation, incompatible with --normalize /
+                     --smart-normalize) and always tries Gemini then falls
+                     back to Groq for the whole batch, mirroring the
+                     production provider chain at the batch level.
 
 WHICH PATH AM I TESTING?
     By default this calls classify_complaint(raw_text) directly, which is what
@@ -44,6 +53,14 @@ import sys
 import time
 from collections import Counter, defaultdict
 
+# The holdout set is 3/4 non-English and the report prints complaint text in
+# its original script. On a Windows console defaulting to cp1252 that is an
+# immediate UnicodeEncodeError — and because report() runs BEFORE the results
+# file is written, that crash used to destroy a completed 200-case run's
+# output. Force UTF-8 and degrade unencodable characters instead.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 from ai_service.categories import HUMAN_REVIEW_CONFIDENCE_THRESHOLD
 from ai_service.service import (
     _detect_native_script,
@@ -51,6 +68,7 @@ from ai_service.service import (
     classify_from_raw_input,
     normalize_text,
 )
+from ai_service.tests import batch_classify
 from ai_service.tests.holdout_set import HOLDOUT_SET
 
 MODE_LABELS = {
@@ -73,6 +91,53 @@ def _accepted_priorities(case: dict) -> list:
 def _truncate(text: str, length: int = 60) -> str:
     text = " ".join(text.split())
     return text if len(text) <= length else text[: length - 1] + "…"
+
+
+def _mark_for(row: dict) -> str:
+    if row.get("source") == "error":
+        return "!"
+    if row.get("source") == "fallback":
+        return "-"
+    if row["exact_ok"]:
+        return "OK"
+    if row["category_ok"]:
+        return "~"   # right department, wrong urgency
+    return "X"
+
+
+def _build_row(case: dict, result: dict, *, normalized_text=None, detected_language=None,
+                detected_script=None, took_translation_path=None) -> dict:
+    """Turns one classification result into the row shape report() expects.
+    Shared by run_case() (one API call per case) and run_batch_chunk() (one
+    API call per N cases) so both paths score identically regardless of how
+    the answer was obtained."""
+    got_category = result.get("category")
+    got_priority = result.get("priority")
+    category_ok = got_category in _accepted_categories(case)
+    priority_ok = got_priority in _accepted_priorities(case)
+
+    return {
+        "text": case["text"],
+        "normalized_text": normalized_text,
+        "detected_language": detected_language,
+        "detected_script": detected_script,
+        "took_translation_path": took_translation_path,
+        "expected_category": case["expected_category"],
+        "expected_priority": case["expected_priority"],
+        "got_category": got_category,
+        "got_priority": got_priority,
+        "category_ok": category_ok,
+        "priority_ok": priority_ok,
+        "exact_ok": category_ok and priority_ok,
+        "confidence": result.get("confidence", 0.0),
+        "source": result.get("source", "?"),
+        "summary": result.get("summary"),
+        "location_text": result.get("location_text"),
+        "borderline": bool(case.get("borderline")),
+        "note": case.get("note"),
+        "lang": case.get("lang"),
+        "tags": case.get("tags"),
+    }
 
 
 def run_case(case: dict, mode: str) -> dict:
@@ -111,33 +176,29 @@ def run_case(case: dict, mode: str) -> dict:
             "source": "error",
         }
 
-    got_category = result.get("category")
-    got_priority = result.get("priority")
-    category_ok = got_category in _accepted_categories(case)
-    priority_ok = got_priority in _accepted_priorities(case)
+    return _build_row(
+        case, result,
+        normalized_text=text if mode == "normalize" else None,
+        detected_language=language,
+        detected_script=detected_script,
+        took_translation_path=took_translation_path,
+    )
 
-    return {
-        "text": case["text"],
-        "normalized_text": text if mode == "normalize" else None,
-        "detected_language": language,
-        "detected_script": detected_script,
-        "took_translation_path": took_translation_path,
-        "expected_category": case["expected_category"],
-        "expected_priority": case["expected_priority"],
-        "got_category": got_category,
-        "got_priority": got_priority,
-        "category_ok": category_ok,
-        "priority_ok": priority_ok,
-        "exact_ok": category_ok and priority_ok,
-        "confidence": result.get("confidence", 0.0),
-        "source": result.get("source", "?"),
-        "summary": result.get("summary"),
-        "location_text": result.get("location_text"),
-        "borderline": bool(case.get("borderline")),
-        "note": case.get("note"),
-        "lang": case.get("lang"),
-        "tags": case.get("tags"),
-    }
+
+def run_batch_chunk(chunk: list) -> list:
+    """TEST-ONLY: classifies a chunk of holdout cases in ONE API call via
+    ai_service.tests.batch_classify, and returns row dicts in the same
+    shape run_case() produces. Always raw mode (no translation) — see
+    batch_classify's module docstring for why. Never raises."""
+    texts = [c["text"] for c in chunk]
+    try:
+        results = batch_classify.classify_batch(texts)
+    except Exception as exc:  # noqa: BLE001 — a scorer must never crash mid-run
+        return [
+            {"text": c["text"], "error": f"{type(exc).__name__}: {exc}", "source": "error"}
+            for c in chunk
+        ]
+    return [_build_row(case, result) for case, result in zip(chunk, results)]
 
 
 def report(rows: list, mode: str) -> dict:
@@ -339,6 +400,9 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="only run N cases")
     parser.add_argument("--delay", type=float, default=15.0,
                         help="seconds between calls (default 15 for free-tier limits)")
+    parser.add_argument("--batch", type=int, default=None,
+                        help="TEST-ONLY: classify N cases per API call instead of 1 "
+                             "(cuts request count ~Nx; incompatible with --normalize/--smart-normalize)")
     args = parser.parse_args()
 
     if args.smart_normalize:
@@ -347,6 +411,11 @@ def main():
         mode = "normalize"
     else:
         mode = "raw"
+
+    if args.batch and mode != "raw":
+        parser.error("--batch always runs raw (no translation) — drop --normalize/--smart-normalize to use it")
+    if args.batch is not None and args.batch < 1:
+        parser.error("--batch must be at least 1")
 
     cases = HOLDOUT_SET[args.start:]
     if args.limit:
@@ -358,14 +427,17 @@ def main():
     # case of "every case translates".
     will_translate = [_detect_native_script(c["text"]) is not None for c in cases] if mode == "smart" else None
 
-    if mode == "normalize":
+    if args.batch:
+        total_calls = -(-len(cases) // args.batch)  # ceil division
+    elif mode == "normalize":
         total_calls = len(cases) * 2
     elif mode == "smart":
         total_calls = sum(2 if t else 1 for t in will_translate)
     else:
         total_calls = len(cases)
     est_minutes = (total_calls * args.delay) / 60
-    print(f"\nRunning {len(cases)} holdout cases ({MODE_LABELS[mode]}),"
+    batch_note = f", {args.batch} cases/call" if args.batch else ""
+    print(f"\nRunning {len(cases)} holdout cases ({MODE_LABELS[mode]}{batch_note}),"
           f" {args.delay:g}s between calls ({total_calls} calls total).")
     print(f"Estimated runtime: ~{est_minutes:.0f} minutes. Progress prints as it goes.\n")
 
@@ -373,37 +445,55 @@ def main():
     os.makedirs(RESULTS_DIR, exist_ok=True)
     partial_path = os.path.join(RESULTS_DIR, "_partial.json")
 
-    for i, case in enumerate(cases):
-        if i > 0:
-            time.sleep(args.delay)
-        if i > 0 and (mode == "normalize" or (mode == "smart" and will_translate[i])):
-            time.sleep(args.delay)  # this case makes a second API call, give it its own slot
+    if args.batch:
+        chunks = [cases[i:i + args.batch] for i in range(0, len(cases), args.batch)]
+        done = 0
+        for ci, chunk in enumerate(chunks):
+            if ci > 0:
+                time.sleep(args.delay)
 
-        row = run_case(case, mode)
-        rows.append(row)
+            chunk_rows = run_batch_chunk(chunk)
+            rows.extend(chunk_rows)
+            done += len(chunk)
 
-        # Save after every case — a 25-minute run should never lose its work
-        # to a crash or a Ctrl-C on case 29.
-        with open(partial_path, "w", encoding="utf-8") as fh:
-            json.dump(rows, fh, ensure_ascii=False, indent=2)
+            with open(partial_path, "w", encoding="utf-8") as fh:
+                json.dump(rows, fh, ensure_ascii=False, indent=2)
 
-        if row.get("source") == "error":
-            mark = "!"
-        elif row.get("source") == "fallback":
-            mark = "-"
-        elif row["exact_ok"]:
-            mark = "OK"
-        elif row["category_ok"]:
-            mark = "~"   # right department, wrong urgency
-        else:
-            mark = "X"
-        print(f"  [{args.start + i + 1:>2}/{args.start + len(cases)}] {mark:<2} "
-              f"{_truncate(case['text'], 56)}")
+            print(f"  [batch {ci + 1}/{len(chunks)}] {len(chunk)} cases -> "
+                  f"{' '.join(_mark_for(r) for r in chunk_rows)}   "
+                  f"({args.start + done}/{args.start + len(cases)} done)")
+    else:
+        for i, case in enumerate(cases):
+            if i > 0:
+                time.sleep(args.delay)
+            if i > 0 and (mode == "normalize" or (mode == "smart" and will_translate[i])):
+                time.sleep(args.delay)  # this case makes a second API call, give it its own slot
+
+            row = run_case(case, mode)
+            rows.append(row)
+
+            # Save after every case — a 25-minute run should never lose its work
+            # to a crash or a Ctrl-C on case 29.
+            with open(partial_path, "w", encoding="utf-8") as fh:
+                json.dump(rows, fh, ensure_ascii=False, indent=2)
+
+            print(f"  [{args.start + i + 1:>2}/{args.start + len(cases)}] {_mark_for(row):<2} "
+                  f"{_truncate(case['text'], 56)}")
+
+    suffix = {"raw": "raw", "normalize": "normalized", "smart": "smart"}[mode]
+    if args.batch:
+        suffix += f"_batch{args.batch}"
+    out_path = os.path.join(RESULTS_DIR, f"holdout_{suffix}.json")
+
+    # Write the rows BEFORE reporting. report() only formats what is already
+    # decided, but it is also the one part of this script that can still
+    # raise (it prints complaint text, sorts, divides) — and a crash there
+    # after a full run would otherwise throw away every API call just spent.
+    with open(out_path, "w", encoding="utf-8") as fh:
+        json.dump({"summary": None, "rows": rows}, fh, ensure_ascii=False, indent=2)
 
     summary = report(rows, mode)
 
-    suffix = {"raw": "raw", "normalize": "normalized", "smart": "smart"}[mode]
-    out_path = os.path.join(RESULTS_DIR, f"holdout_{suffix}.json")
     with open(out_path, "w", encoding="utf-8") as fh:
         json.dump({"summary": summary, "rows": rows}, fh, ensure_ascii=False, indent=2)
     if os.path.exists(partial_path):

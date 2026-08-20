@@ -11,6 +11,9 @@ Public functions (this is the contract the backend team imports and calls):
         for itself whether normalize_text() is needed (native Indic script)
         or should be skipped (English/Hinglish), then classifies. Use this
         instead of calling normalize_text() + classify_complaint() by hand.
+    split_departments(text, classification) -> dict
+        Phase 3. See docs/SPLIT_DEPARTMENTS_DESIGN.md §1 for the locked
+        output contract.
     embed_text(text) -> {"vector": [768 floats]}
 
 Reliability rules (must hold for every function):
@@ -21,9 +24,6 @@ Reliability rules (must hold for every function):
       allowed lists in categories.py.
     - No function raises an unhandled exception to the caller — backend
       intake must always succeed even if the AI layer is having a bad day.
-
-Phase 2 (split_departments, for multi-department complaints) is intentionally
-NOT in this file yet — that's built in a later phase, once this is solid.
 """
 import json
 import logging
@@ -34,8 +34,19 @@ from google import genai
 from google.genai import types
 
 from . import config
-from .categories import CATEGORIES, PRIORITIES, DEFAULT_CATEGORY, DEFAULT_PRIORITY
-from .prompts import NORMALIZE_PROMPT_TEMPLATE, IMAGE_DESCRIBE_PROMPT, build_classification_prompt
+from .categories import (
+    CATEGORIES,
+    PRIORITIES,
+    DEFAULT_CATEGORY,
+    DEFAULT_PRIORITY,
+    MAX_DEPARTMENTS,
+)
+from .prompts import (
+    NORMALIZE_PROMPT_TEMPLATE,
+    IMAGE_DESCRIBE_PROMPT,
+    build_classification_prompt,
+    build_split_departments_prompt,
+)
 
 logger = logging.getLogger("ai_service")
 
@@ -403,6 +414,137 @@ def classify_from_raw_input(text: str, image_description: Optional[str] = None) 
     classification["normalized"] = normalized
     classification["detected_script"] = detected_script
     return classification
+
+
+# ---------------------------------------------------------------------------
+# split_departments (Phase 3)
+# ---------------------------------------------------------------------------
+# Locked output contract: docs/SPLIT_DEPARTMENTS_DESIGN.md §1. Do not change
+# the shape below without updating that doc and the Team Integration Guide
+# the same day.
+
+_PRIORITY_SEVERITY = {"critical": 3, "high": 2, "medium": 1, "low": 0}
+
+
+def _split_fallback(text: str, classification: dict) -> dict:
+    """Design doc §1 rule 6: a failed split is NOT a failed classification,
+    so confidence is carried through unchanged, not zeroed."""
+    return {
+        "is_split": False,
+        "departments": [{
+            "category": classification.get("category", DEFAULT_CATEGORY),
+            "subcategory": classification.get("subcategory") or "unspecified",
+            "priority": classification.get("priority", DEFAULT_PRIORITY),
+            "confidence": classification.get("confidence", 0.0),
+            "excerpt": text,
+            "location_text": classification.get("location_text"),
+        }],
+        "source": "fallback",
+        "fallback": True,
+    }
+
+
+def split_departments(text: str, classification: dict) -> dict:
+    """Decides whether `classification` (already produced by
+    classify_complaint() for this same `text`) should be broken into
+    multiple department-routed pieces. See
+    docs/SPLIT_DEPARTMENTS_DESIGN.md §1 for the full contract.
+
+    Provider chain (Gemini -> Groq -> safe default) and retry behavior
+    mirror classify_complaint() exactly. The one difference is the fallback
+    shape itself — see _split_fallback()."""
+    client = _get_client()
+    if client is not None:
+        try:
+            prompt = build_split_departments_prompt(text, classification)
+            response = _with_retry(
+                client.models.generate_content,
+                model=config.GEMINI_TEXT_MODEL,
+                contents=prompt,
+                config=types.GenerateContentConfig(response_mime_type="application/json"),
+            )
+            parsed = _extract_json(response.text)
+            return _validate_split_departments(parsed, text, source="gemini")
+        except Exception as exc:  # noqa: BLE001
+            logger.error("split_departments: Gemini failed, trying Groq fallback: %s", exc)
+
+    if config.GROQ_API_KEY:
+        try:
+            prompt = build_split_departments_prompt(text, classification)
+            parsed = _with_retry(_split_departments_with_groq, prompt)
+            return _validate_split_departments(parsed, text, source="groq")
+        except Exception as exc:  # noqa: BLE001
+            logger.error("split_departments: Groq fallback also failed, returning single-department fallback: %s", exc)
+    else:
+        logger.warning("split_departments: Gemini failed and no GROQ_API_KEY is set, returning single-department fallback")
+
+    return _split_fallback(text, classification)
+
+
+def _split_departments_with_groq(prompt: str) -> dict:
+    from groq import Groq  # imported lazily so this dependency is optional
+
+    client = Groq(api_key=config.GROQ_API_KEY)
+    response = client.chat.completions.create(
+        model=config.GROQ_TEXT_MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"},
+    )
+    raw_text = response.choices[0].message.content
+    return _extract_json(raw_text)
+
+
+def _validate_split_departments(parsed: dict, text: str, source: str) -> dict:
+    """Validates each department item by delegating to _validate_classification()
+    (same category/priority/confidence rules as a single classification —
+    reusing it instead of re-implementing keeps the two from silently
+    drifting apart), then adds the split-specific `excerpt` field. Enforces
+    the design doc's max-4 cap (rule 3) by keeping the highest
+    severity/confidence items, and always leaves at least one department —
+    including when every raw item is unusable — so the "departments is
+    always a non-empty list" contract (design doc §1 rule 1) can't be
+    violated. Derives `is_split` from the final department count rather
+    than trusting a model-reported flag, so the two can never disagree."""
+    raw_departments = parsed.get("departments")
+    if not isinstance(raw_departments, list) or not raw_departments:
+        logger.warning("split_departments: response had no usable 'departments' list, treating as single unclassified department")
+        raw_departments = [{}]
+
+    departments = []
+    for item in raw_departments:
+        if not isinstance(item, dict):
+            continue
+        validated = _validate_classification(item, source)
+        departments.append({
+            "category": validated["category"],
+            "subcategory": validated["subcategory"],
+            "priority": validated["priority"],
+            "confidence": validated["confidence"],
+            "excerpt": item.get("excerpt") or text,
+            "location_text": validated["location_text"],
+        })
+
+    if not departments:
+        logger.warning("split_departments: every department item was unusable, treating as single unclassified department")
+        departments.append({
+            "category": DEFAULT_CATEGORY,
+            "subcategory": "unspecified",
+            "priority": DEFAULT_PRIORITY,
+            "confidence": 0.0,
+            "excerpt": text,
+            "location_text": None,
+        })
+
+    if len(departments) > MAX_DEPARTMENTS:
+        departments.sort(key=lambda d: (_PRIORITY_SEVERITY[d["priority"]], d["confidence"]), reverse=True)
+        departments = departments[:MAX_DEPARTMENTS]
+
+    return {
+        "is_split": len(departments) > 1,
+        "departments": departments,
+        "source": source,
+        "fallback": False,
+    }
 
 
 # ---------------------------------------------------------------------------
