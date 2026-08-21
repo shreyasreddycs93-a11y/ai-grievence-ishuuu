@@ -102,7 +102,10 @@ def update_grievance(id: int, payload: AdminUpdateRequest, db: Session = Depends
         category=grievance.category,
         priority=grievance.priority,
         department=department_name,
-        summary=grievance.description[:140],
+        # Full text on the detail view — the officer working the ticket needs
+        # the whole complaint, not a 140-char preview. The queue list above
+        # still previews.
+        summary=grievance.description,
         confidence=grievance.confidence,
         needs_human_review=grievance.needs_human_review,
         created_at=grievance.created_at,

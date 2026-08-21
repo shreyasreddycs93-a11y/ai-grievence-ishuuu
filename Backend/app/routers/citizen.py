@@ -95,7 +95,11 @@ def get_status(tracking_id: str, db: Session = Depends(get_db)):
         category=grievance.category,
         priority=grievance.priority,
         department=department_name,
-        summary=grievance.description[:140],
+        # Full text, not a 140-char preview: this is the detail view, and the
+        # truncation was cutting off the tail of longer complaints — including
+        # the English rendering appended to non-English ones. The list
+        # endpoint above still previews.
+        summary=grievance.description,
         address=grievance.address,
         confidence=grievance.confidence,
         created_at=grievance.created_at,
