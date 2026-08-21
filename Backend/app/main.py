@@ -28,15 +28,31 @@ logger = logging.getLogger("grievanceai")
 
 class SPAStaticFiles(StaticFiles):
     """StaticFiles that falls back to index.html for any unmatched path,
-    so client-side routes (e.g. /officer/queue) work on direct load/refresh."""
+    so client-side routes (e.g. /officer/queue) work on direct load/refresh.
+
+    Also sets Cache-Control, which StaticFiles omits entirely. Without it
+    browsers fall back to heuristic caching and can serve a stale index.html
+    for hours after a deploy — which is how citizens kept seeing the old
+    mock-data bundle long after the fix shipped. Vite fingerprints everything
+    under assets/, so those are safe to cache forever; index.html points at
+    those hashes and must be revalidated on every load."""
 
     async def get_response(self, path: str, scope):
         try:
-            return await super().get_response(path, scope)
+            response = await super().get_response(path, scope)
         except StarletteHTTPException as exc:
-            if exc.status_code == 404:
-                return await super().get_response("index.html", scope)
-            raise
+            if exc.status_code != 404:
+                raise
+            response = await super().get_response("index.html", scope)
+            path = "index.html"
+
+        # StaticFiles hands us an OS-normalized path, so this is
+        # "assets\app.js" on Windows and "assets/app.js" on Linux.
+        if path.replace("\\", "/").startswith("assets/"):
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        else:
+            response.headers["Cache-Control"] = "no-cache"
+        return response
 
 app = FastAPI(title="CivicSahayak", version="0.1.0")
 
