@@ -17,9 +17,17 @@ Public functions (this is the contract the backend team imports and calls):
     embed_text(text) -> {"vector": [768 floats]}
 
 Reliability rules (must hold for every function):
-    - Every external call has a timeout, then up to MAX_RETRIES retries with
-      a short delay, then falls back to a safe default in the SAME shape,
-      with "fallback": True added so callers can tell it happened.
+    - Availability beats accuracy. A citizen must always be able to lodge a
+      complaint; a roughly-classified ticket is worth far more than a failed
+      submission. Every degradation below is chosen on that basis.
+    - Every external call has a timeout (REQUEST_TIMEOUT_SECONDS, applied on
+      the client), then up to MAX_RETRIES retries with a short delay, then
+      rolls to the next model in the chain, then to Groq, then falls back to a
+      safe default in the SAME shape, with "fallback": True added so callers
+      can tell it happened.
+    - The whole model-chain walk is bounded by CHAIN_BUDGET_SECONDS, because a
+      submission that eventually succeeds after several minutes has already
+      failed the person making it.
     - classify_complaint() NEVER returns a category/priority outside the
       allowed lists in categories.py.
     - No function raises an unhandled exception to the caller — backend
@@ -27,7 +35,9 @@ Reliability rules (must hold for every function):
 """
 import json
 import logging
+import threading
 import time
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from google import genai
@@ -58,7 +68,14 @@ def _get_client() -> Optional[genai.Client]:
     so callers can fall back cleanly instead of crashing on import."""
     global _client
     if _client is None and config.GEMINI_API_KEY:
-        _client = genai.Client(api_key=config.GEMINI_API_KEY)
+        _client = genai.Client(
+            api_key=config.GEMINI_API_KEY,
+            # Without this the SDK waits indefinitely, so one hung connection
+            # blocks an intake forever — the exact "citizen can't lodge a
+            # complaint" outcome the fallback chain exists to prevent.
+            # HttpOptions.timeout is in milliseconds.
+            http_options=types.HttpOptions(timeout=config.REQUEST_TIMEOUT_SECONDS * 1000),
+        )
     return _client
 
 
@@ -78,6 +95,146 @@ def _with_retry(fn, *args, **kwargs):
     raise last_error
 
 
+# ---------------------------------------------------------------------------
+# Gemini model fallback chain
+# ---------------------------------------------------------------------------
+#
+# Every free-tier model has its own RPM and RPD budget (see config.py for the
+# table). Rather than retrying one model until its window clears — which is
+# what the old single-model + Groq path did, and which stalls the whole intake
+# during a demo burst — we walk the chain: a quota error benches that model
+# and the same request goes straight to the next one.
+#
+# Bench state is process-wide, so it's shared across concurrent requests. The
+# backend runs sync endpoints in a threadpool, hence the lock.
+
+_model_available_at: dict = {}       # model -> unix ts before which to skip it
+_model_disabled: set = set()         # models this key can't reach at all
+_chain_lock = threading.Lock()
+
+
+def _next_daily_reset() -> float:
+    """Unix timestamp of the next midnight Pacific, when Google's free-tier
+    daily quotas roll over. Falls back to a fixed UTC-8 offset if the tz
+    database isn't available (Windows without `tzdata` installed), which at
+    worst benches a model an hour longer than needed during PDT."""
+    try:
+        from zoneinfo import ZoneInfo
+
+        pacific = ZoneInfo("America/Los_Angeles")
+    except Exception:  # noqa: BLE001 — missing tzdata, not worth failing over
+        pacific = timezone(timedelta(hours=-8))
+
+    now = datetime.now(pacific)
+    tomorrow = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    return tomorrow.timestamp()
+
+
+def _classify_error(exc: Exception) -> tuple:
+    """Maps an exception to (kind, bench_until).
+
+    kind is one of:
+      "quota"     — rate/daily limit hit; bench this model, move on immediately.
+                    Retrying in place would just burn the same exhausted window.
+      "missing"   — model doesn't exist, isn't enabled for this key, or doesn't
+                    support this input (e.g. audio on a text-only model).
+                    Disable permanently; it will never start working mid-run.
+      "transient" — 5xx/network/timeout. Worth retrying the SAME model before
+                    moving on, since the next model is no likelier to succeed.
+    """
+    text = f"{type(exc).__name__}: {exc}".lower()
+
+    if "resource_exhausted" in text or "429" in text or "rate limit" in text or "quota" in text:
+        # Google labels the violated quota, e.g. GenerateRequestsPerDayPerProjectPerModel.
+        if "perday" in text.replace("_", "").replace("-", ""):
+            return "quota", _next_daily_reset()
+        return "quota", time.time() + config.RPM_COOLDOWN_SECONDS
+
+    if "not_found" in text or "404" in text or "is not found" in text or "not supported" in text:
+        return "missing", None
+
+    return "transient", None
+
+
+def _available_models() -> list:
+    """The chain, minus models that are benched or disabled, in priority order."""
+    now = time.time()
+    with _chain_lock:
+        return [
+            m for m in config.GEMINI_TEXT_MODELS
+            if m not in _model_disabled and _model_available_at.get(m, 0) <= now
+        ]
+
+
+def _bench(model: str, kind: str, until) -> None:
+    with _chain_lock:
+        if kind == "missing":
+            _model_disabled.add(model)
+        elif until is not None:
+            _model_available_at[model] = until
+
+
+def _generate_with_fallback(client: genai.Client, *, contents, gen_config=None, purpose: str):
+    """Runs generate_content against the model chain and returns
+    (response, model_name).
+
+    Transient failures retry the same model up to MAX_RETRIES; quota failures
+    bench it and move on with no retry. The whole walk is capped at
+    CHAIN_BUDGET_SECONDS — see the note there on why finishing late is its own
+    kind of failure. Raises the last exception when the chain is exhausted or
+    the budget runs out; callers treat that as "the Gemini path is down" and
+    fall through to their own safe default, which still lodges the complaint."""
+    models = _available_models()
+    if not models:
+        # Everything is benched. Rather than give up, retry whichever model
+        # frees up soonest — a stale bench shouldn't hard-fail an intake.
+        with _chain_lock:
+            candidates = [m for m in config.GEMINI_TEXT_MODELS if m not in _model_disabled]
+        if not candidates:
+            raise RuntimeError("every Gemini model in the chain is disabled for this API key")
+        models = [min(candidates, key=lambda m: _model_available_at.get(m, 0))]
+        logger.warning("%s: all models benched, forcing a retry on %s", purpose, models[0])
+
+    deadline = time.time() + config.CHAIN_BUDGET_SECONDS
+    last_error = None
+    for model in models:
+        if time.time() >= deadline:
+            logger.warning(
+                "%s: chain budget of %ss spent, giving up with %d model(s) untried",
+                purpose, config.CHAIN_BUDGET_SECONDS, len(models) - models.index(model),
+            )
+            break
+        for attempt in range(config.MAX_RETRIES + 1):
+            try:
+                response = client.models.generate_content(
+                    model=model, contents=contents, config=gen_config,
+                )
+                if model != config.GEMINI_TEXT_MODELS[0]:
+                    logger.info("%s: answered by fallback model %s", purpose, model)
+                return response, model
+            except Exception as exc:  # noqa: BLE001 — reliability boundary
+                last_error = exc
+                kind, until = _classify_error(exc)
+
+                if (
+                    kind == "transient"
+                    and attempt < config.MAX_RETRIES
+                    and time.time() + config.RETRY_DELAY_SECONDS < deadline
+                ):
+                    logger.warning(
+                        "%s: %s transient failure (attempt %d/%d): %s",
+                        purpose, model, attempt + 1, config.MAX_RETRIES + 1, exc,
+                    )
+                    time.sleep(config.RETRY_DELAY_SECONDS)
+                    continue
+
+                _bench(model, kind, until)
+                logger.warning("%s: %s failed (%s), falling through: %s", purpose, model, kind, exc)
+                break  # next model in the chain
+
+    raise last_error
+
+
 def _extract_json(raw_text: str) -> dict:
     """Gemini is asked for raw JSON, but strips/handles the common case of
     it wrapping the answer in ```json ... ``` fences anyway."""
@@ -94,17 +251,20 @@ def _extract_json(raw_text: str) -> dict:
 # ---------------------------------------------------------------------------
 
 def transcribe_audio(file_path: str) -> str:
-    """Converts a voice-note audio file to text. Tries Gemini first (it
-    accepts audio directly); falls back to Groq's free Whisper endpoint if
-    GROQ_API_KEY is set and Gemini fails; falls back to an empty string
-    (never raises) if everything fails, so the caller can still create a
-    ticket flagged for human review instead of losing the complaint."""
+    """Converts a voice-note audio file to text. Walks the Gemini model chain
+    first (Gemini accepts audio directly); falls back to Groq's free Whisper
+    endpoint if GROQ_API_KEY is set and every Gemini model fails; falls back
+    to an empty string (never raises) if everything fails, so the caller can
+    still create a ticket flagged for human review instead of losing the
+    complaint. Groq matters more here than elsewhere — Whisper is a purpose-
+    built transcription model, so it's a genuine upgrade over the last rungs
+    of the Gemini chain rather than just a spare."""
     client = _get_client()
     if client is not None:
         try:
-            return _with_retry(_transcribe_with_gemini, client, file_path)
+            return _transcribe_with_gemini(client, file_path)
         except Exception as exc:  # noqa: BLE001
-            logger.error("Gemini transcription failed, trying fallback: %s", exc)
+            logger.error("Gemini transcription chain failed, trying fallback: %s", exc)
 
     if config.GROQ_API_KEY:
         try:
@@ -117,14 +277,15 @@ def transcribe_audio(file_path: str) -> str:
 
 
 def _transcribe_with_gemini(client: genai.Client, file_path: str) -> str:
-    uploaded = client.files.upload(file=file_path)
-    response = client.models.generate_content(
-        model=config.GEMINI_TEXT_MODEL,
+    uploaded = _with_retry(client.files.upload, file=file_path)
+    response, _model = _generate_with_fallback(
+        client,
         contents=[
             uploaded,
             "Transcribe this audio exactly as spoken. If it is not in English, "
             "transcribe it in its original language/script — do not translate here.",
         ],
+        purpose="transcribe_audio",
     )
     return (response.text or "").strip()
 
@@ -157,11 +318,11 @@ def normalize_text(text: str) -> dict:
 
     try:
         prompt = NORMALIZE_PROMPT_TEMPLATE.format(raw_text=text)
-        response = _with_retry(
-            client.models.generate_content,
-            model=config.GEMINI_TEXT_MODEL,
+        response, _model = _generate_with_fallback(
+            client,
             contents=prompt,
-            config=types.GenerateContentConfig(response_mime_type="application/json"),
+            gen_config=types.GenerateContentConfig(response_mime_type="application/json"),
+            purpose="normalize_text",
         )
         parsed = _extract_json(response.text)
         return {
@@ -186,17 +347,22 @@ def describe_image(file_path: str) -> str:
         return ""
 
     try:
-        return _with_retry(_describe_image_with_gemini, client, file_path)
+        return _describe_image_with_gemini(client, file_path)
     except Exception as exc:  # noqa: BLE001
         logger.error("describe_image failed, continuing without image context: %s", exc)
         return ""
 
 
 def _describe_image_with_gemini(client: genai.Client, file_path: str) -> str:
-    uploaded = client.files.upload(file=file_path)
-    response = client.models.generate_content(
-        model=config.GEMINI_TEXT_MODEL,
+    # The upload is done once, outside the chain — the uploaded file handle is
+    # not model-specific, so re-uploading per fallback attempt would waste a
+    # round trip. Any model in the chain that can't take image input reports
+    # "not supported", which _classify_error benches permanently.
+    uploaded = _with_retry(client.files.upload, file=file_path)
+    response, _model = _generate_with_fallback(
+        client,
         contents=[uploaded, IMAGE_DESCRIBE_PROMPT],
+        purpose="describe_image",
     )
     return (response.text or "").strip()
 
@@ -267,37 +433,38 @@ def classify_complaint(text: str, image_description: Optional[str] = None) -> di
     lists before returning — never passes through a value the model
     invented outside those lists.
 
-    Provider chain: Gemini -> Groq (if GROQ_API_KEY is set) -> safe default.
-    Groq is a second, independent provider — if Gemini's free tier is
-    rate-limited or briefly down (which happens during demos when several
-    complaints come in close together), we don't want to silently drop to
-    confidence=0 on every complaint until the quota window resets. Groq
-    gets the exact same prompt (system instruction + few-shot examples),
-    just run through a different model, so accuracy should be comparable."""
+    Provider chain: the Gemini model chain (config.GEMINI_TEXT_MODELS, in
+    order) -> Groq (if GROQ_API_KEY is set) -> safe default. Each Gemini
+    model has its own free-tier quota, so when one is rate-limited the same
+    complaint rolls to the next model rather than dropping to confidence=0 —
+    which is what used to happen during demos when several complaints came in
+    close together. Groq stays on the end as an independent provider, for the
+    case where Gemini is down as a whole rather than merely throttled; it gets
+    the identical prompt, just run through a different model."""
     client = _get_client()
     if client is not None:
         try:
             prompt = build_classification_prompt(text, image_description)
-            response = _with_retry(
-                client.models.generate_content,
-                model=config.GEMINI_TEXT_MODEL,
+            response, model = _generate_with_fallback(
+                client,
                 contents=prompt,
-                config=types.GenerateContentConfig(response_mime_type="application/json"),
+                gen_config=types.GenerateContentConfig(response_mime_type="application/json"),
+                purpose="classify_complaint",
             )
             parsed = _extract_json(response.text)
-            return _validate_classification(parsed, source="gemini")
+            return _validate_classification(parsed, source="gemini", model=model)
         except Exception as exc:  # noqa: BLE001
-            logger.error("classify_complaint: Gemini failed, trying Groq fallback: %s", exc)
+            logger.error("classify_complaint: whole Gemini chain failed, trying Groq fallback: %s", exc)
 
     if config.GROQ_API_KEY:
         try:
             prompt = build_classification_prompt(text, image_description)
             parsed = _with_retry(_classify_with_groq, prompt)
-            return _validate_classification(parsed, source="groq")
+            return _validate_classification(parsed, source="groq", model=config.GROQ_TEXT_MODEL)
         except Exception as exc:  # noqa: BLE001
             logger.error("classify_complaint: Groq fallback also failed, returning safe default: %s", exc)
     else:
-        logger.warning("classify_complaint: Gemini failed and no GROQ_API_KEY is set, returning safe default")
+        logger.warning("classify_complaint: Gemini chain failed and no GROQ_API_KEY is set, returning safe default")
 
     return _fallback_classification()
 
@@ -318,13 +485,16 @@ def _classify_with_groq(prompt: str) -> dict:
     return _extract_json(raw_text)
 
 
-def _validate_classification(parsed: dict, source: str) -> dict:
+def _validate_classification(parsed: dict, source: str, model: Optional[str] = None) -> dict:
     """Guards against the model returning a category/priority outside our
     fixed lists, a confidence outside [0, 1], or missing fields.
 
     `source` records which provider actually produced this answer
     ("gemini" or "groq") so callers/logs can tell them apart — useful for
-    debugging and for knowing how often the Groq fallback is kicking in."""
+    debugging and for knowing how often the Groq fallback is kicking in.
+    `model` narrows that to the exact model, since "gemini" now covers a
+    whole fallback chain and the rungs differ in accuracy; run_holdout.py
+    keys its scoring off `source`, so that stays coarse deliberately."""
     category = parsed.get("category")
     if category not in CATEGORIES:
         logger.warning("classify_complaint: invalid category '%s', defaulting to '%s'", category, DEFAULT_CATEGORY)
@@ -355,6 +525,7 @@ def _validate_classification(parsed: dict, source: str) -> dict:
         "location_text": parsed.get("location_text") or None,
         "summary": parsed.get("summary") or "No summary available.",
         "source": source,
+        "model": model,
     }
 
 
@@ -450,33 +621,33 @@ def split_departments(text: str, classification: dict) -> dict:
     multiple department-routed pieces. See
     docs/SPLIT_DEPARTMENTS_DESIGN.md §1 for the full contract.
 
-    Provider chain (Gemini -> Groq -> safe default) and retry behavior
-    mirror classify_complaint() exactly. The one difference is the fallback
-    shape itself — see _split_fallback()."""
+    Provider chain (Gemini model chain -> Groq -> safe default) and retry
+    behavior mirror classify_complaint() exactly. The one difference is the
+    fallback shape itself — see _split_fallback()."""
     client = _get_client()
     if client is not None:
         try:
             prompt = build_split_departments_prompt(text, classification)
-            response = _with_retry(
-                client.models.generate_content,
-                model=config.GEMINI_TEXT_MODEL,
+            response, model = _generate_with_fallback(
+                client,
                 contents=prompt,
-                config=types.GenerateContentConfig(response_mime_type="application/json"),
+                gen_config=types.GenerateContentConfig(response_mime_type="application/json"),
+                purpose="split_departments",
             )
             parsed = _extract_json(response.text)
-            return _validate_split_departments(parsed, text, source="gemini")
+            return _validate_split_departments(parsed, text, source="gemini", model=model)
         except Exception as exc:  # noqa: BLE001
-            logger.error("split_departments: Gemini failed, trying Groq fallback: %s", exc)
+            logger.error("split_departments: whole Gemini chain failed, trying Groq fallback: %s", exc)
 
     if config.GROQ_API_KEY:
         try:
             prompt = build_split_departments_prompt(text, classification)
             parsed = _with_retry(_split_departments_with_groq, prompt)
-            return _validate_split_departments(parsed, text, source="groq")
+            return _validate_split_departments(parsed, text, source="groq", model=config.GROQ_TEXT_MODEL)
         except Exception as exc:  # noqa: BLE001
             logger.error("split_departments: Groq fallback also failed, returning single-department fallback: %s", exc)
     else:
-        logger.warning("split_departments: Gemini failed and no GROQ_API_KEY is set, returning single-department fallback")
+        logger.warning("split_departments: Gemini chain failed and no GROQ_API_KEY is set, returning single-department fallback")
 
     return _split_fallback(text, classification)
 
@@ -494,7 +665,7 @@ def _split_departments_with_groq(prompt: str) -> dict:
     return _extract_json(raw_text)
 
 
-def _validate_split_departments(parsed: dict, text: str, source: str) -> dict:
+def _validate_split_departments(parsed: dict, text: str, source: str, model: Optional[str] = None) -> dict:
     """Validates each department item by delegating to _validate_classification()
     (same category/priority/confidence rules as a single classification —
     reusing it instead of re-implementing keeps the two from silently
@@ -514,7 +685,7 @@ def _validate_split_departments(parsed: dict, text: str, source: str) -> dict:
     for item in raw_departments:
         if not isinstance(item, dict):
             continue
-        validated = _validate_classification(item, source)
+        validated = _validate_classification(item, source, model)
         departments.append({
             "category": validated["category"],
             "subcategory": validated["subcategory"],
@@ -543,6 +714,7 @@ def _validate_split_departments(parsed: dict, text: str, source: str) -> dict:
         "is_split": len(departments) > 1,
         "departments": departments,
         "source": source,
+        "model": model,
         "fallback": False,
     }
 
