@@ -2,6 +2,13 @@
 FROM node:20-slim AS frontend-build
 WORKDIR /build
 
+# All three apps and the API are served from one origin by the runtime image,
+# so the frontends must talk to the API via relative paths. Set explicitly
+# rather than relying on each app's default, so the prod build is unambiguous.
+# VITE_USE_MOCK is deliberately left unset — mock data must never ship.
+ENV VITE_API_BASE_URL="" \
+    VITE_API_URL=""
+
 COPY Landing/package*.json Landing/
 RUN cd Landing && npm ci
 

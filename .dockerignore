@@ -1,5 +1,9 @@
 **/node_modules
 **/dist
+# Local dev .env files point the frontends at localhost — baking those into a
+# prod image breaks it. The image builds same-origin (see Dockerfile ENVs).
+**/.env
+!**/.env.example
 **/__pycache__
 **/*.pyc
 Backend/venv

@@ -13,8 +13,12 @@ import type {
 } from './types'
 import { MOCK_QUEUE, getMockDetail } from './mockData'
 
-// Base URL — adjust if backend moves to a different host/port
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
+// Empty default = same origin, which is how we deploy: one FastAPI process
+// serves this app at /officer/ and the API at unprefixed paths. A localhost
+// default would be unreachable in prod, and withMockFallback below would
+// quietly serve MOCK_QUEUE instead of erroring. Set it only when the backend
+// is on a different origin (e.g. `npm run dev` against a separate backend).
+const BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 // Set to true to force mock mode regardless of backend status
 const FORCE_MOCK = false

@@ -7,9 +7,16 @@ import type {
 } from '@/types';
 import { mockIntake, mockGetStatus, mockVerify, mockGetMyGrievances } from './mockApi';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
+// Empty default = same origin, which is how we deploy: one FastAPI process
+// serves this app at /citizen/ and the API at unprefixed paths. Set it only
+// when the backend is on a different origin (e.g. `npm run dev` against a
+// separately-run backend).
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '';
 
-export const isMockMode = !API_BASE_URL;
+// Mock mode must be opt-in. Inferring it from a missing base URL silently
+// turned the whole deployed app into a demo — every citizen saw the same
+// two fake tickets in My Complaints.
+export const isMockMode = import.meta.env.VITE_USE_MOCK === 'true';
 
 // Written by the Landing app on login/signup — shared via localStorage since
 // all three apps run on the same origin. Optional here: the citizen app
