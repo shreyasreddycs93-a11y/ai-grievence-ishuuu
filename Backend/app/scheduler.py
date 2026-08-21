@@ -119,6 +119,19 @@ def _merge_into(db, *, source: Grievance, target: Grievance) -> bool:
     notification log row — since those aren't safe to silently drop.
     Returns whether the merge happened.
     """
+    # A split-family member must never be merged. A sub-ticket's description is
+    # an excerpt of its parent's, so the two embeddings are near-identical BY
+    # CONSTRUCTION and _find_duplicate will always match them — merging would
+    # delete a deliberately department-routed ticket (that department then
+    # never sees its half of the complaint) and inflate report_count with a
+    # report that never happened.
+    if source.parent_id is not None or target.parent_id is not None:
+        logger.warning(
+            "reembed_broken_vectors: %s matches %s but one of them is a split sub-ticket, leaving both standalone",
+            source.tracking_id, target.tracking_id,
+        )
+        return False
+
     has_children = db.query(Grievance.id).filter(Grievance.parent_id == source.id).first() is not None
     has_notifications = db.query(NotificationLog.id).filter(NotificationLog.grievance_id == source.id).first() is not None
     if has_children or has_notifications:
