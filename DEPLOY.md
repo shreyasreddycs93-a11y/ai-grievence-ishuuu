@@ -1,3 +1,24 @@
+# Frontend-only deploy on Vercel (current setup)
+
+`vercel.json` + `.vercelignore` deploy **only the three static frontends**
+(no Python, no database): `/` Landing, `/citizen/` Citizen app, `/officer/` Officer app.
+
+1. Vercel → Add New Project → import this repo. Root Directory **empty**, Framework Preset **Other**.
+2. Deploy. No environment variables are needed.
+3. Because there is no backend yet, API calls (login, report, queue) will fail.
+   To demo the citizen app with built-in fixtures, set `VITE_USE_MOCK=true`
+   in Vercel env vars and redeploy (citizen app only). Or point the apps at a
+   backend hosted elsewhere via `VITE_API_BASE_URL` (Landing + Citizen) and
+   `VITE_API_URL` (Officer) — but note the API must allow CORS (it currently allows all).
+
+## Adding the backend later (full stack on Vercel)
+
+1. Replace `vercel.json` with `vercel.fullstack.json` (`cp vercel.fullstack.json vercel.json`).
+2. Empty `.vercelignore` of `Backend`, `ai_service`, `api`, `requirements.txt`, `.python-version`.
+3. Follow the "Full stack" section below.
+
+---
+
 # Deploying on Vercel (single project)
 
 One Vercel project serves everything:

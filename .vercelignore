@@ -1,5 +1,8 @@
 **/node_modules
-Backend/venv
-ai_service/tests
+Backend
+ai_service
+api
+requirements.txt
+.python-version
 docs
 *.bat
