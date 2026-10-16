@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     Boolean,
+    LargeBinary,
     Column,
     DateTime,
     Enum as SAEnum,
@@ -198,6 +199,17 @@ class GrievanceMedia(Base):
     storage_url = Column(String, nullable=False)
 
     grievance = relationship("Grievance", back_populates="media")
+
+
+class MediaBlob(Base):
+    """Uploaded photo/voice-note bytes. Stored in the DB (not on disk) so uploads
+    survive serverless hosts such as Vercel, whose filesystem is read-only/ephemeral."""
+    __tablename__ = "media_blobs"
+
+    filename = Column(String, primary_key=True)
+    content_type = Column(String, nullable=False)
+    data = Column(LargeBinary, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
 
 
 class StatusHistory(Base):

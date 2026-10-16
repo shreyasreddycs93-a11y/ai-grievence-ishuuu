@@ -2,6 +2,8 @@
 CivicSahayak FastAPI application entrypoint.
 """
 import logging
+import os
+import threading
 
 from pathlib import Path
 
@@ -9,14 +11,14 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.concurrency import run_in_threadpool
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.db import init_db
-from app.scheduler import start_scheduler, stop_scheduler
+from app.scheduler import check_overdue_grievances, reembed_broken_vectors, start_scheduler, stop_scheduler
 
-UPLOAD_DIR = Path(__file__).resolve().parents[1] / "uploads"
-UPLOAD_DIR.mkdir(exist_ok=True)
+IS_SERVERLESS = bool(os.environ.get("VERCEL"))
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CITIZEN_DIST = REPO_ROOT / "Frontend" / "dist"
@@ -87,15 +89,47 @@ async def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content={"error": "Internal server error"})
 
 
-@app.on_event("startup")
-def on_startup():
-    init_db()
-    start_scheduler(interval_minutes=5)
+_db_ready = False
+_db_lock = threading.Lock()
 
 
-@app.on_event("shutdown")
-def on_shutdown():
-    stop_scheduler()
+def _ensure_db_ready() -> None:
+    """Serverless has no reliable startup hook, so create the extension/tables
+    lazily on the first request of each instance. Retries until it succeeds."""
+    global _db_ready
+    if _db_ready:
+        return
+    with _db_lock:
+        if not _db_ready:
+            init_db()
+            _db_ready = True
+
+
+if IS_SERVERLESS:
+    @app.middleware("http")
+    async def lazy_init_db(request: Request, call_next):
+        if request.url.path != "/health":
+            await run_in_threadpool(_ensure_db_ready)
+        return await call_next(request)
+else:
+    @app.on_event("startup")
+    def on_startup():
+        init_db()
+        start_scheduler(interval_minutes=5)
+
+    @app.on_event("shutdown")
+    def on_shutdown():
+        stop_scheduler()
+
+
+@app.get("/cron/maintenance")
+def cron_maintenance(request: Request):
+    """Replaces the in-process APScheduler on Vercel: Vercel Cron calls this with
+    `Authorization: Bearer $CRON_SECRET`. Runs the SLA-breach check and vector repair."""
+    secret = os.environ.get("CRON_SECRET", "")
+    if not secret or request.headers.get("authorization") != f"Bearer {secret}":
+        raise StarletteHTTPException(status_code=401, detail="Unauthorized")
+    return {"escalated": check_overdue_grievances(), "reembedded": reembed_broken_vectors()}
 
 
 @app.get("/health")
@@ -110,8 +144,6 @@ app.include_router(media.router)
 app.include_router(citizen.router)
 app.include_router(admin.router)
 app.include_router(auth.router)
-
-app.mount("/media", StaticFiles(directory=str(UPLOAD_DIR)), name="media")
 
 # Serve the three built frontend apps off this same port. Order matters:
 # API routes/mounts above always win on an exact prefix match; "/" is

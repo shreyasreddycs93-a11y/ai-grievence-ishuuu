@@ -1,0 +1,29 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm run install:all",
+  "buildCommand": "npm run build:all",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 60,
+      "includeFiles": "{Backend,ai_service}/**",
+      "excludeFiles": "{Frontend,Landing,OfficerFrontend,docs,dist}/**"
+    }
+  },
+  "crons": [{ "path": "/cron/maintenance", "schedule": "0 3 * * *" }],
+  "rewrites": [
+    { "source": "/health", "destination": "/api/index" },
+    { "source": "/cron/:path*", "destination": "/api/index" },
+    { "source": "/auth/:path*", "destination": "/api/index" },
+    { "source": "/admin/:path*", "destination": "/api/index" },
+    { "source": "/departments", "destination": "/api/index" },
+    { "source": "/grievance/:path*", "destination": "/api/index" },
+    { "source": "/intake/:path*", "destination": "/api/index" },
+    { "source": "/media/:path*", "destination": "/api/index" },
+    { "source": "/citizen/my-grievances", "destination": "/api/index" },
+    { "source": "/citizen/:path*", "destination": "/citizen/index.html" },
+    { "source": "/officer/:path*", "destination": "/officer/index.html" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}

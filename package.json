@@ -1,0 +1,9 @@
+{
+  "name": "grievance-ai",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "install:all": "npm ci --prefix Landing && npm ci --prefix Frontend && npm ci --prefix OfficerFrontend",
+    "build:all": "npm run build --prefix Landing && npm run build --prefix Frontend && npm run build --prefix OfficerFrontend && node scripts/assemble.mjs"
+  }
+}

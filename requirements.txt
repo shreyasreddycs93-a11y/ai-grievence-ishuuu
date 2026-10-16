@@ -1,3 +1,17 @@
-google-genai>=0.3.0
+# Vercel installs the Python function's dependencies from this file.
+# (Backend/requirements.txt is kept in sync for Docker/Railway.)
+fastapi==0.115.0
+sqlalchemy==2.0.35
+psycopg2-binary==2.9.12
+pgvector==0.3.4
+pydantic>=2.11
+pydantic-settings>=2.7
 python-dotenv>=1.0.0
+httpx==0.27.2
+apscheduler==3.10.4
+google-genai>=0.3.0
 groq>=0.11.0
+python-multipart>=0.0.9
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+pyjwt==2.9.0

@@ -1,0 +1,5 @@
+**/node_modules
+Backend/venv
+ai_service/tests
+docs
+*.bat
