@@ -27,7 +27,7 @@ There are two test scripts and they measure different things. **Both matter, and
 ### 1. Sanity check (open book)
 
 ```bash
-python -m ai_service.tests.run_examples
+cd Backend && python -m ai_service.tests.run_examples
 ```
 
 Runs the 15 few-shot examples plus 5 adversarial edge cases. Note what this actually proves: it grades the model on the same examples that are baked into its own prompt. Scoring 15/15 means the prompt is well-formed and the model follows instructions — it does **not** mean the classifier is 90%+ accurate. Treat a drop here as a red flag, not a passing grade.
@@ -35,7 +35,7 @@ Runs the 15 few-shot examples plus 5 adversarial edge cases. Note what this actu
 ### 2. Real accuracy (closed book)
 
 ```bash
-python -m ai_service.tests.run_holdout
+cd Backend && python -m ai_service.tests.run_holdout
 ```
 
 Scores the classifier against 30 complaints in `tests/holdout_set.py` that it has never seen. This is the number to quote. Takes ~8 minutes because it paces calls to stay under the free-tier rate limit.

@@ -1,12 +1,36 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "installCommand": "npm run install:all",
-  "buildCommand": "npm run build:all",
-  "outputDirectory": "dist",
+  "services": {
+    "backend": {
+      "root": "Backend",
+      "framework": "fastapi"
+    },
+    "citizen": {
+      "root": "Frontend",
+      "framework": "vite"
+    },
+    "officer": {
+      "root": "OfficerFrontend",
+      "framework": "vite"
+    },
+    "landing": {
+      "root": "Landing",
+      "framework": "vite"
+    }
+  },
+  "crons": [{ "path": "/cron/maintenance", "schedule": "0 3 * * *" }],
   "rewrites": [
-    { "source": "/citizen/:path*", "destination": "/citizen/index.html" },
-    { "source": "/officer/:path*", "destination": "/officer/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/health", "destination": { "service": "backend" } },
+    { "source": "/cron/(.*)", "destination": { "service": "backend" } },
+    { "source": "/auth/(.*)", "destination": { "service": "backend" } },
+    { "source": "/admin/(.*)", "destination": { "service": "backend" } },
+    { "source": "/departments", "destination": { "service": "backend" } },
+    { "source": "/grievance/(.*)", "destination": { "service": "backend" } },
+    { "source": "/intake/(.*)", "destination": { "service": "backend" } },
+    { "source": "/media/(.*)", "destination": { "service": "backend" } },
+    { "source": "/citizen/my-grievances", "destination": { "service": "backend" } },
+    { "source": "/citizen(/.*)?", "destination": { "service": "citizen" } },
+    { "source": "/officer(/.*)?", "destination": { "service": "officer" } },
+    { "source": "/(.*)", "destination": { "service": "landing" } }
   ]
 }

@@ -9,7 +9,7 @@ venv/
 env/
 
 # Test scratch files
-ai_service/tests/holdout_results/_partial.json
+Backend/ai_service/tests/holdout_results/_partial.json
 
 # OS junk
 .DS_Store

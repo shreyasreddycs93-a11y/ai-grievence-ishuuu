@@ -10,4 +10,4 @@ Backend/venv
 Backend/uploads
 .git
 .claude
-ai_service/tests/holdout_results
+Backend/ai_service/tests/holdout_results

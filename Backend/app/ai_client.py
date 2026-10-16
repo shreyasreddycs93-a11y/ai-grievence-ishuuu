@@ -3,22 +3,18 @@ Real AI client — wraps the `ai_service` package (Gemini -> Groq -> safe
 default) behind the exact function signatures / return shapes the rest of
 the backend was built against, so no caller needed to change.
 
-`ai_service` lives as a sibling directory to `Backend/` in this monorepo,
-not as an installed package, so it's reached via a repo-root sys.path
-insert below. That only works when the full repo is checked out next to
-Backend/ (true for local dev). If this app is ever deployed with its
-Railway "Root Directory" scoped to just Backend/, ai_service/ won't be
-present in that build and this import will fail at startup — either point
-Root Directory at the repo root instead, or vendor ai_service/ into the
-deployed image.
+`ai_service` lives inside `Backend/` (not as an installed package), so it's
+reached via a Backend-dir sys.path insert below. Keeping it inside Backend/
+means it ships with any deploy whose root is scoped to Backend/ (e.g. a
+Vercel service with `"root": "Backend"`).
 """
 import sys
 from pathlib import Path
 from typing import List, Optional, TypedDict
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-if str(_REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(_REPO_ROOT))
+_BACKEND_DIR = Path(__file__).resolve().parents[1]
+if str(_BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_DIR))
 
 from ai_service import (  # noqa: E402
     classify_from_raw_input,

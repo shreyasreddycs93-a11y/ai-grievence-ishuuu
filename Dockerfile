@@ -35,7 +35,6 @@ COPY Backend/requirements.txt Backend/requirements.txt
 RUN pip install --no-cache-dir -r Backend/requirements.txt
 
 COPY Backend/ Backend/
-COPY ai_service/ ai_service/
 
 # Only the built output from stage 1 — no node_modules, no source maps clutter.
 COPY --from=frontend-build /build/Landing/dist Landing/dist
