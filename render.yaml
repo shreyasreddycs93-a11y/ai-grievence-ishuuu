@@ -6,7 +6,9 @@ services:
     plan: free
     envVars:
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: civicsahayak-db
+          property: connectionString
       - key: GEMINI_API_KEY
         sync: false
       - key: GROQ_API_KEY
@@ -17,3 +19,9 @@ services:
         generateValue: true
       - key: DEPARTMENT_INVITE_CODE
         sync: false
+
+databases:
+  - name: civicsahayak-db
+    plan: free
+    databaseName: civicsahayak
+    user: civicsahayak
