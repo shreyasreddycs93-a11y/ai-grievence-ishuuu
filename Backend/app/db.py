@@ -2,20 +2,12 @@
 Database engine/session setup, plus a startup routine that ensures the
 pgvector extension exists and creates all tables.
 """
-import os
-
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy.pool import NullPool
 
 from app.config import settings
 
-# Serverless (Vercel): each invocation may be a fresh, short-lived instance, so
-# don't hold pooled connections open — rely on the provider's pooler instead.
-if os.environ.get("VERCEL"):
-    engine = create_engine(settings.DATABASE_URL, poolclass=NullPool)
-else:
-    engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
+engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

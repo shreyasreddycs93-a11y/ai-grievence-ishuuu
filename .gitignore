@@ -9,16 +9,9 @@ venv/
 env/
 
 # Test scratch files
-Backend/ai_service/tests/holdout_results/_partial.json
+ai_service/tests/holdout_results/_partial.json
 
 # OS junk
 .DS_Store
 Thumbs.db
 
-# Claude Code local state (per-developer, not shared)
-.claude/
-
-# Vercel
-dist/
-.vercel/
-node_modules/
