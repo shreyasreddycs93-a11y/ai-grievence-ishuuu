@@ -44,4 +44,6 @@ COPY --from=frontend-build /build/OfficerFrontend/dist OfficerFrontend/dist
 
 WORKDIR /app/Backend
 EXPOSE 8000
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Seed departments (idempotent) so no manual shell step is needed on Render,
+# then start the server.
+CMD ["sh", "-c", "python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
