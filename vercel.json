@@ -2,10 +2,16 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "echo skip",
-  "buildCommand": "for d in Frontend OfficerFrontend Landing; do (cd $d && npm ci && npm run build) || exit 1; done && rm -rf out && mkdir -p out/citizen out/officer && cp -r Landing/dist/. out/ && cp -r Frontend/dist/. out/citizen/ && cp -r OfficerFrontend/dist/. out/officer/",
+  "buildCommand": "bash build-vercel.sh",
   "outputDirectory": "out",
   "rewrites": [
-    { "source": "/citizen/:path((?!assets/).*)", "destination": "/citizen/index.html" },
-    { "source": "/officer/:path((?!assets/).*)", "destination": "/officer/index.html" }
+    {
+      "source": "/citizen/:path((?!assets/).*)",
+      "destination": "/citizen/index.html"
+    },
+    {
+      "source": "/officer/:path((?!assets/).*)",
+      "destination": "/officer/index.html"
+    }
   ]
 }
